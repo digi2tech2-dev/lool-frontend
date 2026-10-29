@@ -210,7 +210,7 @@ const OrdersFiltersBar = ({
           ) : null}
         </div>
 
-        {customRange ? (
+        {customRange && dateFilter === 'custom' ? (
           <div className={cn(
             'grid grid-cols-2 gap-2 border-t border-[color:rgb(var(--color-border-rgb)/0.68)] xl:grid-cols-4',
             compact ? 'pt-2.5' : 'pt-3'

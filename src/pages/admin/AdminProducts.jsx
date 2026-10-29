@@ -15,6 +15,9 @@ import { useToast } from '../../components/ui/Toast';
 import { useLanguage } from '../../context/LanguageContext';
 import { formatNumber } from '../../utils/intl';
 import { getProductStatus, validateProductForm } from '../../utils/productStatus';
+import useGroupStore from '../../store/useGroupStore';
+import useSystemStore from '../../store/useSystemStore';
+import { calculateProductPrice, convertPriceByCurrency, formatCurrencyAmount } from '../../utils/pricing';
 
 const PROVIDER_PRODUCTS_LIMIT = 2000;
 const PROVIDER_PRODUCTS_PAGE_SIZE = 80;
@@ -22,6 +25,7 @@ const PRODUCT_FORM_STEPS = [
     { id: 'basic', number: 1, labelAr: 'الأساسيات', labelEn: 'Basics' },
     { id: 'pricing', number: 2, labelAr: 'الربط والسعر', labelEn: 'Pricing' },
     { id: 'fields', number: 3, labelAr: 'حقول الطلب والمراجعة', labelEn: 'Fields & Review' },
+    { id: 'customerPrice', number: 4, labelAr: 'سعر العميل', labelEn: 'Customer price' },
 ];
 
 const getProviderProductSearchToken = (product) =>
@@ -329,6 +333,8 @@ const AdminProducts = () => {
         loadProducts,
     } = useMediaStore();
     const { user } = useAuthStore();
+    const { groups, loadGroups } = useGroupStore();
+    const { currencies, loadCurrencies } = useSystemStore();
     const { addToast } = useToast();
     const { t, language } = useLanguage();
     const isEnglish = language === 'en';
@@ -358,6 +364,9 @@ const AdminProducts = () => {
     const [selectedSubCategoryId, setSelectedSubCategoryId] = useState('');
     const [productSearchQuery, setProductSearchQuery] = useState('');
     const [productFormStep, setProductFormStep] = useState(PRODUCT_FORM_STEPS[0].id);
+    const [previewGroupId, setPreviewGroupId] = useState('');
+    const [previewQuantity, setPreviewQuantity] = useState('1');
+    const [previewCurrencyCode, setPreviewCurrencyCode] = useState('USD');
     const [productForm, setProductForm] = useState({
         name: '',
         nameAr: '',
@@ -415,6 +424,44 @@ const AdminProducts = () => {
         showOutOfStockLabel: true,
         dynamicFields: [],
     });
+
+    useEffect(() => {
+        if (!isProductModalOpen) return;
+        void loadGroups({ force: false });
+        void loadCurrencies({ force: false });
+    }, [isProductModalOpen, loadCurrencies, loadGroups]);
+
+    useEffect(() => {
+        if (!groups.length) return;
+        setPreviewGroupId((current) => (
+            groups.some((group) => String(group.id) === current)
+                ? current
+                : String(groups[0].id)
+        ));
+    }, [groups]);
+
+    const previewGroup = groups.find((group) => String(group.id) === previewGroupId) || groups[0] || null;
+    const previewCurrency = String(previewCurrencyCode || 'USD').toUpperCase();
+    const previewGroupPercentage = Number(previewGroup?.percentage ?? previewGroup?.discount ?? 0) || 0;
+    const previewBaseUnitPrice = calculateProductPrice(
+        { basePriceCoins: productForm.basePriceCoins },
+        String(previewGroup?.id || previewGroup?.name || 'Normal'),
+        previewGroupPercentage
+    );
+    const previewUnitPrice = previewCurrency === 'USD'
+        ? previewBaseUnitPrice
+        : convertPriceByCurrency(previewBaseUnitPrice, previewCurrency, currencies);
+    const previewMinimumQuantity = parsePositiveQuantity(productForm.minimumOrderQty, 1);
+    const previewMaximumQuantity = parsePositiveQuantity(productForm.maximumOrderQty, 999);
+    const previewStepQuantity = parsePositiveQuantity(productForm.stepQty, 1);
+    const previewQuantityNumber = Number(previewQuantity);
+    const isPreviewQuantityValid = Number.isFinite(previewQuantityNumber)
+        && previewQuantityNumber >= previewMinimumQuantity
+        && previewQuantityNumber <= previewMaximumQuantity
+        && Math.abs((previewQuantityNumber - previewMinimumQuantity) / previewStepQuantity
+            - Math.round((previewQuantityNumber - previewMinimumQuantity) / previewStepQuantity)) < 0.000001;
+    const safePreviewQuantity = isPreviewQuantityValid ? previewQuantityNumber : previewMinimumQuantity;
+    const previewTotal = Number(previewUnitPrice || 0) * safePreviewQuantity;
 
     const sortedAdminProducts = useMemo(() => (
         Array.isArray(products) ? [...products] : []
@@ -825,6 +872,8 @@ const AdminProducts = () => {
 
     const openProductModal = (product = null) => {
         setProductFormStep(PRODUCT_FORM_STEPS[0].id);
+        setPreviewQuantity(String(product?.minimumOrderQty ?? product?.minQty ?? 1));
+        setPreviewCurrencyCode('USD');
         setProviderProductsVisibleCount(PROVIDER_PRODUCTS_PAGE_SIZE);
         if (product) {
             const linkedProviderId = String(product.providerId || product.supplierId || '').trim();
@@ -2640,6 +2689,107 @@ const AdminProducts = () => {
                             );
                         })()}
                     </div>
+                    ) : null}
+
+                    {productFormStep === 'customerPrice' ? (
+                    <section className="space-y-4 rounded-2xl border border-violet-200 bg-gradient-to-br from-violet-50 via-white to-cyan-50 p-4 dark:border-violet-900/70 dark:from-violet-950/35 dark:via-gray-900 dark:to-cyan-950/25 sm:p-5">
+                        <div className="flex items-start gap-3">
+                            <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-violet-600 text-white shadow-lg shadow-violet-950/20">
+                                <Package className="h-5 w-5" />
+                            </span>
+                            <div>
+                                <h3 className="font-bold text-gray-900 dark:text-white">{isEnglish ? 'Customer price preview' : 'معاينة سعر العميل'}</h3>
+                                <p className="mt-1 text-xs leading-5 text-gray-600 dark:text-gray-300">
+                                    {isEnglish
+                                        ? 'Choose a customer group, quantity, and currency to see the same estimated total shown before purchase.'
+                                        : 'اختر مجموعة العميل والكمية والعملة لمعاينة الإجمالي المتوقع قبل الشراء، وفق سعر المنتج ونسبة المجموعة.'}
+                                </p>
+                            </div>
+                        </div>
+
+                        <div className="grid gap-3 sm:grid-cols-3">
+                            <label className="space-y-1.5">
+                                <span className="block text-xs font-bold text-gray-700 dark:text-gray-200">{isEnglish ? 'Customer group' : 'مجموعة العميل'}</span>
+                                <select
+                                    value={previewGroup ? String(previewGroup.id) : ''}
+                                    onChange={(event) => setPreviewGroupId(event.target.value)}
+                                    disabled={!groups.length}
+                                    className={selectClassName}
+                                >
+                                    {groups.length ? groups.map((group) => (
+                                        <option key={group.id} value={String(group.id)}>
+                                            {(isEnglish ? group.name || group.nameAr : group.nameAr || group.name) || (isEnglish ? 'Group' : 'مجموعة')} ({Number(group.percentage ?? group.discount ?? 0)}%)
+                                        </option>
+                                    )) : <option value="">{isEnglish ? 'No groups available' : 'لا توجد مجموعات'}</option>}
+                                </select>
+                            </label>
+
+                            <label className="space-y-1.5">
+                                <span className="block text-xs font-bold text-gray-700 dark:text-gray-200">{isEnglish ? 'Quantity' : 'الكمية'}</span>
+                                <Input
+                                    type="number"
+                                    min={productForm.minimumOrderQty || 1}
+                                    max={productForm.maximumOrderQty || 999}
+                                    step={productForm.stepQty || 1}
+                                    value={previewQuantity}
+                                    onChange={(event) => setPreviewQuantity(event.target.value)}
+                                    className="h-11"
+                                />
+                                <span className="block text-[10px] text-gray-500 dark:text-gray-400">
+                                    {isEnglish ? 'Allowed' : 'المتاح'}: {productForm.minimumOrderQty || 1}–{productForm.maximumOrderQty || 999}
+                                </span>
+                            </label>
+
+                            <label className="space-y-1.5">
+                                <span className="block text-xs font-bold text-gray-700 dark:text-gray-200">{isEnglish ? 'Currency' : 'العملة'}</span>
+                                <select
+                                    value={previewCurrency}
+                                    onChange={(event) => setPreviewCurrencyCode(event.target.value)}
+                                    className={selectClassName}
+                                >
+                                    <option value="USD">USD — {isEnglish ? 'US Dollar' : 'دولار أمريكي'}</option>
+                                    {currencies
+                                        .filter((currency) => String(currency.code || '').toUpperCase() !== 'USD')
+                                        .map((currency) => (
+                                            <option key={currency.code} value={String(currency.code).toUpperCase()}>
+                                                {currency.code} — {currency.name || currency.symbol || currency.code}
+                                            </option>
+                                        ))}
+                                </select>
+                            </label>
+                        </div>
+
+                        {!isPreviewQuantityValid ? (
+                                <p className="rounded-lg border border-amber-300 bg-amber-50 px-3 py-2 text-xs font-semibold text-amber-800 dark:border-amber-700 dark:bg-amber-950/30 dark:text-amber-200">
+                                    {isEnglish
+                                        ? `Choose a quantity from ${previewMinimumQuantity} to ${previewMaximumQuantity}, in steps of ${previewStepQuantity}.`
+                                        : `اختر كمية من ${previewMinimumQuantity} إلى ${previewMaximumQuantity} وبمقدار زيادة ${previewStepQuantity}.`}
+                                </p>
+                            ) : null}
+
+                        <div className="grid gap-3 sm:grid-cols-2">
+                            <div className="rounded-xl border border-gray-200 bg-white/80 p-4 dark:border-gray-700 dark:bg-gray-950/35">
+                                <p className="text-xs font-semibold text-gray-500 dark:text-gray-400">{isEnglish ? 'Price per unit' : 'سعر الوحدة'}</p>
+                                <p className="mt-1 text-lg font-black text-gray-900 dark:text-white" dir="ltr">
+                                    {formatCurrencyAmount(previewUnitPrice, previewCurrency, currencies, isEnglish ? 'en-US' : 'ar-EG', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                                </p>
+                                <p className="mt-1 text-[10px] text-gray-500 dark:text-gray-400">
+                                    {isEnglish ? `Group rate: ${previewGroupPercentage}%` : `نسبة المجموعة: ${previewGroupPercentage}%`}
+                                </p>
+                            </div>
+                            <div className="rounded-xl border border-violet-300 bg-violet-600 p-4 text-white shadow-lg shadow-violet-950/15 dark:border-violet-500">
+                                <p className="text-xs font-semibold text-violet-100">{isEnglish ? 'Total for selected quantity' : 'الإجمالي للكمية المحددة'}</p>
+                                <p className="mt-1 text-2xl font-black" dir="ltr">
+                                    {isPreviewQuantityValid
+                                        ? formatCurrencyAmount(previewTotal, previewCurrency, currencies, isEnglish ? 'en-US' : 'ar-EG', { minimumFractionDigits: 2, maximumFractionDigits: 2 })
+                                        : '—'}
+                                </p>
+                                <p className="mt-1 text-[10px] text-violet-100">
+                                    {isEnglish ? `${safePreviewQuantity} units` : `${formatNumber(safePreviewQuantity, isEnglish ? 'en-US' : 'ar-EG')} قطعة`}
+                                </p>
+                            </div>
+                        </div>
+                    </section>
                     ) : null}
 
                     <div className="grid grid-cols-2 gap-2 border-t border-[color:rgb(var(--color-border-rgb)/0.7)] pt-4 sm:flex sm:justify-end">

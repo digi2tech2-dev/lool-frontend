@@ -35,8 +35,8 @@ const ORDER_STATUS_META = {
 const ORDER_TYPE_META = {
   auto: {
     variant: 'info',
-    labelAr: 'أوتوماتيكي',
-    labelEn: 'Automatic',
+    labelAr: 'عن طريق API',
+    labelEn: 'Through API',
   },
   manual: {
     variant: 'secondary',
@@ -257,8 +257,8 @@ export const createOrderStatusOptions = (language = 'ar') => ([
 ]);
 
 export const createOrderTypeOptions = (language = 'ar') => ([
-  { value: 'all', label: language === 'ar' ? 'كل الأنواع' : 'All types' },
-  { value: 'auto', label: language === 'ar' ? 'أوتوماتيكي' : 'Automatic' },
+  { value: 'all', label: language === 'ar' ? 'الكل' : 'All' },
+  { value: 'auto', label: language === 'ar' ? 'عن طريق API' : 'Through API' },
   { value: 'manual', label: language === 'ar' ? 'يدوي' : 'Manual' },
 ]);
 
@@ -339,7 +339,16 @@ export const getOrderType = (order = {}) => {
     return 'manual';
   }
 
-  return order?.supplierId ? 'auto' : 'manual';
+  const hasApiExecution = Boolean(
+    order?.supplierId
+    || order?.externalOrderId
+    || order?.providerOrderId
+    || order?.supplierOrderNumber
+    || order?.supplierRequestSnapshot
+    || order?.supplierResponseSnapshot
+  );
+
+  return hasApiExecution ? 'auto' : 'manual';
 };
 
 export const getOrderTypeMeta = (order, language = 'ar') => {
@@ -696,7 +705,7 @@ export const enrichOrders = (orders, { users = [], products = [], language = 'ar
         || '',
     };
     const statusMeta = getOrderStatusMeta(hydratedOrder?.status, language);
-    const typeMeta = getOrderTypeMeta(hydratedOrder, language);
+    const typeMeta = getOrderTypeMeta(order, language);
     const siteOrderNumber = resolveSiteOrderNumber(hydratedOrder);
     const supplierOrderNumber = resolveSupplierOrderNumber(hydratedOrder);
     const customerName = order?.userName
@@ -804,6 +813,9 @@ export const filterOrders = (orders, {
 } = {}) => {
   const normalizedSearchTerm = toLower(searchTerm);
   const threshold = getDateFilterThreshold(dateFilter);
+  const endOfToday = dateFilter === 'today'
+    ? new Date(new Date().setHours(24, 0, 0, 0))
+    : null;
 
   return [...(Array.isArray(orders) ? orders : [])]
     .filter((order) => {
@@ -833,7 +845,7 @@ export const filterOrders = (orders, {
 
       if (threshold) {
         const orderDate = new Date(order?.createdAt || 0);
-        if (Number.isNaN(orderDate.getTime()) || orderDate < threshold) {
+        if (Number.isNaN(orderDate.getTime()) || orderDate < threshold || (endOfToday && orderDate >= endOfToday)) {
           return false;
         }
       }

@@ -21,10 +21,10 @@ const CustomerBottomNav = () => {
   const { isHidden, isScrolled } = useHideOnScroll({ enabled: shouldShow, hideAfter: 15, minimumDelta: 5 });
 
   const items = useMemo(() => ([
-    { to: '/orders', label: isArabic ? 'طلباتي' : 'Orders', icon: ShoppingCart, matches: ['/orders', '/target-orders'], accent: '139 92 246' },
+    { to: '/wallet/topup-history', label: isArabic ? 'سجل الرصيد' : 'Balance history', icon: WalletCards, matches: ['/wallet/topup-history', '/wallet/topups'], accent: '245 158 11' },
     { to: '/wallet/add-balance', label: isArabic ? 'إضافة رصيد' : 'Add balance', icon: CirclePlus, matches: ['/wallet/add-balance', '/wallet/payment-details'], accent: '16 185 129' },
     { to: '/dashboard', label: isArabic ? 'الرئيسية' : 'Home', icon: House, matches: ['/dashboard'], accent: '14 165 233' },
-    { to: '/wallet/topup-history', label: isArabic ? 'سجل الرصيد' : 'Wallet history', icon: WalletCards, matches: ['/wallet/topup-history', '/wallet/topups'], accent: '245 158 11' },
+    { to: '/orders', label: isArabic ? 'طلباتي' : 'Orders', icon: ShoppingCart, matches: ['/orders', '/target-orders'], accent: '139 92 246' },
     { to: '/products', label: isArabic ? 'البحث' : 'Search', icon: Search, matches: ['/products', '/purchase'], accent: '236 72 153', colorShift: true, state: { openProductSearch: true } },
   ]), [isArabic]);
 

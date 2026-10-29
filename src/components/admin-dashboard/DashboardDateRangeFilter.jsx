@@ -81,6 +81,8 @@ const DashboardDateRangeFilter = ({
   onRangeChange,
   className,
   buttonClassName,
+  compact = false,
+  showFilterButton = true,
 }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [selectionStep, setSelectionStep] = useState('start');
@@ -194,7 +196,9 @@ const DashboardDateRangeFilter = ({
           <div className="flex items-center justify-between gap-2">
             <div>
               <p className="text-[11px] font-semibold uppercase tracking-[0.14em] text-[var(--color-muted)]">
-                {isArabic ? 'فلترة التاريخ' : 'Date filter'}
+                {compact
+                  ? (isArabic ? 'التاريخ' : 'Date')
+                  : (isArabic ? 'فلترة التاريخ' : 'Date filter')}
               </p>
               <p className="mt-0.5 text-sm font-bold text-[var(--color-text)]">{monthLabel}</p>
             </div>
@@ -338,33 +342,37 @@ const DashboardDateRangeFilter = ({
   );
 
   return (
-    <div ref={rootRef} className={cn('relative flex w-full flex-wrap items-stretch gap-2 sm:w-auto', className)}>
+    <div ref={rootRef} className={cn('relative flex w-full flex-wrap items-stretch gap-2 sm:w-auto', compact && 'gap-1.5', className)}>
       <button
         type="button"
         onClick={() => setIsOpen((current) => !current)}
         className={cn(
           'inline-flex min-w-[220px] flex-1 items-center gap-2.5 rounded-[0.95rem] border border-[color:rgb(var(--color-border-rgb)/0.92)] bg-[color:rgb(var(--color-card-rgb)/0.96)] px-3.5 py-2 text-start shadow-[var(--shadow-subtle)] transition-all duration-200 hover:border-[color:rgb(var(--color-primary-rgb)/0.28)] hover:bg-[color:rgb(var(--color-primary-rgb)/0.06)] sm:flex-none',
+          compact && 'min-w-[158px] gap-1.5 rounded-xl px-2 py-1.5',
           buttonClassName
         )}
         aria-expanded={isOpen}
       >
-        <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-[0.8rem] border border-[color:rgb(var(--color-primary-rgb)/0.18)] bg-[color:rgb(var(--color-primary-rgb)/0.1)] text-[var(--color-primary)]">
-          <CalendarRange className="h-3.5 w-3.5" />
+        <div className={cn(
+          'flex h-8 w-8 shrink-0 items-center justify-center rounded-[0.8rem] border border-[color:rgb(var(--color-primary-rgb)/0.18)] bg-[color:rgb(var(--color-primary-rgb)/0.1)] text-[var(--color-primary)]',
+          compact && 'h-7 w-7 rounded-lg'
+        )}>
+          <CalendarRange className={compact ? 'h-3 w-3' : 'h-3.5 w-3.5'} />
         </div>
 
         <div className="min-w-0 flex-1">
-          <p className="text-[11px] font-semibold uppercase tracking-[0.14em] text-[var(--color-muted)]">
+          <p className={cn('text-[11px] font-semibold uppercase tracking-[0.14em] text-[var(--color-muted)]', compact && 'text-[9px] tracking-[0.08em]')}>
             {isArabic ? 'التاريخ' : 'Date'}
           </p>
-          <p className="truncate text-[13px] font-semibold text-[var(--color-text)]">
+          <p className={cn('truncate text-[13px] font-semibold text-[var(--color-text)]', compact && 'text-[11px]')}>
             {triggerLabel}
           </p>
         </div>
 
-        <ChevronDown className={cn('h-3.5 w-3.5 shrink-0 text-[var(--color-text-secondary)] transition-transform duration-200', isOpen && 'rotate-180')} />
+        <ChevronDown className={cn('h-3.5 w-3.5 shrink-0 text-[var(--color-text-secondary)] transition-transform duration-200', compact && 'h-3 w-3', isOpen && 'rotate-180')} />
       </button>
 
-      <Button
+      {showFilterButton ? <Button
         type="button"
         onClick={() => setIsOpen(true)}
         className="h-auto min-h-[3.25rem] shrink-0 rounded-[0.95rem] px-4"
@@ -372,7 +380,7 @@ const DashboardDateRangeFilter = ({
       >
         <Filter className="h-4 w-4" />
         <span>{isArabic ? 'فلتره' : 'Filter'}</span>
-      </Button>
+      </Button> : null}
 
       {typeof document !== 'undefined' ? createPortal(popupContent, document.body) : null}
     </div>
