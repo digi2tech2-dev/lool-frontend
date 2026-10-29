@@ -186,7 +186,7 @@ const OrderDetailsDrawer = ({
     : null;
   const customerName = order?.customerName || order?.userName || order?.userRecord?.name || '';
   const customerEmail = order?.customerEmail || order?.userEmail || order?.userRecord?.email || '';
-  const customerAvatar = resolveUserAvatar(order?.customerAvatar || order?.userRecord?.avatar, customerName || customerEmail || 'AD CARD User');
+  const customerAvatar = resolveUserAvatar(order?.customerAvatar || order?.userRecord?.avatar, customerName || customerEmail || 'Lool Store User');
   const customerSiteId = order?.userId || order?.userRecord?.id || order?.userRecord?._id || '';
   const copyToClipboard = async (value) => {
     const text = String(value || '').trim();

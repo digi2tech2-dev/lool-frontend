@@ -37,6 +37,7 @@ const main = async () => {
     fs.writeFile(path.join(outDir, 'favicon-16x16.png'), png16),
     fs.writeFile(path.join(outDir, 'favicon-32x32.png'), png32),
     fs.writeFile(path.join(outDir, 'apple-touch-icon.png'), png180),
+    fs.writeFile(path.join(outDir, 'lool-store-logo.png'), await renderPng(512)),
   ]);
 
   const ico = await toIco([png16, png32]);

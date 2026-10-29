@@ -11,6 +11,7 @@ import BestSellingSection from '../components/home/BestSellingSection';
 import ProductSearchBar from '../components/products/ProductSearchBar';
 import ProductPurchaseDialog from '../components/products/ProductPurchaseDialog';
 import StorefrontQuickOffers from '../components/products/StorefrontQuickOffers';
+import WelcomeIntro from '../components/app/WelcomeIntro';
 import slideOneHeroImage from '../assets/slide-1.jpg';
 import slideTwoHeroImage from '../assets/slide-2.jpg';
 import slideThreeHeroImage from '../assets/slide-3.jpg';
@@ -60,7 +61,7 @@ const Dashboard = () => {
     };
   }, [loadProducts]);
 
-  const slideTwoUrl = 'https://whatsapp.com/channel/0029VbDgien6RGJJnl8WYV0Q';
+  const slideTwoUrl = 'https://chat.whatsapp.com/EhP71my5sGm2VXafTk12Qw';
   const heroSlides = useMemo(() => ([
     { id: 'landing-slide-1', image: slideOneHeroImage, title: '' },
     { id: 'landing-slide-2', image: slideTwoHeroImage, title: '', href: slideTwoUrl },
@@ -175,13 +176,14 @@ const Dashboard = () => {
 
   return (
     <div className="space-y-5 pb-5 sm:space-y-6">
+      {isCustomerUser ? <WelcomeIntro key={user?.id || user?._id || user?.email} user={user} language={language} /> : null}
       {!isTwoFactorEnabled ? (
-        <section className="group relative mx-auto w-full max-w-md overflow-hidden rounded-xl border border-sky-400/18 bg-[linear-gradient(110deg,rgb(14_31_55/0.92),rgb(var(--color-card-rgb)/0.8),rgb(67_56_202/0.11))] p-1 shadow-[0_12px_26px_-22px_rgb(14_116_144/0.8)] backdrop-blur-xl">
-          <span className="pointer-events-none absolute -start-6 -top-8 h-16 w-16 rounded-full bg-sky-400/10 blur-xl" />
+        <section className="group relative mx-auto w-full max-w-md overflow-hidden rounded-xl border border-[color:rgb(var(--color-primary-rgb)/0.28)] bg-[linear-gradient(110deg,rgb(var(--color-card-rgb)/0.96),rgb(var(--color-primary-rgb)/0.12),rgb(var(--color-secondary-rgb)/0.1))] p-1 shadow-[0_12px_26px_-22px_rgb(var(--color-primary-rgb)/0.55)] backdrop-blur-xl">
+          <span className="pointer-events-none absolute -start-6 -top-8 h-16 w-16 rounded-full bg-[color:rgb(var(--color-primary-rgb)/0.16)] blur-xl" />
           <div className="relative flex items-center justify-between gap-1.5">
             <div className="flex min-w-0 items-center gap-1.5">
-              <span className="relative grid h-7 w-7 shrink-0 place-items-center rounded-lg border border-sky-300/20 bg-sky-400/10 text-sky-400">
-                <span className="absolute end-0 top-0 h-1.5 w-1.5 -translate-y-1/4 translate-x-1/4 rounded-full border border-[rgb(var(--color-card-rgb))] bg-sky-400" />
+              <span className="relative grid h-7 w-7 shrink-0 place-items-center rounded-lg border border-[color:rgb(var(--color-primary-rgb)/0.3)] bg-[color:rgb(var(--color-primary-rgb)/0.12)] text-[var(--color-primary)]">
+                <span className="absolute end-0 top-0 h-1.5 w-1.5 -translate-y-1/4 translate-x-1/4 rounded-full border border-[rgb(var(--color-card-rgb))] bg-[var(--color-secondary)]" />
                 <ShieldCheck className="h-3.5 w-3.5" strokeWidth={2.2} />
               </span>
               <div className="min-w-0 leading-tight">
@@ -196,7 +198,7 @@ const Dashboard = () => {
 
             <Link
               to="/account-security"
-              className="inline-flex h-7 shrink-0 items-center justify-center gap-1 rounded-lg border border-sky-400/25 bg-sky-400/10 px-2 text-[0.55rem] font-extrabold text-sky-500 transition-all duration-200 hover:-translate-y-0.5 hover:border-sky-400/45 hover:bg-sky-400/16 hover:shadow-[0_8px_18px_-14px_rgb(14_165_233/0.9)]"
+              className="inline-flex h-7 shrink-0 items-center justify-center gap-1 rounded-lg border border-[color:rgb(var(--color-primary-rgb)/0.32)] bg-[color:rgb(var(--color-primary-rgb)/0.12)] px-2 text-[0.55rem] font-extrabold text-[var(--color-primary)] transition-all duration-200 hover:-translate-y-0.5 hover:border-[color:rgb(var(--color-primary-rgb)/0.55)] hover:bg-[color:rgb(var(--color-primary-rgb)/0.2)] hover:shadow-[0_8px_18px_-14px_rgb(var(--color-primary-rgb)/0.75)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--color-primary)]"
             >
               <span>{language === 'ar' ? 'تفعيل الحماية' : 'Protect now'}</span>
               <ArrowUpRight className="h-3 w-3" strokeWidth={2.4} />

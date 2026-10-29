@@ -5,8 +5,8 @@ import { getSafeInternalRoute } from '../utils/safeInternalRoute';
 const PUSH_ACTION_EVENT = 'adcard:push-action';
 const CHANNEL = {
   id: 'adcard_general',
-  name: 'AD CARD Notifications',
-  description: 'Account and order updates from AD CARD',
+  name: 'Lool Store Notifications',
+  description: 'Account and order updates from Lool Store',
 };
 
 let activeUserId = null;

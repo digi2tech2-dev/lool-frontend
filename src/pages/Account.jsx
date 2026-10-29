@@ -12,6 +12,7 @@ import useAdminStore from '../store/useAdminStore';
 import { useLanguage } from '../context/LanguageContext';
 import { useToast } from '../components/ui/Toast';
 import { resolveUserAvatar } from '../utils/avatar';
+import avatarSocialFrame from '../assets/lool-avatar-social-frame.png';
 import { useBodyScrollLock } from '../utils/bodyScrollLock';
 import { getReadableErrorMessage } from '../utils/errorMessages';
 
@@ -200,7 +201,7 @@ const Account = () => {
     }
   }, [location.hash]);
 
-  const avatarIdentity = form.fullName || savedProfile.fullName || form.username || savedProfile.username || form.email || savedProfile.email || 'AD CARD User';
+  const avatarIdentity = form.fullName || savedProfile.fullName || form.username || savedProfile.username || form.email || savedProfile.email || 'Lool Store User';
   const fallbackAvatar = resolveUserAvatar({ name: avatarIdentity, avatar: '' }, avatarIdentity);
   const displayedAvatar =
     form.avatarAction === 'remove'
@@ -634,6 +635,12 @@ const Account = () => {
                 }}
                 className="relative h-24 w-24 rounded-[1.7rem] border-2 border-white/85 object-cover shadow-[0_18px_42px_-24px_rgba(2,6,23,0.75)] dark:border-white/10"
               />
+              <img
+                src={avatarSocialFrame}
+                alt=""
+                aria-hidden="true"
+                className="pointer-events-none absolute left-1/2 top-1/2 z-[5] h-36 w-36 max-w-none -translate-x-1/2 -translate-y-1/2 object-contain md:h-40 md:w-40"
+              />
               <span
                 className="absolute -bottom-1 -right-1 z-10 h-5 w-5 rounded-full border-[3px] border-[color:rgb(var(--color-card-rgb)/0.98)] bg-emerald-400 shadow-[0_0_0_4px_rgb(16_185_129/0.14),0_0_18px_rgb(16_185_129/0.72)]"
                 role="status"
@@ -644,7 +651,7 @@ const Account = () => {
                 type="button"
                 onClick={() => fileInputRef.current?.click()}
                 disabled={isAvatarSaving}
-                className="absolute -bottom-2 -left-2 inline-flex h-9 w-9 items-center justify-center rounded-2xl border border-white/80 bg-[var(--color-primary)] text-[var(--color-button-text)] shadow-lg transition hover:brightness-105 dark:border-white/10"
+                className="absolute -bottom-2 -left-2 z-20 inline-flex h-9 w-9 items-center justify-center rounded-2xl border border-white/80 bg-[var(--color-primary)] text-[var(--color-button-text)] shadow-lg transition hover:brightness-105 dark:border-white/10"
                 aria-label={text.changePhoto}
               >
                 <Camera className="h-4 w-4" />

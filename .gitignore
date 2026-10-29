@@ -42,7 +42,7 @@ android/local.properties
 Thumbs.db# Dependencies
 node_modules/
 
-# Buil
+# Bu
 dist/
 build/
 

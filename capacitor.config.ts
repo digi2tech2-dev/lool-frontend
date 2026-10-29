@@ -13,7 +13,7 @@ try {
 
 const config: CapacitorConfig = {
   appId: 'com.adcard.app',
-  appName: 'AD CARD',
+  appName: 'Lool Store',
   webDir: 'dist',
   server: {
     url: serverUrl,

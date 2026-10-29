@@ -169,13 +169,13 @@ const AccountAccessState = ({ variant = 'pending' }) => {
               <div className="rounded-[1.5rem] border border-[color:rgb(var(--color-border-rgb)/0.84)] bg-[color:rgb(var(--color-card-rgb)/0.72)] p-4 text-start">
                 <div className="flex items-center gap-3">
                   <img
-                    src={resolveUserAvatar(activeUser, activeUser?.name || activeUser?.email || 'AD CARD User')}
+                    src={resolveUserAvatar(activeUser, activeUser?.name || activeUser?.email || 'Lool Store User')}
                     alt={activeUser?.name || 'User'}
                     className="h-12 w-12 rounded-full border border-[color:rgb(var(--color-border-rgb)/0.84)] object-cover"
                   />
                   <div className="min-w-0 flex-1">
                     <p className="truncate text-sm font-semibold text-[var(--color-text)]">
-                      {activeUser?.name || 'AD CARD User'}
+                      {activeUser?.name || 'Lool Store User'}
                     </p>
                     <p className="truncate text-xs text-[var(--color-text-secondary)]">
                       {activeUser?.email || 'account@ad-card.app'}

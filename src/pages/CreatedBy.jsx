@@ -64,13 +64,13 @@ const CreatedBy = () => {
     <div className="min-h-screen pb-5 pt-[4.75rem]">
       {typeof document !== 'undefined' && createPortal(
         <header className="pointer-events-none fixed inset-x-0 top-0 z-[90]">
-          <div className="mx-auto max-w-[var(--shell-max-width)] px-3 py-2 sm:px-4 lg:px-6">
-            <div dir="ltr" className="ka-card-panel pointer-events-auto grid min-h-[2.95rem] grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)] items-center gap-2 rounded-[20px] border px-2.5 py-1 sm:min-h-[3.25rem] sm:gap-5 sm:rounded-[28px] sm:px-5 sm:py-1.5">
+          <div className="w-full">
+            <div dir="ltr" className="public-full-header ka-card-panel pointer-events-auto grid min-h-[2.95rem] grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)] items-center gap-2 rounded-[20px] border px-2.5 py-1 sm:min-h-[3.25rem] sm:gap-5 sm:rounded-[28px] sm:px-5 sm:py-1.5">
               <div className="col-start-1 row-start-1 justify-self-start">
                 <ThemeToggle variant="glass" compact className="h-9 w-9 sm:h-10 sm:w-10" />
               </div>
               <button type="button" onClick={handleHome} className="col-start-2 row-start-1 justify-self-center rounded-[20px] transition-all hover:-translate-y-0.5" aria-label={isArabic ? 'العودة للرئيسية' : 'Back to home'}>
-                <HeaderBrand />
+                <HeaderBrand className="justify-center" iconClassName="h-14 w-24 scale-100 sm:h-16 sm:w-28" />
               </button>
               <div className="col-start-3 row-start-1 flex items-center gap-1.5 justify-self-end sm:gap-2">
                 <button type="button" onClick={handleLogin} className="inline-flex h-9 w-9 items-center justify-center rounded-full border border-cyan-200/20 bg-[linear-gradient(180deg,rgb(124_58_237/0.22),rgb(3_8_22/0.78))] text-cyan-50 sm:h-10 sm:w-10" aria-label={isArabic ? 'تسجيل الدخول' : 'Login'}>
@@ -108,11 +108,11 @@ const CreatedBy = () => {
 
           <p className="inline-flex items-center gap-2 rounded-full border border-[color:rgb(var(--color-primary-rgb)/0.2)] bg-[color:rgb(var(--color-primary-rgb)/0.08)] px-3 py-1 text-xs font-black text-[var(--color-primary)]">
             <Sparkles className="h-3.5 w-3.5" />
-            AD CARD
+            Lool Store
           </p>
 
           <h1 className="mt-4 text-2xl font-black text-[var(--color-text)] sm:text-3xl">
-            {isArabic ? 'AD CARD من تنفيذ DIGI TECH' : 'AD CARD built by DIGI TECH'}
+            {isArabic ? 'Lool Store من تنفيذ DIGI TECH' : 'Lool Store built by DIGI TECH'}
           </h1>
 
           <a
@@ -136,8 +136,8 @@ const CreatedBy = () => {
 
           <p className="mt-3 max-w-xl text-sm font-semibold leading-7 text-[var(--color-text-secondary)]">
             {isArabic
-              ? 'نحن شركة برمجة نصمم ونبني منتجات رقمية احترافية، وAD CARD أحد أعمالنا التي تعكس اهتمامنا بالتفاصيل وسهولة الاستخدام.'
-              : 'We are a software company that designs and builds professional digital products, and AD CARD is one of our works that reflects our focus on detail and usability.'}
+              ? 'نحن شركة برمجة نصمم ونبني منتجات رقمية احترافية، وLool Store أحد أعمالنا التي تعكس اهتمامنا بالتفاصيل وسهولة الاستخدام.'
+              : 'We are a software company that designs and builds professional digital products, and Lool Store is one of our works that reflects our focus on detail and usability.'}
           </p>
         </div>
       </Card>

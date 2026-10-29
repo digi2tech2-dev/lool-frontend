@@ -5,6 +5,7 @@ import useAuthStore from '../../store/useAuthStore';
 import { isAdminRole } from '../../utils/authRoles';
 import WhatsAppContactChooser from './WhatsAppContactChooser';
 import floatingPromoTwo from '../../assets/floating-promo.webp';
+import supportRobot from '../../assets/lool-support-robot.webp';
 import { isLitePerformanceMode } from '../../utils/performanceMode';
 
 const FloatingWhatsApp = () => {
@@ -39,12 +40,12 @@ const FloatingWhatsApp = () => {
     .startsWith('ar');
 
   const message = isArabic
-    ? 'مرحباً، أحتاج مساعدة من فريق AD CARD'
-    : 'Hello, I need help from the AD CARD team';
+    ? 'مرحباً، أحتاج مساعدة من فريق Lool Store'
+    : 'Hello, I need help from the Lool Store team';
   const tooltipText = isArabic ? 'تواصل معنا' : 'Chat with us';
 
   return (
-    <div className="floating-whatsapp">
+    <>
       {showPromo ? <span className="floating-whatsapp-promos">
         <Link
           to="/referral"
@@ -63,26 +64,26 @@ const FloatingWhatsApp = () => {
           />
         </Link>
       </span> : null}
+      <div className="floating-whatsapp">
       <button
         type="button"
         onClick={() => setShowContactChooser(true)}
         aria-label={isArabic ? 'واتساب الدعم' : 'WhatsApp Support'}
         className="floating-whatsapp-action"
       >
-        <span className="floating-whatsapp-ring" aria-hidden="true" />
         <span className="floating-whatsapp-tooltip" aria-hidden="true">{tooltipText}</span>
         <span className="floating-whatsapp-button">
-          <span className="floating-whatsapp-headset" aria-hidden="true" />
-          <span className="floating-whatsapp-monogram" aria-hidden="true"><b>AD</b><small>WHATSAPP</small></span>
+          <img className="floating-whatsapp-robot" src={supportRobot} alt="" width="512" height="512" />
         </span>
       </button>
+      </div>
       <WhatsAppContactChooser
         isOpen={showContactChooser}
         onClose={() => setShowContactChooser(false)}
         message={message}
         isArabic={isArabic}
       />
-    </div>
+    </>
   );
 };
 

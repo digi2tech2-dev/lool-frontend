@@ -1,12 +1,5 @@
-const SUPPORT_CONTACTS = Object.freeze([
-  { name: 'AHMED CARD', number: '01012286661', icon: 'male' },
-  { name: 'DARREN CARD', number: '01013669339', icon: 'female' },
-]);
-
-const ENV_ADMIN_WHATSAPP_NUMBER =
-  import.meta.env.VITE_ADMIN_WHATSAPP_NUMBER
-  || import.meta.env.ADMIN_WHATSAPP_NUMBER
-  || '';
+export const SUPPORT_WHATSAPP_NUMBER = '201067836859';
+export const SUPPORT_WHATSAPP_DISPLAY = '+20 106 783 6859';
 
 export const normalizeWhatsAppNumber = (value) => {
   const digits = String(value || '').replace(/\D/g, '');
@@ -28,6 +21,5 @@ export const buildWhatsAppLink = ({ number, message = '' }) => {
   return `https://wa.me/${normalizedNumber}${suffix}`;
 };
 
-export const getDefaultWhatsAppNumber = () => normalizeWhatsAppNumber(ENV_ADMIN_WHATSAPP_NUMBER || SUPPORT_CONTACTS[0].number);
-export const getAdminWhatsAppNumber = () => normalizeWhatsAppNumber(ENV_ADMIN_WHATSAPP_NUMBER || SUPPORT_CONTACTS[0].number);
-export const getSupportContacts = () => SUPPORT_CONTACTS;
+export const getDefaultWhatsAppNumber = () => SUPPORT_WHATSAPP_NUMBER;
+export const getAdminWhatsAppNumber = () => SUPPORT_WHATSAPP_NUMBER;

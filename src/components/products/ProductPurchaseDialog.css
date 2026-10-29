@@ -1435,7 +1435,7 @@
   }
 }
 
-/* Purchase experience V4 — premium AD CARD checkout, UI-only. */
+/* Purchase experience V4 — premium Lool Store checkout, UI-only. */
 .purchase-dialog-card:not(.is-wallet-flow) {
   width: min(100%, 30rem);
   border-radius: 1.75rem;
@@ -1785,7 +1785,7 @@
   }
 }
 
-/* Purchase experience V7 — AD CARD theme-native identity for light and dark modes. */
+/* Purchase experience V7 — Lool Store theme-native identity for light and dark modes. */
 .purchase-dialog-card:not(.is-wallet-flow) {
   --checkout-main-rgb: var(--color-primary-rgb);
   --checkout-accent-rgb: var(--color-accent-rgb);
@@ -2029,7 +2029,7 @@
   }
 }
 
-/* Purchase experience V6 — focused neon checkout inspired by the AD CARD digital catalog. */
+/* Purchase experience V6 — focused neon checkout inspired by the Lool Store digital catalog. */
 .purchase-dialog-card:not(.is-wallet-flow) {
   --checkout-cyan: 31 211 255;
   --checkout-violet: 169 56 255;
@@ -2516,7 +2516,7 @@
   }
 }
 
-/* Brand lockup spacing — keep product and AD CARD identities distinct and calm. */
+/* Brand lockup spacing — keep product and Lool Store identities distinct and calm. */
 .purchase-dialog-card:not(.is-wallet-flow) .purchase-dialog-brand-visual {
   gap: clamp(1.2rem, 5vw, 1.8rem);
   min-width: min(100%, 13rem);
@@ -2565,7 +2565,7 @@
   }
 }
 
-/* Final purchase theme lock: one AD CARD identity, fully driven by platform tokens. */
+/* Final purchase theme lock: one Lool Store identity, fully driven by platform tokens. */
 .purchase-dialog-card:not(.is-wallet-flow) {
   --checkout-main-rgb: var(--color-primary-rgb);
   --checkout-accent-rgb: var(--color-accent-rgb);

@@ -39,7 +39,7 @@ import {
   readReferralBridge,
   readReferralCodeFromSearch,
 } from '../utils/referralCode';
-import brandIconImage from '../assets/LOGO.PNG';
+import brandIconImage from '../assets/lool-store-logo.webp';
 import styles from './Auth.module.css';
 
 const GoogleMark = () => (
@@ -664,13 +664,12 @@ const countryOptions = useMemo(() => {
             <div className={styles.brandIcon}>
               <img
                 src={brandIconImage}
-                alt="AD CARD"
+                alt="Lool Store"
                 loading="eager"
                 decoding="async"
                 fetchPriority="high"
               />
             </div>
-            <h1 className={styles.brandName}><span>AD</span> CARD</h1>
             <div className={styles.brandDivider}><span /></div>
           </div>
 
@@ -1101,8 +1100,8 @@ const countryOptions = useMemo(() => {
         <div className="space-y-3 text-sm leading-7 text-[var(--color-text-secondary)]">
           <p>
             {dir === 'rtl'
-              ? 'باستخدام AD CARD، فإنك توافق على إدخال بيانات صحيحة والحفاظ على سرية حسابك وعدم استخدام المنصة في أي نشاط مخالف.'
-              : 'By using AD CARD, you agree to provide accurate information, protect your account, and avoid any prohibited activity.'}
+              ? 'باستخدام Lool Store، فإنك توافق على إدخال بيانات صحيحة والحفاظ على سرية حسابك وعدم استخدام المنصة في أي نشاط مخالف.'
+              : 'By using Lool Store, you agree to provide accurate information, protect your account, and avoid any prohibited activity.'}
           </p>
           <p>
             {dir === 'rtl'

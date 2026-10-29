@@ -94,21 +94,21 @@ const DownloadApp = () => {
   return (
     <div className="min-h-screen bg-[linear-gradient(180deg,#fff8ea_0%,#f4fbff_48%,#fffdf8_100%)] pb-5 pt-[4.75rem] dark:bg-[radial-gradient(circle_at_50%_0%,rgba(124,58,237,0.16),transparent_34%),linear-gradient(180deg,#041019_0%,#07111f_52%,#03070d_100%)]">
       <Seo
-        title={isArabic ? 'تحميل تطبيق AD CARD للأندرويد' : 'Download the AD CARD Android app'}
-        description={isArabic ? 'حمّل تطبيق AD CARD الرسمي للأندرويد.' : 'Download the official AD CARD Android app.'}
+        title={isArabic ? 'تحميل تطبيق Lool Store للأندرويد' : 'Download the Lool Store Android app'}
+        description={isArabic ? 'حمّل تطبيق Lool Store الرسمي للأندرويد.' : 'Download the official Lool Store Android app.'}
         canonicalUrl="https://ad-card.com/download-app"
         language={language}
       />
 
       {typeof document !== 'undefined' && createPortal(
         <header className="pointer-events-none fixed inset-x-0 top-0 z-[90]">
-          <div className="mx-auto max-w-[var(--shell-max-width)] px-3 py-2 sm:px-4 lg:px-6">
-            <div dir="ltr" className="ka-card-panel pointer-events-auto grid min-h-[2.95rem] grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)] items-center gap-2 rounded-[20px] border px-2.5 py-1 sm:min-h-[3.25rem] sm:gap-5 sm:rounded-[28px] sm:px-5 sm:py-1.5">
+          <div className="w-full">
+            <div dir="ltr" className="public-full-header ka-card-panel pointer-events-auto grid min-h-[2.95rem] grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)] items-center gap-2 rounded-[20px] border px-2.5 py-1 sm:min-h-[3.25rem] sm:gap-5 sm:rounded-[28px] sm:px-5 sm:py-1.5">
               <div className="col-start-1 row-start-1 justify-self-start">
                 <ThemeToggle variant="glass" compact className="h-9 w-9 sm:h-10 sm:w-10" />
               </div>
               <button type="button" onClick={handleHome} className="col-start-2 row-start-1 justify-self-center rounded-[20px] transition-all hover:-translate-y-0.5" aria-label={isArabic ? 'العودة للرئيسية' : 'Back to home'}>
-                <HeaderBrand />
+                <HeaderBrand className="justify-center" iconClassName="h-14 w-24 scale-100 sm:h-16 sm:w-28" />
               </button>
               <div className="col-start-3 row-start-1 flex items-center gap-1.5 justify-self-end sm:gap-2">
                 <button type="button" onClick={handleLogin} className="inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-full border border-cyan-200/20 bg-[linear-gradient(180deg,rgb(124_58_237/0.22),rgb(3_8_22/0.78))] text-cyan-50 shadow-[inset_0_0_18px_rgb(255_255_255/0.035),0_0_26px_-18px_rgb(124_58_237/0.9)] transition-all hover:-translate-y-0.5 hover:border-amber-200/30 hover:text-amber-100 sm:h-10 sm:w-10" aria-label={isArabic ? 'تسجيل الدخول' : 'Login'}>
@@ -147,10 +147,10 @@ const DownloadApp = () => {
             </span>
             <p className="mt-5 inline-flex items-center gap-2 rounded-full border border-[color:rgb(var(--color-primary-rgb)/0.24)] bg-[color:rgb(var(--color-primary-rgb)/0.1)] px-3 py-1 text-xs font-black tracking-[0.12em] text-[var(--color-primary)]">
               <CheckCircle2 className="h-3.5 w-3.5" />
-              AD CARD · ANDROID
+              Lool Store · ANDROID
             </p>
             <h1 className="mt-4 text-2xl font-black text-[var(--color-text)] sm:text-4xl">
-              {isArabic ? 'تطبيق AD CARD للأندرويد' : 'AD CARD for Android'}
+              {isArabic ? 'تطبيق Lool Store للأندرويد' : 'Lool Store for Android'}
             </h1>
             <p className="mx-auto mt-3 max-w-xl text-sm font-semibold leading-7 text-[var(--color-text-secondary)] sm:text-base">
               {isArabic ? 'حمّل النسخة الرسمية لتجربة أسرع وأسهل على جهازك.' : 'Download the official app for a faster, simpler experience on your device.'}
@@ -171,7 +171,7 @@ const DownloadApp = () => {
               onClick={(event) => {
                 if (release.isLoading) event.preventDefault();
               }}
-              className={`mt-6 inline-flex min-h-12 w-full max-w-md items-center justify-center gap-2 rounded-2xl border px-5 py-3 text-base font-black transition-all ${release.isLoading ? 'pointer-events-none cursor-wait border-[color:rgb(var(--color-border-rgb)/0.6)] bg-[color:rgb(var(--color-surface-rgb)/0.58)] text-[var(--color-text-secondary)]' : 'border-amber-100/35 bg-[linear-gradient(135deg,#e5a668,#bd7041)] text-[#31102f] shadow-[0_18px_36px_-20px_rgb(189_112_65/0.86)] hover:-translate-y-0.5 hover:brightness-110'}`}
+              className={`mt-6 inline-flex min-h-12 w-full max-w-md items-center justify-center gap-2 rounded-2xl border px-5 py-3 text-base font-black transition-all ${release.isLoading ? 'pointer-events-none cursor-wait border-[color:rgb(var(--color-border-rgb)/0.6)] bg-[color:rgb(var(--color-surface-rgb)/0.58)] text-[var(--color-text-secondary)]' : 'border-amber-100/35 bg-[linear-gradient(135deg,#29bfe8,#1485bf)] text-[#151039] shadow-[0_18px_36px_-20px_rgb(189_112_65/0.86)] hover:-translate-y-0.5 hover:brightness-110'}`}
             >
               <Download className="h-5 w-5" />
               {isArabic ? 'تحميل التطبيق للأندرويد' : 'Download for Android'}
@@ -179,7 +179,7 @@ const DownloadApp = () => {
 
             <div className="mt-5 flex items-center justify-center gap-2 text-xs font-semibold text-[var(--color-text-secondary)]">
               <ShieldCheck className="h-4 w-4 text-[var(--color-primary)]" />
-              <span>{isArabic ? 'رابط التحميل الرسمي لـ AD CARD' : 'Official AD CARD download link'}</span>
+              <span>{isArabic ? 'رابط التحميل الرسمي لـ Lool Store' : 'Official Lool Store download link'}</span>
             </div>
           </div>
         </section>

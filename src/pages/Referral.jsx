@@ -94,7 +94,7 @@ const TEST_VODAFONE_RECEIPT = `data:image/svg+xml;charset=UTF-8,${encodeURICompo
     <text x="638" y="250" text-anchor="end" font-family="Arial" font-size="20" font-weight="700" fill="#0f172a">01012345678</text>
     <text x="82" y="300" font-family="Arial" font-size="17" fill="#64748b">Transaction ID</text>
     <text x="638" y="300" text-anchor="end" font-family="Arial" font-size="20" font-weight="700" fill="#0f172a">VC-TEST-2026</text>
-    <text x="82" y="342" font-family="Arial" font-size="14" fill="#94a3b8">AD CARD · Test receipt</text>
+    <text x="82" y="342" font-family="Arial" font-size="14" fill="#94a3b8">Lool Store · Test receipt</text>
   </svg>
 `)}`;
 
@@ -337,8 +337,8 @@ const Referral = () => {
     ];
   const withdrawals = [...(isRealProvider ? [] : localWithdrawals), ...realWithdrawals, ...previewWithdrawals];
   const shareMessage = isArabic
-    ? '🚀 كل خدماتك الرقمية في مكان واحد مع AD CARD!\n\n🎮 شحن الألعاب والتطبيقات\n💎 اشتراكات وبطاقات رقمية\n🤖 خدمات وأدوات الذكاء الاصطناعي\n📈 خدمات السوشيال ميديا\n\n✨ سجّل الآن من خلال رابط دعوتي واكتشف خدمات AD CARD:'
-    : '🚀 Everything you need in one place with AD CARD!\n\n🎮 Games and software top-ups\n💎 Premium subscriptions\n🤖 AI services and tools\n📈 Followers growth and social media services\n\n✨ Sign up through my invitation link and discover all the services:';
+    ? '🚀 كل خدماتك الرقمية في مكان واحد مع Lool Store!\n\n🎮 شحن الألعاب والتطبيقات\n💎 اشتراكات وبطاقات رقمية\n🤖 خدمات وأدوات الذكاء الاصطناعي\n📈 خدمات السوشيال ميديا\n\n✨ سجّل الآن من خلال رابط دعوتي واكتشف خدمات Lool Store:'
+    : '🚀 Everything you need in one place with Lool Store!\n\n🎮 Games and software top-ups\n💎 Premium subscriptions\n🤖 AI services and tools\n📈 Followers growth and social media services\n\n✨ Sign up through my invitation link and discover all the services:';
   const shareText = `${shareMessage}\n${referralLink}`;
 
   useEffect(() => {
@@ -373,7 +373,7 @@ const Referral = () => {
 
     try {
       await navigator.share({
-        title: isArabic ? 'دعوة إلى AD CARD' : 'AD CARD invitation',
+        title: isArabic ? 'دعوة إلى Lool Store' : 'Lool Store invitation',
         text: shareMessage,
         url: referralLink,
       });
@@ -929,7 +929,7 @@ const Referral = () => {
         <span className="pointer-events-none absolute -end-16 -top-16 -z-10 h-52 w-52 rotate-12 bg-[#f59e0b]/10" />
         <div className="flex items-center gap-3 border-b-2 border-[#f59e0b]/35 pb-5">
           <span className="grid h-12 w-12 shrink-0 place-items-center bg-[#0b1f33] text-[#fbbf24] shadow-[5px_5px_0_#f59e0b]"><UserRoundPlus className="h-5.5 w-5.5" /></span>
-          <div><h1 className="text-lg font-black text-[var(--color-text)]">{isApprovedSubAgent ? (isArabic ? 'مبروك، أصبحت وكيلًا فرعيًا' : 'Congratulations, you are now a sub-agent') : (isArabic ? 'انضم كوكيل فرعي' : 'Become a sub-agent')}</h1><p className="mt-0.5 text-xs font-semibold text-[var(--color-text-secondary)]">{isApprovedSubAgent ? (isArabic ? 'تم قبول طلبك وترقية حسابك في AD CARD بنجاح.' : 'Your AD CARD account was successfully upgraded.') : (isArabic ? 'أرسل رسالة وصورة تثبت وجود عملاء وسيتم مراجعة طلبك.' : 'Send a message and customer proof for review.')}</p></div>
+          <div><h1 className="text-lg font-black text-[var(--color-text)]">{isApprovedSubAgent ? (isArabic ? 'مبروك، أصبحت وكيلًا فرعيًا' : 'Congratulations, you are now a sub-agent') : (isArabic ? 'انضم كوكيل فرعي' : 'Become a sub-agent')}</h1><p className="mt-0.5 text-xs font-semibold text-[var(--color-text-secondary)]">{isApprovedSubAgent ? (isArabic ? 'تم قبول طلبك وترقية حسابك في Lool Store بنجاح.' : 'Your Lool Store account was successfully upgraded.') : (isArabic ? 'أرسل رسالة وصورة تثبت وجود عملاء وسيتم مراجعة طلبك.' : 'Send a message and customer proof for review.')}</p></div>
         </div>
 
         {isApprovedSubAgent ? (
@@ -937,7 +937,7 @@ const Referral = () => {
             <span className="absolute inset-x-[22%] top-0 h-px bg-gradient-to-r from-transparent via-emerald-300 to-transparent shadow-[0_0_16px_2px_rgb(52_211_153/0.7)]" />
             <span className="mx-auto grid h-20 w-20 place-items-center rounded-full border border-emerald-300/35 bg-emerald-500/12 text-emerald-500 shadow-[0_18px_38px_-24px_rgb(16_185_129/0.9)]"><Crown className="h-9 w-9" /></span>
             <h2 className="mt-4 inline-flex items-center justify-center gap-2 text-xl font-black text-[var(--color-text)] sm:text-2xl"><span>{isArabic ? 'مبروك، أصبحت وكيلًا فرعيًا' : 'Congratulations, you are now a sub-agent'}</span><BadgeCheck className="h-6 w-6 shrink-0 fill-emerald-500 text-white drop-shadow-[0_3px_7px_rgb(16_185_129/0.5)]" /></h2>
-            <p className="mx-auto mt-2 max-w-lg text-sm font-semibold leading-6 text-[var(--color-text-secondary)]">{isArabic ? 'تمت الموافقة على طلبك في AD CARD وتغيير عضويتك من عضو المتجر إلى وكيل فرعي.' : 'AD CARD approved your request and changed your Store Member account to a Sub-agent account.'}</p>
+            <p className="mx-auto mt-2 max-w-lg text-sm font-semibold leading-6 text-[var(--color-text-secondary)]">{isArabic ? 'تمت الموافقة على طلبك في Lool Store وتغيير عضويتك من عضو المتجر إلى وكيل فرعي.' : 'Lool Store approved your request and changed your Store Member account to a Sub-agent account.'}</p>
             <span className="mt-4 inline-flex items-center gap-2 rounded-full bg-emerald-500 px-4 py-2 text-xs font-black text-white"><CheckCircle2 className="h-4 w-4" />{isArabic ? 'وكيل فرعي معتمد' : 'Approved sub-agent'}</span>
           </div>
         ) : agentRequest ? (

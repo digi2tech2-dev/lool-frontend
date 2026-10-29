@@ -1,7 +1,7 @@
 import buyCardsImage from '../assets/slide-1.jpg';
 import chatAppsImage from '../assets/slide-2.jpg';
 import gamesChargingImage from '../assets/slide-3.jpg';
-import brandIconImage from '../assets/LOGO.PNG';
+import brandIconImage from '../assets/lool-store-logo.webp';
 import { calculateProductPrice } from './pricing';
 import { formatNumber } from './intl';
 import { getMoneyFormatOptions, toFiniteMoneyNumber } from './money';

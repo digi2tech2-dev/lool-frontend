@@ -103,13 +103,13 @@ const NativeAppUpdateGate = () => {
           </span>
           <p className="mt-4 inline-flex items-center gap-1.5 rounded-full border border-[color:rgb(var(--color-primary-rgb)/0.24)] bg-[color:rgb(var(--color-primary-rgb)/0.1)] px-3 py-1 text-[0.68rem] font-black tracking-[0.1em] text-[var(--color-primary)]">
             <ShieldCheck className="h-3.5 w-3.5" />
-            AD CARD · ANDROID
+            Lool Store · ANDROID
           </p>
           <h2 id="native-app-update-title" className="mt-4 text-xl font-black text-[var(--color-text)] sm:text-2xl">
             {isArabic ? 'يتوفر تحديث جديد' : 'A new update is available'}
           </h2>
           <p className="mt-2 text-sm font-semibold leading-6 text-[var(--color-text-secondary)]">
-            {isArabic ? 'يتوفر تحديث جديد لتطبيق AD CARD' : 'A new AD CARD app update is ready.'}
+            {isArabic ? 'يتوفر تحديث جديد لتطبيق Lool Store' : 'A new Lool Store app update is ready.'}
           </p>
           <p className="mt-4 text-base font-black text-[var(--color-text)]">
             {isArabic ? 'الإصدار' : 'Version'} {update.versionName}
@@ -120,7 +120,7 @@ const NativeAppUpdateGate = () => {
             type="button"
             onClick={handleOpenUpdate}
             disabled={isOpeningDownload}
-            className="mt-6 inline-flex min-h-12 w-full items-center justify-center gap-2 rounded-2xl border border-amber-100/35 bg-[linear-gradient(135deg,#e5a668,#bd7041)] px-5 py-3 text-base font-black text-[#31102f] shadow-[0_18px_36px_-20px_rgb(189_112_65/0.86)] transition-all hover:-translate-y-0.5 hover:brightness-110 disabled:cursor-wait disabled:opacity-70"
+            className="mt-6 inline-flex min-h-12 w-full items-center justify-center gap-2 rounded-2xl border border-amber-100/35 bg-[linear-gradient(135deg,#29bfe8,#1485bf)] px-5 py-3 text-base font-black text-[#151039] shadow-[0_18px_36px_-20px_rgb(189_112_65/0.86)] transition-all hover:-translate-y-0.5 hover:brightness-110 disabled:cursor-wait disabled:opacity-70"
           >
             {isOpeningDownload ? <RefreshCw className="h-5 w-5 animate-spin" /> : <Download className="h-5 w-5" />}
             {isArabic ? 'تحديث الآن' : 'Update now'}

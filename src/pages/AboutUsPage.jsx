@@ -10,7 +10,7 @@ import HeaderBrand from '../components/layout/HeaderBrand';
 import PublicSidebar from '../components/layout/PublicSidebar';
 import SiteCopyrightFooter from '../components/layout/SiteCopyrightFooter';
 import { useBodyScrollLock } from '../utils/bodyScrollLock';
-import brandIconImage from '../assets/LOGO.PNG';
+import brandIconImage from '../assets/lool-store-logo.webp';
 
 const AboutUsPage = () => {
   const navigate = useNavigate();
@@ -70,8 +70,8 @@ const AboutUsPage = () => {
     <div className="min-h-screen bg-[linear-gradient(180deg,#fff8ea_0%,#f4fbff_48%,#fffdf8_100%)] pb-5 pt-[4.75rem] dark:bg-[radial-gradient(circle_at_50%_0%,rgba(124,58,237,0.16),transparent_34%),linear-gradient(180deg,#041019_0%,#07111f_52%,#03070d_100%)]">
       {typeof document !== 'undefined' && createPortal(
       <header className="pointer-events-none fixed inset-x-0 top-0 z-[90]">
-        <div className="mx-auto max-w-[var(--shell-max-width)] px-3 py-2 sm:px-4 lg:px-6">
-          <div dir="ltr" className="ka-card-panel pointer-events-auto grid min-h-[2.95rem] grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)] items-center gap-2 rounded-[20px] border px-2.5 py-1 sm:min-h-[3.25rem] sm:gap-5 sm:rounded-[28px] sm:px-5 sm:py-1.5">
+        <div className="w-full">
+          <div dir="ltr" className="public-full-header ka-card-panel pointer-events-auto grid min-h-[2.95rem] grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)] items-center gap-2 rounded-[20px] border px-2.5 py-1 sm:min-h-[3.25rem] sm:gap-5 sm:rounded-[28px] sm:px-5 sm:py-1.5">
             <div className="col-start-1 row-start-1 flex items-center gap-1 justify-self-start sm:gap-2">
               <ThemeToggle variant="glass" compact className="h-9 w-9 sm:h-10 sm:w-10" />
             </div>
@@ -82,7 +82,7 @@ const AboutUsPage = () => {
               className="col-start-2 row-start-1 justify-self-center rounded-[20px] transition-all hover:-translate-y-0.5"
               aria-label={isArabic ? 'العودة للرئيسية' : 'Back to home'}
             >
-              <HeaderBrand />
+              <HeaderBrand className="justify-center" iconClassName="h-14 w-24 scale-100 sm:h-16 sm:w-28" />
             </button>
 
             <div className="col-start-3 row-start-1 flex items-center gap-1.5 justify-self-end sm:gap-2">
@@ -142,7 +142,7 @@ const AboutUsPage = () => {
           className="mx-auto flex min-h-[calc(100vh-10rem)] max-w-5xl items-center"
         >
           <div className="relative w-full overflow-hidden rounded-[18px] border border-amber-200/80 bg-white p-4 shadow-[0_28px_80px_-56px_rgba(15,23,42,0.55)] ring-1 ring-white/80 sm:p-6 lg:p-8 dark:border-cyan-300/18 dark:bg-[linear-gradient(135deg,rgba(5,18,30,0.96),rgba(12,10,27,0.92))] dark:shadow-[0_28px_90px_-62px_rgba(124,58,237,0.75)] dark:ring-white/5">
-            <div className="absolute inset-x-0 top-0 h-1 bg-[linear-gradient(90deg,#bd7041,#a51c93,#d936c2)] dark:bg-[linear-gradient(90deg,#f1b979,#df3dcc,#f18bdd)]" />
+            <div className="absolute inset-x-0 top-0 h-1 bg-[linear-gradient(90deg,#1485bf,#7134ce,#d936c2)] dark:bg-[linear-gradient(90deg,#86e4ff,#bd4cfa,#d9a0ff)]" />
 
             <div className="grid items-stretch gap-5 lg:grid-cols-[0.82fr_1.18fr]">
               <div className="relative flex flex-col items-center justify-center overflow-hidden rounded-[14px] border border-cyan-200 bg-[linear-gradient(160deg,#e0f7ff_0%,#fff7df_56%,#ffffff_100%)] px-5 py-8 text-center shadow-[inset_0_1px_0_rgba(255,255,255,0.9)] sm:py-10 dark:border-cyan-300/16 dark:bg-[linear-gradient(160deg,rgba(124,58,237,0.18)_0%,rgba(244,114,208,0.1)_54%,rgba(139,92,246,0.12)_100%)] dark:shadow-[inset_0_1px_0_rgba(255,255,255,0.06)]">
@@ -153,22 +153,11 @@ const AboutUsPage = () => {
                     <span className="absolute inset-0 rounded-[18px] bg-[linear-gradient(135deg,rgba(245,158,11,0.18),rgba(6,182,212,0.12),rgba(139,92,246,0.13))]" />
                     <img
                       src={brandIconImage}
-                      alt="AD CARD"
+                      alt="Lool Store"
                       loading="eager"
                       decoding="async"
                       className="relative h-full w-full object-contain drop-shadow-[0_10px_18px_rgba(15,23,42,0.18)] dark:drop-shadow-[0_10px_18px_rgba(34,211,238,0.2)]"
                     />
-                  </div>
-                  <div dir="ltr" className="text-center">
-                    <p className="text-[1.15rem] font-black uppercase leading-none tracking-[0.12em] sm:text-[1.35rem]">
-                      <span className="bg-[linear-gradient(120deg,#31102f_0%,#a51c93_34%,#bd7041_70%,#a51c93_100%)] bg-clip-text text-transparent dark:bg-[linear-gradient(120deg,#fff4fd_0%,#f1b979_30%,#f18bdd_66%,#df3dcc_100%)]">
-                        AD
-                      </span>
-                      <span className="mx-1 text-cyan-600 dark:text-cyan-200">—</span>
-                      <span className="bg-[linear-gradient(120deg,#7c2d12_0%,#d97706_38%,#0f766e_100%)] bg-clip-text text-transparent dark:bg-[linear-gradient(120deg,#fef3c7_0%,#c4b5fd_48%,#67e8f9_100%)]">
-                        CARD
-                      </span>
-                    </p>
                   </div>
                 </div>
                 <h1 className="relative mt-5 text-3xl font-black text-slate-950 sm:text-4xl dark:text-white">

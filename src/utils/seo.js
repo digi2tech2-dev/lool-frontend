@@ -1,8 +1,8 @@
 import resolveImageUrl from './imageUrl';
 
-const STORE_NAME = 'AD CARD';
+const STORE_NAME = 'Lool Store';
 const PRIMARY_SITE_ORIGIN = 'https://ad-card.com';
-const DEFAULT_DESCRIPTION = 'AD CARD منصة متكاملة لشحن الألعاب وتطبيقات الدردشة الصوتية وشراء الاشتراكات والبطاقات والخدمات الرقمية بسرعة وأمان.';
+const DEFAULT_DESCRIPTION = 'Lool Store منصة متكاملة لشحن الألعاب وتطبيقات الدردشة الصوتية وشراء الاشتراكات والبطاقات والخدمات الرقمية بسرعة وأمان.';
 
 const SEARCH_PHRASES = [
   'شحن تطبيقات دردشة صوتية',
@@ -14,7 +14,7 @@ const SEARCH_PHRASES = [
   'اشتراكات رقمية',
   'بطاقات رقمية',
   'شحن منتجات رقمية',
-  'AD CARD',
+  'Lool Store',
 ];
 
 const cleanText = (value) => String(value || '')
@@ -55,8 +55,8 @@ export const getProductSeoDescription = (product, language = 'ar') => {
   const productName = getProductSeoName(product, language);
   const description = cleanText(product?.displayDescription || product?.descriptionAr || product?.description);
   const fallback = language === 'ar'
-    ? `شحن ${productName} عبر AD CARD ضمن خدمات شحن تطبيقات الدردشة الصوتية، الألعاب، الاشتراكات، والمنتجات الرقمية.`
-    : `Top up ${productName} through AD CARD for voice chat apps, games, subscriptions, and digital products.`;
+    ? `شحن ${productName} عبر Lool Store ضمن خدمات شحن تطبيقات الدردشة الصوتية، الألعاب، الاشتراكات، والمنتجات الرقمية.`
+    : `Top up ${productName} through Lool Store for voice chat apps, games, subscriptions, and digital products.`;
 
   return truncateText(description || fallback, 220);
 };
@@ -140,16 +140,16 @@ export const buildStoreSeo = ({
       '@context': 'https://schema.org',
       '@type': 'Organization',
       name: STORE_NAME,
-      alternateName: 'AD CARD',
+      alternateName: 'Lool Store',
       url: origin || canonicalUrl,
-      logo: origin ? `${origin}/ad-card-logo.png` : '/ad-card-logo.png',
+      logo: origin ? `${origin}/lool-store-logo.png?v=2` : '/lool-store-logo.png?v=2',
       description: seoDescription,
     },
     {
       '@context': 'https://schema.org',
       '@type': 'WebSite',
       name: STORE_NAME,
-      alternateName: 'AD CARD',
+      alternateName: 'Lool Store',
       url: origin || canonicalUrl,
       inLanguage: language === 'ar' ? 'ar-EG' : 'en',
     },
@@ -168,7 +168,7 @@ export const buildStoreSeo = ({
     jsonLd.push({
       '@context': 'https://schema.org',
       '@type': 'ItemList',
-      name: language === 'ar' ? 'منتجات AD CARD' : 'AD CARD Products',
+      name: language === 'ar' ? 'منتجات Lool Store' : 'Lool Store Products',
       description: seoDescription,
       itemListElement: productList,
     });

@@ -78,7 +78,7 @@ const WalletSidebarCard = ({ className, isVisible = true, onNavigate }) => {
     <section
       dir={dir === 'rtl' ? 'rtl' : 'ltr'}
       className={cn(
-        'relative isolate overflow-hidden rounded-[15px] border border-[color:rgb(var(--color-primary-rgb)/0.34)] bg-[linear-gradient(145deg,rgb(var(--color-primary-rgb)/0.14),rgba(147,51,234,0.12)_40%,rgb(var(--color-card-rgb)/0.92)_100%)] p-2 shadow-[0_12px_28px_-22px_rgb(var(--color-primary-rgb)/0.36)]',
+        'ka-sidebar-wallet relative isolate overflow-hidden rounded-[15px] border border-[color:rgb(var(--color-primary-rgb)/0.34)] bg-[linear-gradient(145deg,rgb(var(--color-primary-rgb)/0.14),rgba(147,51,234,0.12)_40%,rgb(var(--color-card-rgb)/0.92)_100%)] p-2 shadow-[0_12px_28px_-22px_rgb(var(--color-primary-rgb)/0.36)]',
         'before:pointer-events-none before:absolute before:inset-0 before:bg-[radial-gradient(circle_at_top_right,rgba(192,38,211,0.24),transparent_45%)] before:opacity-80',
         className
       )}
@@ -103,7 +103,7 @@ const WalletSidebarCard = ({ className, isVisible = true, onNavigate }) => {
             </div>
           </div>
 
-          <span className="inline-flex h-7 w-7 shrink-0 items-center justify-center rounded-full border border-[color:rgb(var(--color-primary-rgb)/0.34)] bg-[linear-gradient(145deg,rgba(37,99,235,0.86),rgba(49,46,129,0.88))] text-[#f0cf7a] shadow-[inset_0_1px_0_rgba(255,255,255,0.14),0_0_24px_-10px_rgba(124,58,237,0.84),0_0_28px_-14px_rgba(192,38,211,0.84)]">
+          <span className="inline-flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-[color:rgb(var(--color-primary-rgb)/0.12)] text-[var(--color-primary)]">
             <Wallet className="h-3.5 w-3.5" />
           </span>
         </div>
@@ -112,10 +112,10 @@ const WalletSidebarCard = ({ className, isVisible = true, onNavigate }) => {
           <button
             type="button"
             onClick={() => handleNavigate('/wallet/add-balance')}
-            className="inline-flex h-7 w-full items-center justify-center gap-1 rounded-[10px] border border-[color:rgb(var(--color-primary-rgb)/0.34)] bg-[linear-gradient(135deg,#a51c93_0%,#75146d_52%,#e5a668_100%)] px-1.5 text-[9px] font-bold text-white shadow-[0_0_26px_-16px_rgba(165,28,147,0.8),0_0_28px_-18px_rgba(217,54,194,0.82)] transition-colors hover:brightness-[1.05]"
+            className="inline-flex h-7 w-full items-center justify-center gap-1 rounded-[10px] bg-[color:rgb(var(--color-primary-rgb)/0.13)] px-1.5 text-[9px] font-bold text-[var(--color-primary)] transition-colors hover:bg-[color:rgb(var(--color-primary-rgb)/0.2)]"
           >
             <ArrowUpLeft className="h-3 w-3" />
-            <span>اشحن الآن</span>
+            <span>إضافة رصيد</span>
           </button>
         </div>}
       </div>

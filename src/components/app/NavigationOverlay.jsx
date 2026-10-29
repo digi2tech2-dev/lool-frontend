@@ -1,5 +1,5 @@
 import React from 'react';
-import logo from '../../assets/LOGO.PNG';
+import logo from '../../assets/lool-store-logo.webp';
 
 const NavigationOverlay = ({ active }) => (
   <div

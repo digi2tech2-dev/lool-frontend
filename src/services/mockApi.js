@@ -182,7 +182,7 @@ const sanitizeUser = (user) => {
   });
   return {
     ...safeUser,
-    avatar: resolveUserAvatar(safeUser, safeUser.name || safeUser.email || 'AD CARD User'),
+    avatar: resolveUserAvatar(safeUser, safeUser.name || safeUser.email || 'Lool Store User'),
     coins: walletSummary.walletBalance,
     walletBalance: walletSummary.walletBalance,
     balance: walletSummary.walletBalance,
@@ -862,7 +862,7 @@ const mockApi = {
         signupMethod: normalizeSignupMethod(userData.signupMethod || 'email'),
         approvedAt: null,
         rejectedAt: null,
-        avatar: resolveUserAvatar(userData, userData.name || userData.username || userData.email || 'AD CARD User')
+        avatar: resolveUserAvatar(userData, userData.name || userData.username || userData.email || 'Lool Store User')
       };
       delete newUser.password;
       

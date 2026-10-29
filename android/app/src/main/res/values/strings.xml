@@ -1,7 +1,7 @@
 <?xml version='1.0' encoding='utf-8'?>
 <resources>
-    <string name="app_name">AD CARD</string>
-    <string name="title_activity_main">AD CARD</string>
+    <string name="app_name">Lool Store</string>
+    <string name="title_activity_main">Lool Store</string>
     <string name="package_name">com.adcard.app</string>
     <string name="custom_url_scheme">com.adcard.app</string>
 </resources>

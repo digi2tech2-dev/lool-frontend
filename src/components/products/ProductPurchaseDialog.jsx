@@ -1,9 +1,10 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import { createPortal } from 'react-dom';
-import { Check, Copy, FileText, LockKeyhole, Package, ShoppingCart, UserRound, WalletCards, X, Zap } from 'lucide-react';
+import { Box, Check, Copy, FileText, Heart, LockKeyhole, Package, ShoppingBag, ShoppingCart, UserRound, WalletCards, X, Zap } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
 import useAuthStore from '../../store/useAuthStore';
+import useFavoritesStore, { favoriteUserKey } from '../../store/useFavoritesStore';
 import useMediaStore from '../../store/useMediaStore';
 import useOrderStore from '../../store/useOrderStore';
 import useSystemStore from '../../store/useSystemStore';
@@ -11,8 +12,7 @@ import apiClient from '../../services/client';
 import { useToast } from '../ui/Toast';
 import { useLanguage } from '../../context/LanguageContext';
 import { resolveImageUrl } from '../../utils/imageUrl';
-import brandLogoDark from '../../assets/LOGO.PNG';
-import brandLogoLight from '../../assets/LOGO.PNG';
+import brandLogoDark from '../../assets/lool-store-logo.webp';
 import {
   calculateProductPrice,
   formatCurrencyAmount,
@@ -21,6 +21,7 @@ import {
 } from '../../utils/pricing';
 import { getReadableErrorMessage } from '../../utils/errorMessages';
 import {
+  clampProductQuantity,
   getProductQuantityMeta,
   resolveProductOrderFields,
   sanitizeOrderFieldValue,
@@ -31,6 +32,7 @@ import { useBodyScrollLock } from '../../utils/bodyScrollLock';
 import AddBalance from '../../pages/AddBalance';
 import PaymentDetails from '../../pages/PaymentDetails';
 import './ProductPurchaseDialog.css';
+import './ProductPurchaseOscar.css';
 
 const isInstantMockCheckout = (import.meta.env.VITE_DATA_PROVIDER || 'mock').toLowerCase() === 'mock';
 
@@ -45,6 +47,7 @@ const getCopy = (language = 'ar') => (
     ? {
         available: 'Available',
         unavailable: 'Unavailable',
+        priceUnavailable: 'Price is temporarily unavailable. Please try again later.',
         unitPrice: 'Unit Price',
         agentProductId: 'Agent ID',
         accountNumber: 'Receiver Account ID',
@@ -52,6 +55,7 @@ const getCopy = (language = 'ar') => (
         purchaseSummary: 'Purchase summary',
         usdEquivalent: 'USD equivalent',
         usdSettlementNote: 'Base platform price in USD',
+        shippingNotice: 'Shipping is completed within a few seconds',
         quantity: 'Quantity',
         quantityPlaceholder: 'Enter quantity',
         minQuantity: 'Min',
@@ -75,6 +79,7 @@ const getCopy = (language = 'ar') => (
         aboveMax: 'Quantity is above the maximum.',
         emptyUserId: 'User ID is required.',
         insufficientBalance: 'Insufficient balance.',
+        balanceShortfallMessage: 'Your balance is insufficient. Add',
         balanceRequiredTitle: 'Top up to complete your order',
         balanceRequiredDescription: 'Your balance is short by the amount below.',
         currentBalance: 'Available balance',
@@ -87,6 +92,7 @@ const getCopy = (language = 'ar') => (
     : {
         available: 'متاح',
         unavailable: 'غير متاح',
+        priceUnavailable: 'السعر غير متاح مؤقتًا. حاول لاحقًا.',
         unitPrice: 'سعر الوحدة',
         agentProductId: 'رقم آيدي الوكيل',
         accountNumber: 'آيدي الحساب المستلم',
@@ -94,7 +100,8 @@ const getCopy = (language = 'ar') => (
         purchaseSummary: 'ملخص الشراء',
         usdEquivalent: 'المعادل بالدولار',
         usdSettlementNote: 'السعر الأساسي للمنصة بالدولار',
-        quantity: 'الكمية',
+        shippingNotice: 'الشحن يتم خلال ثواني معدوده',
+        quantity: 'العدد',
         quantityPlaceholder: 'أدخل الكمية',
         minQuantity: 'أقل كمية',
         maxQuantity: 'أقصى كمية',
@@ -117,6 +124,7 @@ const getCopy = (language = 'ar') => (
         aboveMax: 'الكمية أكبر من الحد الأقصى.',
         emptyUserId: 'معرف المستخدم مطلوب.',
         insufficientBalance: 'الرصيد غير كافي.',
+        balanceShortfallMessage: 'رصيدك غير كافي، تحتاج لإضافة رصيد',
         balanceRequiredTitle: 'اشحن رصيدك لإتمام الطلب',
         balanceRequiredDescription: 'رصيدك الحالي لا يكفي، وتحتاج إلى شحن المبلغ الموضح بالأسفل.',
         currentBalance: 'الرصيد المتاح',
@@ -133,10 +141,6 @@ const normalizeQuantityDigits = (value) => String(value || '')
   .replace(/[٠-٩]/g, (digit) => String('٠١٢٣٤٥٦٧٨٩'.indexOf(digit)))
   .replace(/[۰-۹]/g, (digit) => String('۰۱۲۳۴۵۶۷۸۹'.indexOf(digit)))
   .replace(/\D/g, '');
-const formatQuantityInput = (value) => {
-  const digits = normalizeQuantityDigits(value);
-  return digits ? digits.replace(/\B(?=(\d{3})+(?!\d))/g, ',') : '';
-};
 const parseQuantityInput = (value) => Number.parseInt(normalizeQuantityDigits(value), 10);
 const isUploadFieldType = (type) => ['image', 'file'].includes(String(type || '').trim().toLowerCase());
 
@@ -151,7 +155,7 @@ const ProductImage = ({ product }) => {
     return <img src={resolveImageUrl(product.image)} alt={product?.name || ''} onError={() => setImageFailed(true)} />;
   }
 
-  return <Package className="h-12 w-12" strokeWidth={1.8} />;
+  return <img src={brandLogoDark} alt="Lool Store" className="purchase-dialog-fallback-logo" />;
 };
 
 const SummaryCell = ({ label, value, icon, onClick, title }) => {
@@ -209,6 +213,9 @@ const ProductPurchaseDialog = ({
   const copy = useMemo(() => getCopy(language), [language]);
 
   const user = useAuthStore((state) => state.user);
+  const favoriteKey = favoriteUserKey(user);
+  const isFavorite = useFavoritesStore((state) => Boolean(favoriteKey && (state.favoritesByUser[favoriteKey] || []).includes(String(productId || initialProduct?.id || ''))));
+  const toggleFavorite = useFavoritesStore((state) => state.toggleFavorite);
   const updateUserSession = useAuthStore((state) => state.updateUserSession);
   const products = useMediaStore((state) => state.products);
   const loadProducts = useMediaStore((state) => state.loadProducts);
@@ -304,6 +311,11 @@ const ProductPurchaseDialog = ({
   const quantityMeta = useMemo(() => (product ? getProductQuantityMeta(product) : null), [product]);
   const orderFields = useMemo(() => (product ? resolveProductOrderFields(product, language) : []), [language, product]);
 
+  useEffect(() => {
+    if (!quantityMeta) return;
+    setQuantityInput(String(quantityMeta.minQty));
+  }, [product?.id, quantityMeta?.minQty]);
+
   const pricingUser = user || pricingPreviewUser || null;
   const shouldRequireAuth = Boolean(requireAuth && !user);
   const userCurrencyCode = String(pricingUser?.currency || 'USD').toUpperCase();
@@ -326,6 +338,7 @@ const ProductPurchaseDialog = ({
   const balanceShortfall = normalizeMoneyAmount(Math.max(0, totalPrice - availableBalance));
   const formattedAvailableBalance = formatCurrencyAmount(availableBalance, userCurrencyCode, currencies, locale);
   const formattedBalanceShortfall = formatCurrencyAmount(balanceShortfall, userCurrencyCode, currencies, locale);
+  const shouldShowBalanceWarning = Boolean(user) && balanceShortfall > 0;
   const agentProductId = String(
     product?.providerProductId
     || product?.externalProductId
@@ -836,8 +849,9 @@ const ProductPurchaseDialog = ({
         initial={{ opacity: 0, y: 28, scale: 0.98 }}
         animate={{ opacity: 1, y: 0, scale: 1 }}
         transition={{ duration: 0.18 }}
-        className={`purchase-dialog-card ${showBalanceTopup && topupStep !== 'summary' ? 'is-wallet-flow' : ''}`}
+        className={`purchase-dialog-card ${showBalanceTopup ? (topupStep !== 'summary' ? 'is-wallet-flow' : 'purchase-dialog-card--reference') : (successOrder ? 'purchase-dialog-card--oscar-success' : 'purchase-dialog-card--oscar')}`}
       >
+        {!successOrder && !showBalanceTopup ? <span className="purchase-oscar-neon-frame" aria-hidden="true" /> : null}
         <div className="purchase-dialog-grid" />
         <button type="button" className="purchase-dialog-close" onClick={onClose} aria-label="Close">
           <X className="h-5 w-5" />
@@ -980,35 +994,20 @@ const ProductPurchaseDialog = ({
           </div>
         ) : (
           <>
-            <div className="purchase-dialog-product">
-              <div className="purchase-dialog-platform-logo" title="AD CARD">
-                <img className="purchase-dialog-logo-dark" src={brandLogoDark} alt="AD CARD" />
-                <img className="purchase-dialog-logo-light" src={brandLogoLight} alt="AD CARD" />
+            <header className="purchase-oscar-header">
+              <span className="purchase-oscar-bag" aria-hidden="true"><ShoppingBag size={21} strokeWidth={2.4} /></span>
+              <div className="purchase-oscar-title-block">
+                <h2 title={displayNameAr}>{displayNameAr}</h2>
+                {displayNameEn && displayNameEn !== displayNameAr ? <p dir="ltr" title={displayNameEn}>{displayNameEn}</p> : null}
+                <span className={`purchase-oscar-status ${isPurchasable ? 'is-available' : 'is-unavailable'}`}>{statusLabel}</span>
+                <span className="purchase-oscar-title-line" aria-hidden="true" />
               </div>
-              <div className="purchase-dialog-product-visual">
-                <div className={`purchase-dialog-image ${isPurchasable ? '' : 'is-unavailable'}`}>
-                  <ProductImage product={product} />
-                </div>
-              </div>
-              <div className="min-w-0">
-                <h2>{displayNameAr}</h2>
-                {displayNameEn && displayNameEn !== displayNameAr ? <p dir="ltr">{displayNameEn}</p> : null}
-                <span className={isPurchasable ? 'is-available' : 'is-unavailable'}>{statusLabel}</span>
-              </div>
-            </div>
+            </header>
 
-            {productDescription ? (
-              <section
-                className="purchase-dialog-description"
-                aria-label={language === 'en' ? 'Product description' : 'وصف المنتج'}
-              >
-                <FileText className="purchase-dialog-description-icon h-4 w-4" aria-hidden="true" />
-                <p>{productDescription}</p>
-              </section>
-            ) : null}
+            <p className="purchase-oscar-description">{productDescription || copy.shippingNotice}</p>
 
             {displayedAccountNumber ? (
-              <div className="purchase-dialog-price-card">
+              <div className="purchase-dialog-price-card purchase-oscar-account">
                 <button type="button" className="purchase-dialog-copy-card" onClick={copyAccountNumber} title={copy.accountCopied}>
                   <span>{copy.accountNumber}</span>
                   <strong dir="ltr">{displayedAccountNumber}</strong>
@@ -1018,40 +1017,45 @@ const ProductPurchaseDialog = ({
             ) : null}
 
             {/* ── Quantity + Total — single premium row ── */}
-            <div className="ppd-gold-row">
+            <div className="ppd-gold-row purchase-oscar-info">
               <div className="ppd-gold-qty">
-                <span className="ppd-gold-label">{copy.quantity}</span>
+                <div className="purchase-oscar-cell-heading"><span className="purchase-oscar-mini-icon"><Box size={17} /></span><span className="ppd-gold-label">{copy.quantity}</span></div>
                 <input
                   type="text"
                   inputMode="numeric"
-                  pattern="[0-9,]*"
+                  pattern="[0-9]*"
                   dir="ltr"
                   className="ppd-gold-input"
                   value={quantityInput}
-                  placeholder="0"
+                  placeholder={`${copy.minQuantity}: ${formatCount(quantityMeta.minQty)}`}
                   onChange={(event) => {
-                    setQuantityInput(formatQuantityInput(event.target.value));
+                    setQuantityInput(normalizeQuantityDigits(event.target.value));
                     setFormError('');
                   }}
+                  onBlur={() => setQuantityInput(String(clampProductQuantity(quantityInput, product)))}
                 />
-                <span className="ppd-gold-range" dir="ltr">{formatCount(quantityMeta.minQty)} — {formatCount(quantityMeta.maxQty)}</span>
+                <span className="ppd-gold-range" dir="ltr">{formatCount(quantityMeta.minQty)} · {formatCount(quantityMeta.maxQty)}</span>
               </div>
-              <div className="ppd-gold-divider" />
+              <div className="ppd-gold-divider" aria-hidden="true" />
               <div className="ppd-gold-total">
-                <span className="ppd-gold-label">{copy.total}</span>
-                <strong className="ppd-gold-price" dir="ltr">{formattedTotalPrice}</strong>
-                {shouldShowUsdEquivalent ? (
-                  <span className="ppd-gold-usd" dir="ltr">{formattedTotalPriceUsd}</span>
-                ) : null}
+                <div className="purchase-oscar-cell-heading"><span className="purchase-oscar-mini-icon"><Zap size={16} fill="currentColor" /></span><span className="ppd-gold-label">{copy.total}</span></div>
+                <output className="ppd-gold-price purchase-oscar-total-output" dir="ltr" aria-label={copy.total}>{formattedTotalPrice}</output>
+                {shouldShowUsdEquivalent ? <span className="ppd-gold-usd" dir="ltr">{formattedTotalPriceUsd}</span> : null}
               </div>
             </div>
 
+            {shouldShowBalanceWarning ? (
+              <p className="purchase-oscar-balance-warning" role="alert">
+                <span>{copy.balanceShortfallMessage}</span>
+                <strong dir="ltr">{formattedBalanceShortfall}</strong>
+              </p>
+            ) : null}
+
             {hasPrimaryOrderField ? (
-              <div className="purchase-dialog-field">
-                <span className="purchase-dialog-field-label"><UserRound className="h-4 w-4" />{primaryOrderFieldLabel}</span>
+              <div className="purchase-dialog-field purchase-oscar-user-field">
+                <span className="purchase-dialog-field-label"><span className="purchase-oscar-mini-icon" aria-hidden="true"><UserRound size={17} /></span>{primaryOrderFieldLabel}</span>
                 <div className={primaryOrderField?.isVerifiable === true ? 'grid grid-cols-[minmax(0,1fr)_auto] gap-2' : ''}>
                   <div className="purchase-dialog-input-shell">
-                    <UserRound className="purchase-dialog-input-icon h-4 w-4" />
                     <input
                       type="text"
                       value={userId}
@@ -1081,12 +1085,38 @@ const ProductPurchaseDialog = ({
                 disabled={isSubmitting || !isPurchasable}
               >
                 <LockKeyhole className="h-5 w-5" />
-                {purchaseButtonLabel}
+                <span>{purchaseButtonLabel}</span>
               </button>
-              <button type="button" className="purchase-dialog-secondary" onClick={onClose}>
+              <button type="button" className="purchase-dialog-secondary" onClick={onClose} disabled={isSubmitting}>
                 {copy.cancel}
               </button>
             </div>
+            <figure className="purchase-oscar-showcase">
+              {favoriteKey ? (
+                <button
+                  type="button"
+                  className={`purchase-dialog-favorite${isFavorite ? ' is-favorite' : ''}`}
+                  onClick={() => {
+                    toggleFavorite(favoriteKey, product.id);
+                    addToast(isFavorite
+                      ? (language === 'en' ? 'Removed from favorites' : 'تمت الإزالة من المفضلة')
+                      : (language === 'en' ? 'Added to favorites' : 'تمت الإضافة إلى المفضلة'), 'success');
+                  }}
+                  aria-label={isFavorite ? (language === 'en' ? 'Remove from favorites' : 'إزالة من المفضلة') : (language === 'en' ? 'Add to favorites' : 'إضافة إلى المفضلة')}
+                  aria-pressed={isFavorite}
+                  title={isFavorite ? (language === 'en' ? 'Remove from favorites' : 'إزالة من المفضلة') : (language === 'en' ? 'Add to favorites' : 'إضافة إلى المفضلة')}
+                >
+                  <Heart size={18} fill={isFavorite ? 'currentColor' : 'none'} aria-hidden="true" />
+                </button>
+              ) : null}
+              <div className="purchase-oscar-stage">
+                <span className="purchase-oscar-ring-glow" aria-hidden="true" />
+                <span className="purchase-oscar-energy-ring" aria-hidden="true" />
+                <span className="purchase-oscar-ring-core" aria-hidden="true" />
+                <span className="purchase-oscar-display-base" aria-hidden="true" />
+                <div className={`purchase-oscar-product-image${isPurchasable ? '' : ' is-unavailable'}`}><ProductImage product={product} /></div>
+              </div>
+            </figure>
           </>
         )}
       </motion.section>

@@ -258,8 +258,8 @@ const ContactUs = ({ accountOnly = false }) => {
         <>
           {typeof document !== 'undefined' && createPortal(
           <header className="pointer-events-none fixed inset-x-0 top-0 z-[90]">
-            <div className="mx-auto max-w-[var(--shell-max-width)] px-3 py-2 sm:px-4 lg:px-6">
-              <div dir="ltr" className="ka-card-panel pointer-events-auto grid min-h-[2.95rem] grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)] items-center gap-2 rounded-[20px] border px-2.5 py-1 sm:min-h-[3.25rem] sm:gap-5 sm:rounded-[28px] sm:px-5 sm:py-1.5">
+            <div className="w-full">
+              <div dir="ltr" className="public-full-header ka-card-panel pointer-events-auto grid min-h-[2.95rem] grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)] items-center gap-2 rounded-[20px] border px-2.5 py-1 sm:min-h-[3.25rem] sm:gap-5 sm:rounded-[28px] sm:px-5 sm:py-1.5">
                 <div className="col-start-1 row-start-1 flex items-center gap-1 justify-self-start sm:gap-2">
                   <ThemeToggle variant="glass" compact className="h-9 w-9 sm:h-10 sm:w-10" />
                 </div>
@@ -270,7 +270,7 @@ const ContactUs = ({ accountOnly = false }) => {
                   className="col-start-2 row-start-1 justify-self-center rounded-[20px] transition-all hover:-translate-y-0.5"
                   aria-label={isArabic ? 'العودة للرئيسية' : 'Back to home'}
                 >
-                  <HeaderBrand />
+                  <HeaderBrand className="justify-center" iconClassName="h-14 w-24 scale-100 sm:h-16 sm:w-28" />
                 </button>
 
                 <div className="col-start-3 row-start-1 flex items-center gap-1.5 justify-self-end sm:gap-2">

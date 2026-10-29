@@ -1,10 +1,10 @@
-# AD CARD Frontend
+# Lool Store Frontend
 
-React/Vite frontend for the AD CARD store, wallet, deposit, target-order, and administration panels. This document describes the current implementation in this repository; the source code and configuration files are the source of truth.
+React/Vite frontend for the Lool Store store, wallet, deposit, target-order, and administration panels. This document describes the current implementation in this repository; the source code and configuration files are the source of truth.
 
 ## Application Overview
 
-AD CARD is a storefront and account portal for buying digital products and services with an internal wallet balance. The frontend supports:
+Lool Store is a storefront and account portal for buying digital products and services with an internal wallet balance. The frontend supports:
 
 - Public browsing of the catalog, About, contact, creator, auth, and account-state pages.
 - Customer registration, email-verification gating, login, Google OAuth callback handling, two-factor login, account settings, product purchases, wallet deposits, deposit history, order history, target requests, referral sharing, notifications, and WhatsApp contact actions.

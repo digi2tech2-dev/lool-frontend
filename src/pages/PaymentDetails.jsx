@@ -95,14 +95,14 @@ const getMethodPresentation = (method) => {
   const token = `${method?.id || ''} ${method?.name || ''}`.toLowerCase();
   const type = normalizeMethodType(method?.type);
 
-  if (token.includes('vodafone')) return { icon: 'VC', color: 'from-[#76106b] via-[#d936c2] to-[#bd7041]' };
-  if (token.includes('etisalat')) return { icon: 'EC', color: 'from-[#5f195d] via-[#a51c93] to-[#f1b979]' };
-  if (token.includes('orange')) return { icon: 'OC', color: 'from-[#bd7041] via-[#d936c2] to-[#76106b]' };
-  if (type === 'bank_transfer') return { icon: 'BT', color: 'from-[#8b1c80] to-[#bd7041]' };
+  if (token.includes('vodafone')) return { icon: 'VC', color: 'from-[#37208c] via-[#d936c2] to-[#1485bf]' };
+  if (token.includes('etisalat')) return { icon: 'EC', color: 'from-[#5f195d] via-[#7134ce] to-[#86e4ff]' };
+  if (token.includes('orange')) return { icon: 'OC', color: 'from-[#1485bf] via-[#d936c2] to-[#37208c]' };
+  if (type === 'bank_transfer') return { icon: 'BT', color: 'from-[#6930c6] to-[#1485bf]' };
   if (type === 'usdt' || type === 'crypto') return { icon: 'USDT', color: 'from-[#5f195d] to-[#d936c2]' };
-  if (type === 'credit_card') return { icon: 'CC', color: 'from-[#bd7041] to-[#8b1c80]' };
+  if (type === 'credit_card') return { icon: 'CC', color: 'from-[#1485bf] to-[#6930c6]' };
 
-  return { icon: 'PM', color: 'from-[#8b1c80] to-[#d936c2]' };
+  return { icon: 'PM', color: 'from-[#6930c6] to-[#d936c2]' };
 };
 
 const getCurrencyRate = (currencies = [], currencyCode = 'USD') => {
@@ -580,10 +580,10 @@ const PaymentDetails = ({
             <button
               type="button"
               onClick={handleCopyAccount}
-              className="group relative flex w-full items-center justify-between gap-3 overflow-hidden rounded-2xl bg-[linear-gradient(135deg,#5f195d_0%,#a51c93_46%,#d936c2_70%,#bd7041_100%)] px-4 py-4 text-white shadow-[0_20px_45px_-28px_rgb(165_28_147/0.9),0_0_28px_-18px_rgb(189_112_65/0.7)] transition hover:-translate-y-0.5 hover:brightness-110 focus:outline-none focus:ring-2 focus:ring-[color:rgb(var(--color-secondary-rgb)/0.55)] focus:ring-offset-2 focus:ring-offset-[var(--color-bg)] sm:px-5"
+              className="group relative flex w-full items-center justify-between gap-3 overflow-hidden rounded-2xl bg-[linear-gradient(135deg,#5f195d_0%,#7134ce_46%,#d936c2_70%,#1485bf_100%)] px-4 py-4 text-white shadow-[0_20px_45px_-28px_rgb(165_28_147/0.9),0_0_28px_-18px_rgb(189_112_65/0.7)] transition hover:-translate-y-0.5 hover:brightness-110 focus:outline-none focus:ring-2 focus:ring-[color:rgb(var(--color-secondary-rgb)/0.55)] focus:ring-offset-2 focus:ring-offset-[var(--color-bg)] sm:px-5"
               title={dir === 'rtl' ? 'اضغط للنسخ' : 'Tap to copy'}
             >
-              <span className="pointer-events-none absolute -top-10 end-5 h-24 w-24 rounded-full bg-[#f1b979]/25 blur-2xl" />
+              <span className="pointer-events-none absolute -top-10 end-5 h-24 w-24 rounded-full bg-[#86e4ff]/25 blur-2xl" />
               <span className="relative min-w-0 text-start">
                 <span className="block text-[9px] font-bold text-[#fff0c9]/82">{dir === 'rtl' ? 'رقم التحويل' : 'Transfer number'}</span>
                 <span className="mt-1 block break-all font-['Poppins'] text-xl font-black tracking-[0.08em] [direction:ltr] sm:text-2xl">{method.accountNumber}</span>
@@ -679,7 +679,7 @@ const PaymentDetails = ({
                     dir={dir}
                   >
                     <span
-                      className="grid min-w-16 shrink-0 place-items-center border-e border-[#bd7041]/55 bg-[linear-gradient(145deg,#fff0c9,#f1b979_55%,#bd7041)] px-3 font-['Poppins'] text-xl font-black text-[#31102f] shadow-[0_0_24px_-12px_rgb(189_112_65/0.9)]"
+                      className="grid min-w-16 shrink-0 place-items-center border-e border-[#1485bf]/55 bg-[linear-gradient(145deg,#fff0c9,#86e4ff_55%,#1485bf)] px-3 font-['Poppins'] text-xl font-black text-[#151039] shadow-[0_0_24px_-12px_rgb(189_112_65/0.9)]"
                       dir="ltr"
                       title={paymentCurrencyCode}
                     >
@@ -729,7 +729,7 @@ const PaymentDetails = ({
                   className="flex h-12 overflow-hidden rounded-xl border border-[color:rgb(var(--color-primary-rgb)/0.55)] bg-[color:rgb(var(--color-primary-rgb)/0.06)] shadow-inner shadow-black/5 transition focus-within:border-[var(--color-primary)] focus-within:ring-2 focus-within:ring-[color:rgb(var(--color-primary-rgb)/0.16)] dark:bg-[linear-gradient(110deg,rgb(49_16_47/0.82),rgb(95_25_93/0.78))] dark:shadow-black/15"
                   dir={dir}
                 >
-                  <span className="grid min-w-16 shrink-0 place-items-center border-e border-[#8b1c80]/55 bg-[linear-gradient(145deg,#f18bdd,#d936c2_58%,#8b1c80)] text-white shadow-[0_0_24px_-12px_rgb(217_54_194/0.9)]">
+                  <span className="grid min-w-16 shrink-0 place-items-center border-e border-[#6930c6]/55 bg-[linear-gradient(145deg,#d9a0ff,#d936c2_58%,#6930c6)] text-white shadow-[0_0_24px_-12px_rgb(217_54_194/0.9)]">
                     <Smartphone className="h-5 w-5 drop-shadow-sm" />
                   </span>
                   <input
@@ -738,7 +738,7 @@ const PaymentDetails = ({
                     value={formData[senderDetailRequirement.field] || ''}
                     onChange={(e) => handleInputChange(senderDetailRequirement.field, e.target.value)}
                     placeholder={senderDetailRequirement.placeholder}
-                    className="min-w-0 flex-1 bg-transparent px-4 text-right font-['Poppins'] text-sm font-black text-[var(--color-primary-hover)] outline-none placeholder:font-semibold placeholder:text-[var(--color-text-secondary)] dark:text-[#f18bdd] [font-variant-numeric:tabular-nums]"
+                    className="min-w-0 flex-1 bg-transparent px-4 text-right font-['Poppins'] text-sm font-black text-[var(--color-primary-hover)] outline-none placeholder:font-semibold placeholder:text-[var(--color-text-secondary)] dark:text-[#d9a0ff] [font-variant-numeric:tabular-nums]"
                     disabled={isSubmitting}
                     required
                   />
@@ -748,7 +748,7 @@ const PaymentDetails = ({
                   className="flex h-12 overflow-hidden rounded-xl border border-[color:rgb(var(--color-secondary-rgb)/0.48)] bg-[color:rgb(var(--color-secondary-rgb)/0.07)] shadow-inner shadow-black/5 transition focus-within:border-[var(--color-secondary)] focus-within:ring-2 focus-within:ring-[color:rgb(var(--color-secondary-rgb)/0.16)] dark:bg-[linear-gradient(110deg,rgb(49_16_47/0.78),rgb(95_25_93/0.78))] dark:shadow-black/15"
                   dir={dir}
                 >
-                  <span className="grid min-w-16 shrink-0 place-items-center border-e border-[#bd7041]/50 bg-[linear-gradient(145deg,#f1b979,#bd7041_58%,#8b1c80)] text-white shadow-[0_0_24px_-12px_rgb(189_112_65/0.82)]">
+                  <span className="grid min-w-16 shrink-0 place-items-center border-e border-[#1485bf]/50 bg-[linear-gradient(145deg,#86e4ff,#1485bf_58%,#6930c6)] text-white shadow-[0_0_24px_-12px_rgb(189_112_65/0.82)]">
                     <WalletCards className="h-5 w-5 drop-shadow-sm" />
                   </span>
                   <input
@@ -756,7 +756,7 @@ const PaymentDetails = ({
                     value={formData[senderDetailRequirement.field] || ''}
                     onChange={(e) => handleInputChange(senderDetailRequirement.field, e.target.value)}
                     placeholder={senderDetailRequirement.placeholder}
-                    className="min-w-0 flex-1 bg-transparent px-4 text-right text-sm font-bold text-[var(--color-secondary)] outline-none placeholder:font-semibold placeholder:text-[var(--color-text-secondary)] dark:text-[#f1b979]"
+                    className="min-w-0 flex-1 bg-transparent px-4 text-right text-sm font-bold text-[var(--color-secondary)] outline-none placeholder:font-semibold placeholder:text-[var(--color-text-secondary)] dark:text-[#86e4ff]"
                     disabled={isSubmitting}
                     required
                   />
@@ -775,7 +775,7 @@ const PaymentDetails = ({
               className="flex h-12 overflow-hidden rounded-xl border border-[color:rgb(var(--color-primary-rgb)/0.55)] bg-[color:rgb(var(--color-primary-rgb)/0.06)] shadow-inner shadow-black/5 transition focus-within:border-[var(--color-primary)] focus-within:ring-2 focus-within:ring-[color:rgb(var(--color-primary-rgb)/0.16)] dark:bg-[linear-gradient(110deg,rgb(95_25_93/0.78),rgb(49_16_47/0.72))] dark:shadow-black/15"
               dir={dir}
             >
-              <span className="grid min-w-16 shrink-0 place-items-center border-e border-[#8b1c80]/50 bg-[linear-gradient(145deg,#f18bdd,#a51c93_52%,#5f195d)] text-white shadow-[0_0_24px_-12px_rgb(165_28_147/0.9)]">
+              <span className="grid min-w-16 shrink-0 place-items-center border-e border-[#6930c6]/50 bg-[linear-gradient(145deg,#d9a0ff,#7134ce_52%,#5f195d)] text-white shadow-[0_0_24px_-12px_rgb(165_28_147/0.9)]">
                 <Hash className="h-5 w-5 drop-shadow-sm" />
               </span>
               <input
@@ -783,7 +783,7 @@ const PaymentDetails = ({
                 value={formData.transactionId || ''}
                 onChange={(e) => handleInputChange('transactionId', e.target.value)}
                 placeholder="أدخل رقم العملية"
-                className="min-w-0 flex-1 bg-transparent px-4 text-right font-['Poppins'] text-sm font-black tracking-wide text-[var(--color-primary-hover)] outline-none placeholder:font-semibold placeholder:tracking-normal placeholder:text-[var(--color-text-secondary)] dark:text-[#f18bdd] [font-variant-numeric:tabular-nums]"
+                className="min-w-0 flex-1 bg-transparent px-4 text-right font-['Poppins'] text-sm font-black tracking-wide text-[var(--color-primary-hover)] outline-none placeholder:font-semibold placeholder:tracking-normal placeholder:text-[var(--color-text-secondary)] dark:text-[#d9a0ff] [font-variant-numeric:tabular-nums]"
                 disabled={isSubmitting}
                 required
               />
@@ -835,7 +835,7 @@ const PaymentDetails = ({
                   defaultValue: dir === 'rtl' ? 'الإجمالي المطلوب تحويله' : 'Total to transfer',
                 })}
               </span>
-              <span className="font-['Poppins'] text-lg font-black tracking-tight text-[var(--color-primary)] [direction:ltr] [font-variant-numeric:tabular-nums] dark:text-[#f18bdd]">{formatMoney(payableAmount)}</span>
+              <span className="font-['Poppins'] text-lg font-black tracking-tight text-[var(--color-primary)] [direction:ltr] [font-variant-numeric:tabular-nums] dark:text-[#d9a0ff]">{formatMoney(payableAmount)}</span>
             </div>
           </div>
 
@@ -865,7 +865,7 @@ const PaymentDetails = ({
             aria-busy={isSubmitting}
             whileTap={{ scale: 0.985 }}
             whileHover={!isSubmitting ? { y: -1 } : undefined}
-            className="group flex h-[52px] w-full items-center justify-center gap-2 rounded-xl bg-[linear-gradient(135deg,#76106b_0%,#d936c2_48%,#a51c93_70%,#bd7041_100%)] px-5 text-sm font-black text-white shadow-[0_20px_38px_-22px_rgb(165_28_147/0.9),0_0_26px_-18px_rgb(189_112_65/0.76)] transition hover:-translate-y-0.5 hover:brightness-110 disabled:cursor-not-allowed disabled:opacity-70"
+            className="group flex h-[52px] w-full items-center justify-center gap-2 rounded-xl bg-[linear-gradient(135deg,#37208c_0%,#d936c2_48%,#7134ce_70%,#1485bf_100%)] px-5 text-sm font-black text-white shadow-[0_20px_38px_-22px_rgb(165_28_147/0.9),0_0_26px_-18px_rgb(189_112_65/0.76)] transition hover:-translate-y-0.5 hover:brightness-110 disabled:cursor-not-allowed disabled:opacity-70"
             disabled={isSubmitting}
           >
             {isSubmitting ? (

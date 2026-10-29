@@ -2,17 +2,19 @@ import React, { useEffect, useState } from 'react';
 import { createPortal } from 'react-dom';
 import { useLocation, useNavigate } from 'react-router-dom';
 import {
-  Headset,
+  MessageCircleMore,
   House,
-  InfoIcon,
+  CircleHelp,
   LogIn,
   Store,
   UserPlus,
   Code2,
-  Download,
+  DownloadCloud,
 } from 'lucide-react';
 import { cn } from '../ui/Button';
 import HeaderBrand from './HeaderBrand';
+import SidebarSocialFooter from './SidebarSocialFooter';
+import sidebarLogoImage from '../../assets/lool-sidebar-logo.webp';
 import LanguageSwitcher from '../ui/LanguageSwitcher';
 import { isNativeApp } from '../../utils/platform';
 
@@ -48,7 +50,7 @@ const PublicSidebar = ({ isOpen, onClose, onLogin, onHome, onAbout, onContact, o
       isActive: pathname === '/',
     },
     {
-      icon: InfoIcon,
+      icon: CircleHelp,
       label: isArabic ? 'من نحن' : 'About us',
       onClick: onAbout,
       isActive: pathname === '/about-us',
@@ -60,7 +62,7 @@ const PublicSidebar = ({ isOpen, onClose, onLogin, onHome, onAbout, onContact, o
       isActive: pathname === '/created-by',
     },
     {
-      icon: Headset,
+      icon: MessageCircleMore,
       label: isArabic ? 'مشاكل الحساب' : 'Account issues',
       onClick: onContact,
       isActive: pathname === '/public-contact-us',
@@ -69,7 +71,7 @@ const PublicSidebar = ({ isOpen, onClose, onLogin, onHome, onAbout, onContact, o
 
   if (!isNativeApp()) {
     navItems.splice(2, 0, {
-      icon: Download,
+      icon: DownloadCloud,
       label: isArabic ? 'تحميل التطبيق' : 'Download app',
       onClick: () => navigate('/download-app'),
       isActive: pathname === '/download-app',
@@ -85,19 +87,21 @@ const PublicSidebar = ({ isOpen, onClose, onLogin, onHome, onAbout, onContact, o
           type="button"
           aria-label="close menu"
           onClick={onClose}
-          className="fixed inset-0 z-[100] bg-black/40 backdrop-blur-[2px]"
+          className="fixed inset-0 z-[100] bg-black/40"
         />
       ) : null}
 
       <aside
+        inert={!isOpen ? true : undefined}
+        aria-hidden={!isOpen ? true : undefined}
         style={{
-          width: isMobile ? 'min(292px, calc(100vw - 1.5rem))' : 282,
+          width: isMobile ? 'min(292px, 100vw)' : 282,
           transform: `translateX(${isOpen ? 0 : 332}px)`,
         }}
-        className="fixed right-3 top-3 z-[110] block h-[calc(100dvh-1.5rem)] max-h-[calc(100dvh-1.5rem)] overflow-hidden transition-[transform,width] duration-200 ease-out sm:right-4 sm:top-4 sm:h-[calc(100dvh-2rem)] sm:max-h-[calc(100dvh-2rem)] motion-reduce:transition-none"
+        className="fixed inset-y-0 right-0 z-[110] block h-[100dvh] max-h-[100dvh] overflow-hidden transition-transform duration-150 ease-out motion-reduce:transition-none"
       >
         <div className={cn(
-          'app-shell-sidebar-panel ka-sidebar-panel relative flex h-full flex-col overflow-hidden rounded-[32px] border backdrop-blur-[24px]'
+          'app-shell-sidebar-panel ka-sidebar-panel relative flex h-full flex-col overflow-hidden rounded-[32px] border'
         )}>
           <div className="relative z-10 px-4 pb-4 pt-5">
             <div className="flex items-center justify-center gap-3">
@@ -107,8 +111,9 @@ const PublicSidebar = ({ isOpen, onClose, onLogin, onHome, onAbout, onContact, o
                 className="flex min-w-0 items-center rounded-[24px] transition-all hover:-translate-y-0.5"
               >
                 <HeaderBrand
-                  className="scale-[0.86] justify-center"
-                  iconClassName="scale-[0.9]"
+                  iconSrc={sidebarLogoImage}
+                  className="justify-center"
+                  iconClassName="h-[7.25rem] w-44 scale-100"
                   textClassName="text-center"
                 />
               </button>
@@ -122,7 +127,7 @@ const PublicSidebar = ({ isOpen, onClose, onLogin, onHome, onAbout, onContact, o
             <div className="ka-sidebar-action-card mt-4">
               <div className="mb-3 flex items-center gap-2 text-sm font-bold text-[var(--color-text)]">
                 <span className="ka-sidebar-icon-bubble is-active">
-                  <Store className="h-5 w-5" strokeWidth={2.15} />
+                  <Store className="h-5 w-5" strokeWidth={1.8} />
                 </span>
                 <span className="truncate">{isArabic ? 'ابدأ الآن' : 'Start now'}</span>
               </div>
@@ -178,7 +183,7 @@ const PublicSidebar = ({ isOpen, onClose, onLogin, onHome, onAbout, onContact, o
                   'ka-sidebar-icon-bubble',
                   item.isActive && 'is-active'
                 )}>
-                  <item.icon className="h-5 w-5" strokeWidth={2.15} />
+                  <item.icon className="h-5 w-5" strokeWidth={1.8} />
                 </span>
                 <span className="truncate text-sm font-bold">{item.label}</span>
               </button>
@@ -186,6 +191,7 @@ const PublicSidebar = ({ isOpen, onClose, onLogin, onHome, onAbout, onContact, o
 
             <div className="mt-auto" />
           </div>
+          <SidebarSocialFooter isArabic={isArabic} />
         </div>
       </aside>
     </>,

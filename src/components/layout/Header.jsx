@@ -205,7 +205,7 @@ const Header = ({ toggleSidebar }) => {
         'app-shell-header-panel ka-card-panel w-full max-w-full overflow-visible rounded-[18px] border px-2 py-0 backdrop-blur-[22px] sm:rounded-[24px] sm:px-4 sm:py-0',
         isAdmin && 'border-[color:rgb(var(--color-primary-rgb)/0.26)]'
       )}>
-        <div dir="ltr" className="grid min-h-0 min-w-0 grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)] items-center gap-1.5 sm:gap-4">
+        <div dir="ltr" className="grid min-h-0 min-w-0 grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)] items-center gap-2 sm:gap-4">
           <div className="col-start-2 row-start-1 min-w-0 justify-self-center">
             <button
               type="button"
@@ -213,8 +213,8 @@ const Header = ({ toggleSidebar }) => {
               className="inline-flex items-center gap-2 rounded-[14px] px-0 py-0 transition-all hover:-translate-y-0.5 sm:gap-4"
             >
               <HeaderBrand
-                className="-my-2 translate-x-11 scale-[0.96] min-[380px]:translate-x-16 sm:translate-x-28 sm:scale-[1.02] lg:translate-x-52"
-                iconClassName="scale-[0.98]"
+                className="justify-center"
+                iconClassName="h-14 w-24 scale-100 sm:h-16 sm:w-28"
               />
             </button>
           </div>
@@ -222,8 +222,6 @@ const Header = ({ toggleSidebar }) => {
           <div className={cn(
             'header-mobile-actions col-start-1 row-start-1 flex min-w-0 shrink-0 items-center gap-1 justify-self-start px-0 sm:gap-2'
           )}>
-            <ThemeToggle compact className="h-[1.875rem] w-[1.875rem] shrink-0 rounded-full border-[color:rgb(var(--color-border-rgb)/0.84)] bg-[radial-gradient(circle_at_35%_25%,rgb(255_255_255/0.16),transparent_34%),linear-gradient(180deg,rgb(10_17_42/0.88),rgb(2_6_19/0.78))] shadow-[inset_0_0_18px_rgb(34_211_238/0.08),0_0_28px_-18px_rgb(34_211_238/0.9)] min-[380px]:h-8 min-[380px]:w-8 sm:h-8 sm:w-8" />
-
             <div ref={notificationsRef} className="relative">
               <button
                 type="button"
@@ -233,7 +231,7 @@ const Header = ({ toggleSidebar }) => {
               >
                 <Bell className="h-3.5 w-3.5" />
                 {unreadCount > 0 ? (
-                  <span className="absolute -end-1 -top-1 grid h-5 min-w-5 place-items-center rounded-full bg-[linear-gradient(135deg,#a51c93,#e5a668)] px-1 text-[10px] font-black text-white shadow-[0_0_18px_rgb(217_54_194/0.52)]">
+                  <span className="absolute -end-1 -top-1 grid h-5 min-w-5 place-items-center rounded-full bg-[linear-gradient(135deg,#7134ce,#29bfe8)] px-1 text-[10px] font-black text-white shadow-[0_0_18px_rgb(217_54_194/0.52)]">
                     {unreadCount > 9 ? '+9' : unreadCount}
                   </span>
                 ) : null}
@@ -301,10 +299,10 @@ const Header = ({ toggleSidebar }) => {
                 <button
                   type="button"
                   onClick={() => navigate(walletTargetPath)}
-                  className="inline-flex h-[1.875rem] shrink-0 items-center gap-1 rounded-full border border-[color:rgb(var(--color-border-rgb)/0.84)] bg-[linear-gradient(180deg,rgb(10_17_42/0.88),rgb(2_6_19/0.72))] px-1.5 text-start shadow-[inset_0_0_18px_rgb(34_211_238/0.08),0_0_28px_-18px_rgb(34_211_238/0.9)] transition-all hover:-translate-y-0.5 min-[380px]:h-8 sm:hidden"
+                  className="inline-flex h-[1.875rem] w-[1.875rem] shrink-0 items-center justify-center gap-1 rounded-full border border-[color:rgb(var(--color-border-rgb)/0.84)] bg-[linear-gradient(180deg,rgb(10_17_42/0.88),rgb(2_6_19/0.72))] p-0 text-start shadow-[inset_0_0_18px_rgb(34_211_238/0.08),0_0_28px_-18px_rgb(34_211_238/0.9)] transition-all hover:-translate-y-0.5 min-[380px]:h-8 min-[380px]:w-auto min-[380px]:justify-start min-[380px]:px-1.5 sm:hidden"
                   aria-label={language === 'ar' ? 'الرصيد' : 'Balance'}
                 >
-                  <span className="header-wallet-balance max-w-[48px] truncate text-[0.62rem] font-semibold text-white dark:text-[var(--color-text)] min-[380px]:max-w-[62px]">
+                  <span className="header-wallet-balance hidden max-w-[62px] truncate text-[0.62rem] font-semibold text-white dark:text-[var(--color-text)] min-[380px]:inline">
                     {walletDisplayValue}
                   </span>
                   <span className="inline-flex h-[1.375rem] w-[1.375rem] items-center justify-center rounded-full bg-[color:rgb(var(--color-primary-rgb)/0.14)] text-[var(--color-primary)]">
@@ -331,14 +329,17 @@ const Header = ({ toggleSidebar }) => {
             )}
           </div>
 
-          <button
-            type="button"
-            onClick={toggleSidebar}
-            className="sidebar-toggle-button col-start-3 row-start-1 inline-flex h-[1.875rem] w-[1.875rem] shrink-0 items-center justify-center justify-self-end rounded-full text-[var(--color-text)] min-[380px]:h-8 min-[380px]:w-8 sm:h-8 sm:w-8"
-            aria-label={language === 'ar' ? 'فتح القائمة' : 'Open menu'}
-          >
-            <SidebarToggleIcon className="h-3.5 w-3.5" />
-          </button>
+          <div dir="ltr" className="col-start-3 row-start-1 flex items-center justify-self-end gap-1 sm:gap-2">
+            <ThemeToggle compact className="h-[1.875rem] w-[1.875rem] shrink-0 rounded-full border-[color:rgb(var(--color-border-rgb)/0.84)] bg-[radial-gradient(circle_at_35%_25%,rgb(255_255_255/0.16),transparent_34%),linear-gradient(180deg,rgb(10_17_42/0.88),rgb(2_6_19/0.78))] shadow-[inset_0_0_18px_rgb(34_211_238/0.08),0_0_28px_-18px_rgb(34_211_238/0.9)] min-[380px]:h-8 min-[380px]:w-8 sm:h-8 sm:w-8" />
+            <button
+              type="button"
+              onClick={toggleSidebar}
+              className="sidebar-toggle-button inline-flex h-[1.875rem] w-[1.875rem] shrink-0 items-center justify-center justify-self-end rounded-full text-[var(--color-text)] min-[380px]:h-8 min-[380px]:w-8 sm:h-8 sm:w-8"
+              aria-label={language === 'ar' ? 'فتح القائمة' : 'Open menu'}
+            >
+              <SidebarToggleIcon className="h-3.5 w-3.5" />
+            </button>
+          </div>
         </div>
       </div>
     </header>

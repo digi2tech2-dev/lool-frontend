@@ -298,7 +298,7 @@ const AdminSupervisors = () => {
               <TableRow key={entry.id}>
                 <TableCell>
                   <div className="flex items-center gap-3">
-                    <img src={resolveUserAvatar(entry, entry.name || entry.email || 'AD CARD User')} alt={entry.name} loading="lazy" decoding="async" referrerPolicy="no-referrer" className="h-8 w-8 rounded-full bg-gray-200 object-cover" />
+                    <img src={resolveUserAvatar(entry, entry.name || entry.email || 'Lool Store User')} alt={entry.name} loading="lazy" decoding="async" referrerPolicy="no-referrer" className="h-8 w-8 rounded-full bg-gray-200 object-cover" />
                     <div>
                       <div className="font-medium text-[var(--color-text)]">{entry.name}</div>
                       <div className="text-xs text-[var(--color-text-secondary)]">{entry.email}</div>

@@ -4,7 +4,7 @@ import { isNativeGoogleAuthAvailable } from '../utils/platform';
 const NativeGoogleAuth = registerPlugin('NativeGoogleAuth');
 
 const unavailable = () => {
-  throw new Error('Native Google Sign-In is only available in the Android AD CARD app.');
+  throw new Error('Native Google Sign-In is only available in the Android Lool Store app.');
 };
 
 export const signInWithNativeGoogle = async () => {

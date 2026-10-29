@@ -4,27 +4,29 @@ import {
   Activity,
   Banknote,
   Boxes,
-  ChevronDown,
   ChevronLeft,
   Check,
   ClipboardCheck,
   Code2,
   Coins,
   Copy,
+  Crosshair,
+  Gift,
+  Braces,
   CreditCard,
-  Headset,
+  MessageCircleMore,
   Heart,
   FolderKanban,
   Gauge,
   House,
-  IdCard,
+  UserRound,
   Landmark,
-  LockKeyhole,
+  ShieldCheck,
   LogOut,
   MessageCircle,
   Share2,
-  ReceiptText,
-  SlidersHorizontal,
+  ShoppingBag,
+  Settings,
   Target,
   Truck,
   UserCog,
@@ -32,7 +34,7 @@ import {
   WalletCards
 } from 'lucide-react';
 import ConfirmDialog from '../account/ConfirmDialog';
-import { motion } from 'framer-motion';
+import { motion, useReducedMotion } from 'framer-motion';
 import { useTranslation } from 'react-i18next';
 import useAuthStore from '../../store/useAuthStore';
 import useFavoritesStore, { favoriteUserKey } from '../../store/useFavoritesStore';
@@ -41,6 +43,9 @@ import { useLanguage } from '../../context/LanguageContext';
 import LanguageSwitcher from '../ui/LanguageSwitcher';
 import WalletSidebarCard from './WalletSidebarCard';
 import HeaderBrand from './HeaderBrand';
+import SidebarSocialFooter from './SidebarSocialFooter';
+import sidebarLogoImage from '../../assets/lool-sidebar-logo.webp';
+import avatarSocialFrame from '../../assets/lool-avatar-social-frame.png';
 import { SUPERVISOR_ROLES, getDefaultRouteForRole, hasRequiredRole } from '../../utils/authRoles';
 import { PERMISSIONS, hasPermission } from '../../utils/permissions';
 import { resolveUserAvatar } from '../../utils/avatar';
@@ -81,12 +86,12 @@ const Sidebar = ({ isOpen, setIsOpen, isMobile }) => {
   const [isPreviewExpanded, setIsPreviewExpanded] = useState(false);
   const [showLogoutConfirm, setShowLogoutConfirm] = useState(false);
   const [copiedUserId, setCopiedUserId] = useState(false);
-  const [collapsedSections, setCollapsedSections] = useState({});
   const { user, logout } = useAuthStore();
   const favoriteCount = useFavoritesStore((state) => (state.favoritesByUser[favoriteUserKey(user)] || []).length);
   const navigate = useNavigate();
   const { dir } = useLanguage();
   const { t } = useTranslation();
+  const reduceMotion = useReducedMotion();
 
   const isExpanded = isOpen || isMobile || isPreviewExpanded;
   const userId = String(user?.id || user?._id || user?.userId || '').trim();
@@ -139,14 +144,6 @@ const Sidebar = ({ isOpen, setIsOpen, isMobile }) => {
     closeSidebarOnMobile();
   };
 
-  const isSectionOpen = (sectionKey) => collapsedSections[sectionKey] !== true;
-  const toggleSidebarSection = (sectionKey) => {
-    setCollapsedSections((current) => ({
-      ...current,
-      [sectionKey]: current[sectionKey] !== true,
-    }));
-  };
-
   const navItems = [
     {
       icon: House,
@@ -170,16 +167,16 @@ const Sidebar = ({ isOpen, setIsOpen, isMobile }) => {
       permission: PERMISSIONS.ADMIN_WALLET,
       section: 'admin',
     },
-    { icon: IdCard, label: t('sidebar.myAccount', { defaultValue: dir === 'rtl' ? 'حسابي' : 'My Account' }), path: '/account', roles: ['admin', 'customer', ...SUPERVISOR_ROLES] },
-    { icon: LockKeyhole, label: t('sidebar.accountProtection', { defaultValue: dir === 'rtl' ? 'حماية الحساب' : 'Account Security' }), path: '/account-security', roles: ['admin', 'customer', ...SUPERVISOR_ROLES] },
-    { icon: Share2, label: dir === 'rtl' ? 'رابط الإحالة اكسب واسحب' : 'Referral Link — Earn & Withdraw', path: '/referral', roles: ['customer'] },
+    { icon: UserRound, label: t('sidebar.myAccount', { defaultValue: dir === 'rtl' ? 'حسابي' : 'My Account' }), path: '/account', roles: ['admin', 'customer', ...SUPERVISOR_ROLES] },
+    { icon: ShieldCheck, label: t('sidebar.accountProtection', { defaultValue: dir === 'rtl' ? 'حماية الحساب' : 'Account Security' }), path: '/account-security', roles: ['admin', 'customer', ...SUPERVISOR_ROLES] },
+    { icon: Gift, label: dir === 'rtl' ? 'رابط الإحالة اكسب واسحب' : 'Referral Link — Earn & Withdraw', path: '/referral', roles: ['customer'] },
     {
-      icon: ReceiptText,
+      icon: ShoppingBag,
       label: t('sidebar.myOrders', { defaultValue: dir === 'rtl' ? 'طلباتي' : 'My Orders' }),
       path: '/orders',
       roles: ['customer', 'admin', ...SUPERVISOR_ROLES]
     },
-    { icon: Target, label: 'بيع التارجت', path: '/buy-target', roles: ['customer'] },
+    { icon: Crosshair, label: 'بيع التارجت', path: '/buy-target', roles: ['customer'] },
     {
       icon: Code2,
       label: dir === 'rtl' ? 'للمطورين (API)' : 'Developer API',
@@ -217,13 +214,13 @@ const Sidebar = ({ isOpen, setIsOpen, isMobile }) => {
     { icon: MessageCircle, label: 'تكامل الواتساب', path: '/admin/whatsapp', roles: ADMIN_NAV_ROLES, permission: PERMISSIONS.ADMIN_WHATSAPP, section: 'admin' },
     { icon: Coins, label: t('sidebar.currencies'), path: '/admin/currencies', roles: ADMIN_NAV_ROLES, permission: PERMISSIONS.ADMIN_CURRENCIES, section: 'admin' },
     {
-      icon: Headset,
+      icon: MessageCircleMore,
       label: t('sidebar.contactUs', { defaultValue: 'اتصل بنا' }),
       path: '/contact-us',
       roles: ['customer', ...SUPERVISOR_ROLES],
       onClick: handleContactClick,
     },
-    { icon: SlidersHorizontal, label: t('sidebar.settings'), path: '/settings', roles: ['admin', 'customer', ...SUPERVISOR_ROLES] }
+    { icon: Settings, label: t('sidebar.settings'), path: '/settings', roles: ['admin', 'customer', ...SUPERVISOR_ROLES] }
   ];
 
   const filteredNavItems = navItems.filter((item) => (
@@ -233,18 +230,7 @@ const Sidebar = ({ isOpen, setIsOpen, isMobile }) => {
   ));
   const accountNavItems = filteredNavItems.filter((item) => item.section !== 'admin');
   const adminNavItems = filteredNavItems.filter((item) => item.section === 'admin');
-  const sidebarSections = [
-    {
-      key: 'account',
-      label: t('sidebar.accountSection', { defaultValue: dir === 'rtl' ? 'الحساب' : 'Account' }),
-      items: accountNavItems,
-    },
-    {
-      key: 'admin',
-      label: t('sidebar.adminSection', { defaultValue: dir === 'rtl' ? 'الإدارة' : 'Administration' }),
-      items: adminNavItems,
-    },
-  ].filter((section) => section.items.length > 0);
+  const visibleNavItems = [...accountNavItems, ...adminNavItems];
   const showWalletCard = String(user?.role || '').toLowerCase() === 'customer' && isExpanded;
   const isAdmin = String(user?.role || '').toLowerCase() === 'admin';
   const userDisplayName = user?.name || user?.email || (dir === 'rtl' ? 'حسابي' : 'My Account');
@@ -265,7 +251,7 @@ const Sidebar = ({ isOpen, setIsOpen, isMobile }) => {
         )}
       >
         <span className="ka-sidebar-icon-bubble">
-          <item.icon className="h-5 w-5" strokeWidth={2.15} />
+          <item.icon className="h-5 w-5" strokeWidth={1.8} />
         </span>
         {isExpanded && <span className="truncate text-[0.8rem] font-semibold">{item.label}</span>}
       </button>
@@ -288,7 +274,7 @@ const Sidebar = ({ isOpen, setIsOpen, isMobile }) => {
         {({ isActive }) => (
           <>
             <span className={cn('ka-sidebar-icon-bubble', isActive && 'is-active')}>
-              <item.icon className="h-5 w-5" strokeWidth={2.15} />
+              <item.icon className="h-5 w-5" strokeWidth={1.8} />
               {!isExpanded && item.count !== undefined && <span className="absolute -end-1 -top-1 grid min-h-4 min-w-4 place-items-center rounded-full bg-rose-500 px-0.5 text-[0.6rem] font-bold leading-none text-white">{item.count}</span>}
             </span>
             {isExpanded && <span className="truncate text-[0.8rem] font-semibold">{item.label}</span>}
@@ -314,9 +300,9 @@ const Sidebar = ({ isOpen, setIsOpen, isMobile }) => {
           width: isMobile ? 274 : isExpanded ? 264 : 84,
           x: isMobile && !isOpen ? (dir === 'rtl' ? 320 : -320) : 0
         }}
-        transition={isMobile
-          ? { type: 'tween', duration: 0.18, ease: [0.22, 1, 0.36, 1] }
-          : { type: 'spring', stiffness: 260, damping: 30 }}
+        transition={{ type: 'tween', duration: reduceMotion ? 0 : 0.12, ease: 'easeOut' }}
+        inert={isMobile && !isOpen ? true : undefined}
+        aria-hidden={isMobile && !isOpen ? true : undefined}
         onMouseEnter={() => {
           if (!isMobile && !isOpen) {
             setIsPreviewExpanded(true);
@@ -328,18 +314,17 @@ const Sidebar = ({ isOpen, setIsOpen, isMobile }) => {
           }
         }}
         className={cn(
-          'fixed top-4 z-[70] h-[calc(100vh-4rem)] overflow-hidden will-change-transform',
-          dir === 'rtl' ? 'right-4' : 'left-4',
+          'fixed inset-y-0 z-[70] h-[100dvh] overflow-hidden will-change-transform',
+          dir === 'rtl' ? 'right-0' : 'left-0',
           isMobile && 'ka-sidebar-mobile',
           isMobile && !isOpen && 'pointer-events-none'
         )}
       >
         <div className={cn(
           'app-shell-sidebar-panel ka-sidebar-panel relative flex h-full flex-col rounded-[32px] border',
-          !isMobile && 'backdrop-blur-[24px]',
           isAdmin && 'border-[color:rgb(var(--color-primary-rgb)/0.26)]'
         )}>
-          <div className="relative z-10 px-4 pb-4 pt-5">
+          <div className="relative z-10 shrink-0 px-4 pb-3 pt-5">
             <div className={cn('relative flex items-center', isExpanded ? 'justify-center' : 'justify-center')}>
               <button
                 type="button"
@@ -350,13 +335,14 @@ const Sidebar = ({ isOpen, setIsOpen, isMobile }) => {
                 )}
               >
                 <HeaderBrand
+                  iconSrc={sidebarLogoImage}
                   className={cn(
                     'transition-transform',
                     isExpanded
-                      ? 'scale-[1.18]'
-                      : 'max-w-11 scale-[0.82] justify-center overflow-hidden [&>span:first-child]:hidden'
+                      ? 'justify-center'
+                      : 'max-w-12 justify-center overflow-hidden'
                   )}
-                  iconClassName={isExpanded ? 'scale-[1.14]' : 'scale-[1.04]'}
+                  iconClassName={isExpanded ? 'h-[7.25rem] w-44 scale-100' : 'h-8 w-12 scale-100'}
                   textClassName="shrink-0"
                 />
               </button>
@@ -370,68 +356,84 @@ const Sidebar = ({ isOpen, setIsOpen, isMobile }) => {
                     dir === 'rtl' ? 'left-0' : 'right-0',
                     !isExpanded && 'mx-auto'
                   )}
-                  aria-label={dir === 'rtl' ? 'تصغير الشريط الجانبي' : 'Collapse sidebar'}
+                  aria-label={isOpen ? (dir === 'rtl' ? 'تصغير الشريط الجانبي' : 'Collapse sidebar') : (dir === 'rtl' ? 'توسيع الشريط الجانبي' : 'Expand sidebar')}
+                  aria-expanded={isOpen}
                 >
                   <ChevronLeft className={cn('h-4.5 w-4.5 transition-transform', (dir === 'rtl' ? isExpanded : !isExpanded) && 'rotate-180')} />
                 </button>
               )}
             </div>
-
-            {isExpanded && (
-              <>
-                <div className="mt-4">
-                  <LanguageSwitcher showIcon variant="sidebar" className="ka-sidebar-language w-full justify-center" />
-                </div>
-
-                <div className="ka-sidebar-user-card mt-2 px-2.5 py-2">
-                  <div className="flex items-center gap-2.5">
-                    <div className="relative flex shrink-0 flex-col items-center">
-                      {userId ? (
-                        <button
-                          type="button"
-                          onClick={handleCopyUserId}
-                          className="ka-sidebar-id-chip absolute left-1/2 top-0 z-20 -translate-x-1/2 -translate-y-1/2"
-                          title={copiedUserId ? 'تم نسخ ID المستخدم' : 'اضغط لنسخ ID المستخدم'}
-                          aria-label={copiedUserId ? 'تم نسخ ID المستخدم' : 'نسخ ID المستخدم'}
-                        >
-                          {copiedUserId ? <Check className="h-3 w-3 shrink-0" /> : <Copy className="h-3 w-3 shrink-0" />}
-                          <span className="truncate">{copiedUserId ? 'تم النسخ' : `...${userId.slice(-8)}`}</span>
-                        </button>
-                      ) : null}
-
-                      <div className="relative">
-                        <button
-                          type="button"
-                          onClick={handleOpenMyAccount}
-                          className="ka-sidebar-avatar h-9 w-9"
-                          aria-label={dir === 'rtl' ? 'فتح الحساب' : 'Open account'}
-                        >
-                          <img
-                            src={userAvatar}
-                            alt={userDisplayName}
-                          />
-                        </button>
-                        <span
-                          className="absolute -bottom-0.5 -right-0.5 z-10 h-3.5 w-3.5 rounded-full border-2 border-[color:rgb(var(--color-card-rgb)/0.98)] bg-emerald-400 shadow-[0_0_0_3px_rgb(16_185_129/0.16),0_0_14px_rgb(16_185_129/0.76)]"
-                          role="status"
-                          aria-label={dir === 'rtl' ? 'متصل الآن' : 'Online now'}
-                          title={dir === 'rtl' ? 'متصل الآن' : 'Online now'}
-                        />
-                      </div>
-                    </div>
-
-                    <div className="min-w-0 flex-1">
-                      <div className="truncate text-[0.74rem] font-semibold leading-tight text-[var(--color-text)]">{userDisplayName}</div>
-                      <div className="mt-0.5 truncate text-[0.62rem] font-bold text-[var(--color-primary-hover)]">{userRoleLabel}</div>
-                    </div>
-
-                  </div>
-                </div>
-              </>
-            )}
           </div>
 
-          <div className="relative z-10 flex-1 overflow-y-auto px-3 py-3 scrollbar-hide">
+          <div className="relative z-10 min-h-0 flex-1 overflow-y-auto scrollbar-hide">
+          {isExpanded && (
+            <div className="border-y border-[color:rgb(var(--color-primary-rgb)/0.28)] bg-[color:rgb(var(--color-primary-rgb)/0.04)] px-4 pb-2 pt-3">
+              <div className="ka-sidebar-user-card ka-sidebar-profile">
+                <button
+                  type="button"
+                  onClick={handleLogoutClick}
+                  className={cn(
+                    'ka-sidebar-logout-pill ka-sidebar-profile-logout is-icon-only absolute top-3 z-10',
+                    dir === 'rtl' ? 'left-3' : 'right-3'
+                  )}
+                  aria-label={dir === 'rtl' ? 'تسجيل الخروج' : 'Logout'}
+                  title={dir === 'rtl' ? 'تسجيل الخروج' : 'Logout'}
+                >
+                  <LogOut className="h-4 w-4" />
+                </button>
+                <div className="flex min-w-0 items-center gap-2.5">
+                  <div className="relative shrink-0">
+                    <button
+                      type="button"
+                      onClick={handleOpenMyAccount}
+                      className="ka-sidebar-avatar h-10 w-10"
+                      aria-label={dir === 'rtl' ? 'فتح الحساب' : 'Open account'}
+                    >
+                      <img src={userAvatar} alt="" />
+                    </button>
+                    <img
+                      src={avatarSocialFrame}
+                      alt=""
+                      aria-hidden="true"
+                      className="pointer-events-none absolute left-1/2 top-1/2 z-10 h-[4.25rem] w-[4.25rem] max-w-none -translate-x-1/2 -translate-y-1/2 object-contain"
+                    />
+                    <span
+                      className="absolute -bottom-0.5 -right-0.5 z-20 h-3.5 w-3.5 rounded-full border-2 border-[color:rgb(var(--color-card-rgb)/0.98)] bg-emerald-400"
+                      role="status"
+                      aria-label={dir === 'rtl' ? 'متصل الآن' : 'Online now'}
+                      title={dir === 'rtl' ? 'متصل الآن' : 'Online now'}
+                    />
+                  </div>
+
+                  <div className="min-w-0 flex-1">
+                    <div className={cn(
+                      'truncate text-[0.82rem] font-black leading-tight text-[var(--color-text)]',
+                      dir === 'rtl' ? 'pl-9' : 'pr-9'
+                    )} title={userDisplayName}>{userDisplayName}</div>
+                    <div className="mt-0.5 truncate text-[0.64rem] font-semibold text-[var(--color-text-secondary)]">{userRoleLabel}</div>
+                    {userId ? (
+                      <button
+                        type="button"
+                        onClick={handleCopyUserId}
+                        className="ka-sidebar-id-chip mt-1.5"
+                        title={copiedUserId ? 'تم نسخ ID المستخدم' : 'اضغط لنسخ ID المستخدم'}
+                        aria-label={copiedUserId ? 'تم نسخ ID المستخدم' : 'نسخ ID المستخدم'}
+                      >
+                        {copiedUserId ? <Check className="h-3 w-3 shrink-0" /> : <Copy className="h-3 w-3 shrink-0" />}
+                        <span className="truncate" dir="ltr">{copiedUserId ? 'تم النسخ' : `...${userId.slice(-8)}`}</span>
+                      </button>
+                    ) : null}
+                  </div>
+                </div>
+
+              </div>
+              <div className="mt-2 flex justify-center">
+                <LanguageSwitcher variant="sidebar" className="ka-sidebar-language ka-sidebar-language-compact" />
+              </div>
+            </div>
+          )}
+
+          <div className="px-3 py-3">
             {showWalletCard && (
               <WalletSidebarCard
                 className="mb-3"
@@ -440,50 +442,25 @@ const Sidebar = ({ isOpen, setIsOpen, isMobile }) => {
               />
             )}
 
-            <div className="space-y-3">
-              {sidebarSections.map((section, sectionIndex) => (
-                <div key={section.key} className="space-y-1.5">
-                  {isExpanded ? (
-                    <button
-                      type="button"
-                      onClick={() => toggleSidebarSection(section.key)}
-                      className="flex w-full items-center gap-2 rounded-xl px-2 pb-1 pt-1 text-[0.68rem] font-black text-[var(--color-muted)] transition-colors hover:bg-[color:rgb(var(--color-primary-rgb)/0.08)] hover:text-[var(--color-text)]"
-                      aria-expanded={isSectionOpen(section.key)}
-                      aria-controls={`sidebar-section-${section.key}`}
-                    >
-                      <span className="shrink-0">{section.label}</span>
-                      <span className="h-px flex-1 bg-[color:rgb(var(--color-border-rgb)/0.42)]" />
-                      <ChevronDown
-                        className={cn(
-                          'h-3.5 w-3.5 shrink-0 transition-transform',
-                          !isSectionOpen(section.key) && (dir === 'rtl' ? 'rotate-90' : '-rotate-90')
-                        )}
-                      />
-                    </button>
-                  ) : (
-                    sectionIndex > 0 && <div className="mx-auto my-2 h-px w-7 bg-[color:rgb(var(--color-border-rgb)/0.5)]" />
-                  )}
-                  {isSectionOpen(section.key) && (
-                    <div id={`sidebar-section-${section.key}`} className="space-y-1.5">
-                      {section.items.map(renderNavItem)}
-                    </div>
-                  )}
-                </div>
-              ))}
+            <div className="space-y-1.5">
+              {visibleNavItems.map(renderNavItem)}
             </div>
           </div>
+          </div>
 
-          <div className={cn('relative z-10 px-4 pb-5 pt-1', !isExpanded && 'px-3')}>
+          {!isExpanded && <div className="relative z-10 px-3 pb-5 pt-1">
             <button
               type="button"
               onClick={handleLogoutClick}
-              className={cn('ka-sidebar-logout-pill w-full', !isExpanded && 'is-icon-only')}
+              className="ka-sidebar-logout-pill is-icon-only"
               aria-label={dir === 'rtl' ? 'تسجيل الخروج' : 'Logout'}
             >
               <LogOut className="h-5 w-5" />
-              {isExpanded && <span>{dir === 'rtl' ? 'تسجيل الخروج' : 'Logout'}</span>}
             </button>
-          </div>
+          </div>}
+          {isExpanded && (
+            <SidebarSocialFooter isArabic={dir === 'rtl'} />
+          )}
         </div>
       </motion.aside>
       <ConfirmDialog

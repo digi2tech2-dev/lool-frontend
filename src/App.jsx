@@ -6,7 +6,6 @@ import CustomerBottomNav from './components/layout/CustomerBottomNav';
 import AdminBottomNav from './components/layout/AdminBottomNav';
 import PageTransition from './components/app/PageTransition';
 import SessionBootstrap from './components/app/SessionBootstrap';
-import GuestIntro from './components/app/GuestIntro';
 import NativePlatformBootstrap from './components/app/NativePlatformBootstrap';
 import NativeAppUpdateGate from './components/native/NativeAppUpdateGate';
 import RouteErrorBoundary from './components/app/RouteErrorBoundary';
@@ -482,7 +481,6 @@ function App() {
             <CustomerBottomNav />
             <AdminBottomNav />
             <FloatingWhatsApp />
-            <GuestIntro />
           </BrowserRouter>
         </ToastProvider>
       </LanguageProvider>

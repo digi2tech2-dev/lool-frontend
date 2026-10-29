@@ -16,7 +16,8 @@ import useSystemStore from "../store/useSystemStore";
 import { resolveImageUrl } from "../utils/imageUrl";
 import { formatWalletNumber } from "../utils/storefront";
 import { getActivePaymentGroups } from "../utils/paymentSettings";
-import amoelmoderImg from "../assets/amoelmoder.jpeg";
+import walletHeroImg from "../assets/lool-sidebar-logo.webp";
+import vodafoneRobotImg from "../assets/lool-welcome-robot.webp";
 
 const getMethodIcon = (method) => {
   const token = `${method?.type || ""} ${method?.id || ""} ${method?.name || ""}`.toLowerCase();
@@ -27,9 +28,9 @@ const getMethodIcon = (method) => {
 
 /* ─── Currency badge colours ─── */
 const CURRENCY_COLORS = {
-  EGP: { bg: "from-[#8b1c80] via-[#a51c93] to-[#5f195d]", badge: "bg-[#f1b979]/15 text-[#fff0c9] border-[#f1b979]/35" },
-  USD: { bg: "from-[#5f195d] via-[#8b1c80] to-[#a51c93]", badge: "bg-[#f18bdd]/15 text-[#ffd8f5] border-[#f18bdd]/35" },
-  MAD: { bg: "from-[#bd7041] via-[#a51c93] to-[#76106b]", badge: "bg-[#f1b979]/15 text-[#fff0c9] border-[#f1b979]/35" },
+  EGP: { bg: "from-[#6930c6] via-[#7134ce] to-[#5f195d]", badge: "bg-[#86e4ff]/15 text-[#fff0c9] border-[#86e4ff]/35" },
+  USD: { bg: "from-[#5f195d] via-[#6930c6] to-[#7134ce]", badge: "bg-[#d9a0ff]/15 text-[#ffd8f5] border-[#d9a0ff]/35" },
+  MAD: { bg: "from-[#1485bf] via-[#7134ce] to-[#37208c]", badge: "bg-[#86e4ff]/15 text-[#fff0c9] border-[#86e4ff]/35" },
 };
 const getCurrencyStyle = (currency) => CURRENCY_COLORS[String(currency || "").toUpperCase()] || { bg: "from-gray-700 to-gray-900", badge: "bg-white/10 text-white/70 border-white/20" };
 
@@ -38,6 +39,7 @@ const PaymentMethodButton = ({ method, groupName, groupCurrency, onSelect, isRTL
   const [imageFailed, setImageFailed] = useState(false);
   const Icon = getMethodIcon(method);
   const showImage = Boolean(method?.image) && !imageFailed;
+  const isVodafoneCash = [method?.id, method?.name].some((value) => /vodafone|فودافون/i.test(String(value || "")));
   const note = method.description || (method.type === "mobile_wallet" ? (isRTL ? "محفظة إلكترونية" : "Mobile wallet") : (isRTL ? "وسيلة دفع آمنة" : "Secure payment method"));
   const currStyle = getCurrencyStyle(groupCurrency);
 
@@ -46,7 +48,7 @@ const PaymentMethodButton = ({ method, groupName, groupCurrency, onSelect, isRTL
       type="button"
       onClick={() => onSelect(method)}
       className="group relative flex flex-col overflow-hidden rounded-2xl text-white shadow-[0_12px_40px_-16px_rgba(0,0,0,0.7)] transition-all duration-200 hover:-translate-y-1 hover:shadow-[0_20px_48px_-16px_rgba(0,0,0,0.85)] focus:outline-none"
-      style={{ background: "radial-gradient(circle at 15% 8%,rgba(241,185,121,0.24),transparent 28%), radial-gradient(circle at 90% 94%,rgba(217,54,194,0.26),transparent 38%), linear-gradient(145deg,#3a0b38 0%,#8b1c80 42%,#a51c93 68%,#5f195d 100%)", border: "2px solid rgba(241,185,121,0.42)" }}
+      style={{ background: "radial-gradient(circle at 15% 8%,rgba(241,185,121,0.24),transparent 28%), radial-gradient(circle at 90% 94%,rgba(217,54,194,0.26),transparent 38%), linear-gradient(145deg,#3a0b38 0%,#6930c6 42%,#7134ce 68%,#5f195d 100%)", border: "2px solid rgba(241,185,121,0.42)" }}
     >
       {/* sparkle dots */}
       <span className="pointer-events-none absolute inset-0" style={{ backgroundImage: "radial-gradient(circle,rgba(255,255,255,0.18) 1px,transparent 1px)", backgroundSize: "18px 18px", opacity: 0.4 }} />
@@ -54,27 +56,30 @@ const PaymentMethodButton = ({ method, groupName, groupCurrency, onSelect, isRTL
       {/* header */}
       <div className="relative flex items-center justify-between px-2.5 pt-2.5 pb-1">
         <span className="flex items-center gap-1 text-[9px] font-black text-[#fff0c9] drop-shadow"><span>💰</span><span>{isRTL ? "اشحن رصيدك" : "Top-up"}</span></span>
-        <span className="rounded-full border border-[#f1b979]/30 bg-[#f1b979]/15 px-2 py-0.5 text-[8px] font-black text-[#fff0c9] backdrop-blur">Recharge</span>
+        <span className="rounded-full border border-[#86e4ff]/30 bg-[#86e4ff]/15 px-2 py-0.5 text-[8px] font-black text-[#fff0c9] backdrop-blur">Recharge</span>
       </div>
 
       {/* logo */}
-      <div className="relative mx-2.5 mb-0 mt-1 flex h-[86px] items-center justify-center overflow-hidden rounded-xl bg-white shadow-[inset_0_0_0_1px_rgba(0,0,0,0.08)]">
+      <div className={`relative mx-2.5 mb-0 mt-1 flex h-[86px] items-center justify-center overflow-hidden rounded-xl shadow-[inset_0_0_0_1px_rgba(0,0,0,0.08)] ${isVodafoneCash ? "bg-[linear-gradient(135deg,#f4f0ff,#e5f5ff)]" : "bg-white"}`}>
         {showImage ? (
-          <img src={resolveImageUrl(method.image)} alt="" className="h-full w-full object-contain p-2" loading="lazy" decoding="async" onError={() => setImageFailed(true)} />
+          <img src={resolveImageUrl(method.image)} alt="" className={`h-full object-contain p-2 ${isVodafoneCash ? "w-[62%] me-auto" : "w-full"}`} loading="lazy" decoding="async" onError={() => setImageFailed(true)} />
         ) : (
-          <Icon className="h-9 w-9 text-gray-400" />
+          <Icon className={`h-9 w-9 text-gray-400 ${isVodafoneCash ? "me-auto ms-5" : ""}`} />
         )}
+        {isVodafoneCash ? (
+          <img src={vodafoneRobotImg} alt="" aria-hidden="true" className="pointer-events-none absolute inset-y-0 end-1 h-full w-[42%] object-contain object-bottom" loading="lazy" decoding="async" />
+        ) : null}
       </div>
 
       {/* coins */}
       <div className="px-2.5 pt-1 text-center text-sm leading-none select-none">🪙🪙🪙🪙</div>
 
       {/* name badge */}
-      <div className="mx-2.5 mt-1 rounded-lg bg-gradient-to-r from-[#76106b] via-[#d936c2] to-[#bd7041] py-1 text-center text-[11px] font-black text-white shadow-[0_4px_14px_-6px_rgba(49,16,47,0.72)]">{method.name}</div>
+      <div className="mx-2.5 mt-1 rounded-lg bg-gradient-to-r from-[#37208c] via-[#d936c2] to-[#1485bf] py-1 text-center text-[11px] font-black text-white shadow-[0_4px_14px_-6px_rgba(49,16,47,0.72)]">{method.name}</div>
 
       {/* note section */}
-      <div className="mx-2.5 mt-1.5 overflow-hidden rounded-lg border border-[#f18bdd]/25 bg-[#5f195d]/30 backdrop-blur">
-        <div className="bg-[#f1b979]/16 px-2 py-0.5 text-center text-[8px] font-black text-[#fff0c9]">{isRTL ? "ملاحظة" : "Note"}</div>
+      <div className="mx-2.5 mt-1.5 overflow-hidden rounded-lg border border-[#d9a0ff]/25 bg-[#5f195d]/30 backdrop-blur">
+        <div className="bg-[#86e4ff]/16 px-2 py-0.5 text-center text-[8px] font-black text-[#fff0c9]">{isRTL ? "ملاحظة" : "Note"}</div>
         <div className="px-2 py-1 text-center text-[8px] font-semibold leading-4 text-white/85">{note}</div>
       </div>
 
@@ -141,10 +146,10 @@ const AddBalance = ({ embedded = false, automaticAmount = null, automaticCurrenc
     <div className={embedded ? "w-full min-w-0 overflow-x-hidden pb-1" : "min-h-full pb-6"} dir={dir}>
       <div className="mx-auto w-full min-w-0 max-w-3xl space-y-3 px-1 sm:space-y-4 sm:px-2">
 
-        {/* ── Hero image ── */}
-        <section className="relative isolate overflow-hidden rounded-[1.55rem] shadow-[0_30px_70px_-38px_rgba(0,0,0,0.9)]">
-          <img src={amoelmoderImg} alt="عمو المدير" className="h-36 w-full object-cover sm:h-44" style={{ objectPosition: "top center" }} />
-          <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/30 to-transparent" />
+        {/* ── Wallet hero ── */}
+        <section className="relative isolate min-h-[17rem] overflow-hidden rounded-[1.55rem] bg-[radial-gradient(circle_at_50%_15%,#321264,#140c37_55%,#080717)] shadow-[0_30px_70px_-38px_rgba(0,0,0,0.9)] sm:min-h-[18rem]">
+          <img src={walletHeroImg} alt="" aria-hidden="true" className="pointer-events-none absolute inset-0 h-full w-full object-contain object-top" />
+          <div className="pointer-events-none absolute inset-0 bg-[linear-gradient(to_top,rgba(6,5,20,0.97)_0%,rgba(6,5,20,0.86)_30%,rgba(6,5,20,0.28)_64%,transparent_100%)]" />
 
           {/* wallet badge – fixed top-left */}
           <div className="absolute top-3 left-3">

@@ -74,7 +74,7 @@ const Layout = ({ children = null }) => {
     location.pathname === '/wallet/add-balance'
     || location.pathname.startsWith('/wallet/payment-details/')
   );
-  const shellOffset = !isMobile ? (isSidebarOpen ? '318px' : '112px') : '0';
+  const shellOffset = !isMobile ? (isSidebarOpen ? '264px' : '84px') : '0';
   const showCopyrightFooter = !isAdmin || isHomePage;
   const fixedShell = (
     <>
@@ -85,11 +85,11 @@ const Layout = ({ children = null }) => {
       />
 
       <div
-        className="fixed z-40 max-w-full transition-all duration-300"
+        className="fixed z-40 max-w-full transition-all duration-150 motion-reduce:transition-none"
         style={{
-          top: isMobile ? 'max(0.75rem, env(safe-area-inset-top))' : '1rem',
-          [dir === 'rtl' ? 'right' : 'left']: isMobile ? '12px' : shellOffset,
-          [dir === 'rtl' ? 'left' : 'right']: isMobile ? '12px' : '16px',
+          top: 0,
+          [dir === 'rtl' ? 'right' : 'left']: isMobile ? '0' : shellOffset,
+          [dir === 'rtl' ? 'left' : 'right']: '0',
         }}
       >
         <Header toggleSidebar={() => setIsSidebarOpen(!isSidebarOpen)} />
@@ -118,7 +118,7 @@ const Layout = ({ children = null }) => {
       {typeof document !== 'undefined' ? createPortal(fixedShell, document.body) : fixedShell}
 
       <div
-        className="min-h-screen min-w-0 max-w-full transition-all duration-300"
+        className="min-h-screen min-w-0 max-w-full transition-all duration-150 motion-reduce:transition-none"
         style={{ [dir === 'rtl' ? 'marginRight' : 'marginLeft']: shellOffset }}
       >
         <div className="h-[4.9rem] sm:h-[6.5rem]" aria-hidden="true" />

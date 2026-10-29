@@ -1,0 +1,785 @@
+@import url("https://fonts.googleapis.com/css2?family=Alexandria:wght@400;500;600;700;800&display=swap");
+
+/* Oscar purchase window layout, scoped to El-jasser's existing purchase flow. */
+.purchase-dialog-overlay:has(.purchase-dialog-card--oscar),
+.purchase-dialog-overlay:has(.purchase-dialog-card--oscar-success) {
+  font-family: "Alexandria", "Poppins", ui-sans-serif, system-ui, sans-serif;
+  padding: 0.7rem;
+}
+
+.purchase-dialog-overlay:has(.purchase-dialog-card--oscar) .purchase-dialog-backdrop,
+.purchase-dialog-overlay:has(.purchase-dialog-card--oscar-success) .purchase-dialog-backdrop {
+  background: rgb(0 0 0 / 0.7);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+}
+
+.purchase-dialog-overlay .purchase-dialog-card--oscar,
+.purchase-dialog-overlay .purchase-dialog-card--oscar-success {
+  --oscar-blue: #174a99;
+  --oscar-cyan: #79a9e0;
+  --oscar-purple: #d9ad56;
+  --oscar-pink: #a36b1b;
+  position: relative;
+  width: min(100%, 24.75rem) !important;
+  max-width: 24.75rem !important;
+  max-height: min(95dvh, 52rem) !important;
+  overflow-x: hidden !important;
+  overflow-y: auto !important;
+  padding: 1.08rem 1rem 0.95rem !important;
+  border: 1px solid transparent !important;
+  border-radius: 1.25rem !important;
+  color: #07152e !important;
+  background:
+    radial-gradient(18rem 10rem at 8% 0%, rgb(23 74 153 / 0.08), transparent 68%) padding-box,
+    radial-gradient(18rem 11rem at 94% 4%, rgb(217 173 86 / 0.055), transparent 70%) padding-box,
+    linear-gradient(180deg, rgb(255 255 255 / 0.96), rgb(246 249 255 / 0.97)) padding-box,
+    linear-gradient(125deg, rgb(121 169 224 / 0.7), rgb(217 173 86 / 0.58) 58%, rgb(163 107 27 / 0.46)) border-box !important;
+  box-shadow: inset 0 1px 0 rgb(255 255 255 / 0.96), 0 0 0.45rem rgb(23 74 153 / 0.12), 0 1.35rem 3rem -2.1rem rgb(15 23 42 / 0.34) !important;
+  scrollbar-width: thin;
+}
+
+.purchase-dialog-overlay .purchase-dialog-card--oscar::before,
+.purchase-dialog-overlay .purchase-dialog-card--oscar::after {
+  display: none !important;
+}
+
+.purchase-dialog-card--oscar .purchase-dialog-grid {
+  display: none;
+}
+
+.purchase-oscar-neon-frame {
+  position: absolute;
+  inset: 0;
+  z-index: 12;
+  box-sizing: border-box;
+  overflow: hidden;
+  padding: 2px;
+  border-radius: inherit;
+  pointer-events: none;
+  filter: drop-shadow(0 0 0.28rem rgb(34 211 238 / 0.5)) drop-shadow(0 0 0.42rem rgb(217 173 86 / 0.35));
+  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+  mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  mask-composite: exclude;
+}
+
+.purchase-oscar-neon-frame::before {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 180%;
+  aspect-ratio: 1;
+  content: "";
+  background: conic-gradient(from 0deg, transparent 0 326deg, #79a9e0 335deg, #4271a9 341deg, #d9ad56 348deg, #f5db98 354deg, transparent 360deg);
+  animation: purchase-oscar-border-orbit 8s linear infinite;
+}
+
+@keyframes purchase-oscar-border-orbit {
+  from { transform: translate(-50%, -50%) rotate(0deg); }
+  to { transform: translate(-50%, -50%) rotate(360deg); }
+}
+
+.purchase-dialog-overlay .purchase-dialog-card--oscar .purchase-dialog-close {
+  top: 1.08rem !important;
+  right: auto !important;
+  left: 1rem !important;
+  z-index: 20;
+  width: 2.55rem !important;
+  height: 2.55rem !important;
+  border: 1px solid transparent !important;
+  border-radius: 50% !important;
+  color: #fff !important;
+  background: linear-gradient(145deg, #07152e, #d9ad56 58%, #a36b1b) padding-box,
+    linear-gradient(125deg, #79a9e0, #174a99, #d9ad56, #a36b1b) border-box !important;
+  box-shadow: 0 0 0.5rem rgb(23 74 153 / 0.4), 0 0 1rem rgb(217 173 86 / 0.28) !important;
+}
+
+.purchase-dialog-overlay[dir="ltr"] .purchase-dialog-card--oscar .purchase-dialog-close {
+  right: 1rem !important;
+  left: auto !important;
+}
+
+.purchase-oscar-header {
+  position: relative;
+  display: grid;
+  min-height: 3.65rem;
+  place-items: start center;
+}
+
+.purchase-oscar-bag {
+  position: absolute;
+  top: 0;
+  right: 0;
+  display: grid;
+  width: 2.55rem;
+  height: 2.55rem;
+  place-items: center;
+  border: 1px solid rgb(217 173 86 / 0.4);
+  border-radius: 0.85rem;
+  color: #d9ad56;
+  background: rgb(255 255 255 / 0.9);
+  box-shadow: 0 0.35rem 1rem -0.6rem rgb(217 173 86 / 0.5);
+}
+
+.purchase-dialog-overlay[dir="ltr"] .purchase-oscar-bag {
+  right: auto;
+  left: 0;
+}
+
+.purchase-oscar-title-block {
+  display: grid;
+  justify-items: center;
+  max-width: calc(100% - 6.2rem);
+  min-width: 0;
+  padding-top: 0.2rem;
+  text-align: center;
+}
+
+.purchase-oscar-title-block h2 {
+  display: -webkit-box;
+  overflow: hidden;
+  margin: 0;
+  color: #07152e !important;
+  font-size: 1.22rem !important;
+  font-weight: 800 !important;
+  line-height: 1.2;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+}
+
+.purchase-oscar-title-block p {
+  overflow: hidden;
+  max-width: 100%;
+  margin: 0.2rem 0 0;
+  color: #64748b;
+  font-size: 0.69rem;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.purchase-oscar-status {
+  margin-top: 0.18rem;
+  color: #059669;
+  font-size: 0.65rem;
+  font-weight: 700;
+}
+
+.purchase-oscar-status.is-unavailable { color: #dc2626; }
+
+.purchase-oscar-title-line {
+  width: 4.1rem;
+  height: 0.14rem;
+  margin-top: 0.35rem;
+  border-radius: 999px;
+  background: linear-gradient(90deg, var(--oscar-blue), var(--oscar-purple), var(--oscar-pink));
+  box-shadow: 0 0 0.55rem rgb(217 173 86 / 0.3);
+}
+
+.purchase-dialog-card--oscar .purchase-oscar-showcase .purchase-dialog-favorite {
+  position: absolute !important;
+  top: 0.72rem !important;
+  right: 0.72rem !important;
+  left: auto !important;
+  z-index: 4;
+  display: grid;
+  width: 2.3rem !important;
+  height: 2.3rem !important;
+  place-items: center;
+  transform: none !important;
+  color: var(--brand-gold-light) !important;
+  border: 1px solid var(--brand-gold) !important;
+  border-radius: 0.78rem !important;
+  background: var(--brand-action) !important;
+  box-shadow: 0 0.35rem 0.85rem -0.45rem rgb(var(--color-primary-rgb) / 0.65) !important;
+}
+
+.purchase-dialog-card--oscar .purchase-oscar-showcase .purchase-dialog-favorite:hover,
+.purchase-dialog-card--oscar .purchase-oscar-showcase .purchase-dialog-favorite:focus-visible {
+  transform: scale(1.06) !important;
+  outline: 2px solid var(--brand-gold-light);
+  outline-offset: 2px;
+}
+
+.purchase-dialog-card--oscar .purchase-oscar-showcase .purchase-dialog-favorite.is-favorite {
+  color: var(--brand-gold-light) !important;
+  background: linear-gradient(145deg, var(--brand-blue), var(--brand-navy)) !important;
+}
+
+.purchase-dialog-overlay[dir="ltr"] .purchase-dialog-card--oscar .purchase-oscar-showcase .purchase-dialog-favorite {
+  right: auto !important;
+  left: 0.72rem !important;
+}
+
+.purchase-oscar-description {
+  display: -webkit-box;
+  overflow: hidden;
+  width: min(100%, 21rem);
+  margin: 0 auto 0.65rem;
+  color: rgb(61 63 109 / 0.72);
+  font-size: 0.78rem;
+  font-weight: 500;
+  line-height: 1.42;
+  text-align: center;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+}
+
+.purchase-dialog-card--oscar .purchase-oscar-account {
+  margin: 0 0 0.58rem !important;
+}
+
+.purchase-dialog-card--oscar .purchase-dialog-copy-card,
+.purchase-dialog-card--oscar .purchase-oscar-info,
+.purchase-dialog-card--oscar .purchase-dialog-field,
+.purchase-dialog-card--oscar .purchase-oscar-showcase {
+  border: 1px solid transparent !important;
+  border-radius: 1rem !important;
+  background:
+    linear-gradient(180deg, rgb(255 255 255 / 0.78), rgb(247 250 255 / 0.9)) padding-box,
+    linear-gradient(120deg, rgb(121 169 224 / 0.58), rgb(217 173 86 / 0.48) 58%, rgb(163 107 27 / 0.38)) border-box !important;
+  box-shadow: inset 0 1px 0 rgb(255 255 255 / 0.86), 0 0.75rem 1.55rem -1.25rem rgb(30 64 175 / 0.2) !important;
+}
+
+.purchase-dialog-card--oscar .purchase-dialog-copy-card { padding: 0.65rem 0.75rem !important; }
+.purchase-dialog-card--oscar .purchase-dialog-copy-card svg { color: var(--oscar-purple) !important; }
+.purchase-dialog-card--oscar .purchase-dialog-copy-card span { color: #64748b !important; }
+.purchase-dialog-card--oscar .purchase-dialog-copy-card strong { color: #07152e !important; }
+
+.purchase-dialog-card--oscar .purchase-oscar-info {
+  position: relative;
+  display: grid !important;
+  direction: ltr;
+  grid-template-areas: "total qty";
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) !important;
+  gap: 0 !important;
+  min-height: 5.4rem !important;
+  margin-top: 0 !important;
+  padding: 0.72rem 0.68rem !important;
+  overflow: visible !important;
+}
+
+.purchase-dialog-card--oscar .ppd-gold-qty,
+.purchase-dialog-card--oscar .ppd-gold-total {
+  display: grid !important;
+  direction: rtl;
+  align-content: center;
+  justify-items: stretch;
+  gap: 0.35rem !important;
+  min-width: 0;
+  padding: 0 0.42rem !important;
+  text-align: start !important;
+}
+
+.purchase-dialog-card--oscar .ppd-gold-qty { grid-area: qty; }
+.purchase-dialog-card--oscar .ppd-gold-total { grid-area: total; }
+.purchase-dialog-card--oscar .ppd-gold-divider {
+  position: absolute;
+  top: 0.8rem;
+  bottom: 0.8rem;
+  left: 50%;
+  width: 1px;
+  height: auto;
+  background: linear-gradient(transparent, rgb(217 173 86 / 0.28), transparent) !important;
+}
+
+.purchase-oscar-cell-heading,
+.purchase-dialog-card--oscar .purchase-dialog-field-label {
+  display: flex !important;
+  align-items: center;
+  gap: 0.42rem;
+}
+
+.purchase-oscar-mini-icon {
+  display: grid !important;
+  width: 1.65rem;
+  height: 1.65rem;
+  flex: 0 0 1.65rem;
+  place-items: center;
+  border-radius: 0.58rem;
+  color: #fff !important;
+  background: linear-gradient(135deg, #174a99, #79a9e0 18%, #d9ad56 58%, #a36b1b) !important;
+  box-shadow: 0 0 0.45rem rgb(23 74 153 / 0.3) !important;
+}
+
+.purchase-dialog-card--oscar .ppd-gold-label,
+.purchase-dialog-card--oscar .purchase-dialog-field > span,
+.purchase-dialog-card--oscar .purchase-dialog-field-label {
+  color: #07152e !important;
+  font-size: 0.86rem !important;
+  font-weight: 700 !important;
+}
+
+.purchase-dialog-card--oscar .ppd-gold-price {
+  min-width: 0;
+  color: #174a99 !important;
+  font-size: 1.4rem !important;
+  font-weight: 800 !important;
+  line-height: 1.2;
+  text-align: center;
+  overflow-wrap: anywhere;
+  white-space: normal !important;
+}
+
+.purchase-dialog-card--oscar .ppd-gold-usd,
+.purchase-dialog-card--oscar .ppd-gold-range {
+  justify-self: center;
+  color: #64748b !important;
+  font-size: 0.56rem !important;
+}
+
+.purchase-dialog-card--oscar .purchase-oscar-balance-warning {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.3rem;
+  margin: 0.2rem 0 0.35rem;
+  color: #dc2626 !important;
+  font-size: 0.72rem;
+  font-weight: 750;
+  text-align: center;
+}
+
+.purchase-dialog-card--oscar .purchase-oscar-balance-warning strong {
+  color: inherit;
+  font-weight: 900;
+  white-space: nowrap;
+}
+
+:root.dark .purchase-dialog-card--oscar .purchase-oscar-balance-warning {
+  color: #fca5a5 !important;
+}
+
+.purchase-dialog-card--oscar .ppd-gold-label {
+  text-transform: none !important;
+  letter-spacing: 0 !important;
+}
+
+.purchase-dialog-card--oscar .ppd-gold-usd {
+  border-color: rgb(217 173 86 / 0.25) !important;
+  background: rgb(217 173 86 / 0.07) !important;
+}
+
+.purchase-dialog-card--oscar .ppd-gold-input,
+.purchase-dialog-card--oscar .purchase-dialog-field input:not([type="file"]),
+.purchase-dialog-card--oscar .purchase-dialog-field select {
+  width: 100%;
+  max-width: none !important;
+  min-height: 2.35rem !important;
+  padding: 0 0.72rem !important;
+  border: 1px solid transparent !important;
+  border-radius: 0.82rem !important;
+  outline: none;
+  color: #07152e !important;
+  background: linear-gradient(180deg, #fff, #f8faff) padding-box,
+    linear-gradient(120deg, rgb(121 169 224 / 0.62), rgb(217 173 86 / 0.5) 62%, rgb(163 107 27 / 0.4)) border-box !important;
+  box-shadow: 0 0 0.38rem rgb(23 74 153 / 0.12) !important;
+  animation: none !important;
+  font-size: 0.82rem !important;
+  font-weight: 500 !important;
+  text-align: center;
+}
+
+.purchase-dialog-card--oscar input::placeholder { color: rgb(100 116 139 / 0.68) !important; }
+.purchase-dialog-card--oscar :is(input, select):focus-visible {
+  outline: 2px solid rgb(121 169 224 / 0.55) !important;
+  outline-offset: 2px;
+}
+
+.purchase-dialog-card--oscar .purchase-dialog-field {
+  display: grid !important;
+  gap: 0.52rem !important;
+  margin-top: 0.58rem !important;
+  padding: 0.72rem 0.68rem 0.76rem !important;
+}
+
+.purchase-dialog-card--oscar .purchase-dialog-field > span:not(.purchase-dialog-field-label) {
+  display: flex !important;
+  align-items: center;
+}
+
+.purchase-dialog-card--oscar .purchase-dialog-input-shell { background: transparent !important; border: 0 !important; box-shadow: none !important; }
+.purchase-dialog-card--oscar .purchase-dialog-input-shell input { padding-inline: 0.72rem !important; }
+.purchase-dialog-card--oscar .purchase-dialog-input-badge,
+.purchase-dialog-card--oscar .purchase-dialog-id-mark { display: none !important; }
+.purchase-dialog-card--oscar .purchase-dialog-field input[type="file"] {
+  min-height: 2.75rem;
+  padding: 0.45rem;
+  border: 1px solid rgb(217 173 86 / 0.5) !important;
+  border-radius: 0.82rem !important;
+  color: #07152e !important;
+  background: #f8faff !important;
+  animation: none !important;
+}
+
+.purchase-dialog-card--oscar .purchase-dialog-field button {
+  min-height: 2.35rem;
+  border-color: rgb(217 173 86 / 0.4) !important;
+  border-radius: 0.82rem;
+  color: #8a5c12 !important;
+  background: rgb(217 173 86 / 0.08) !important;
+}
+
+.purchase-dialog-card--oscar .purchase-dialog-field .text-indigo-200 { color: #8a5c12 !important; }
+
+.purchase-dialog-card--oscar .purchase-dialog-actions {
+  display: grid !important;
+  direction: ltr;
+  grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+  grid-template-areas: "cancel buy";
+  width: min(100%, 20.5rem);
+  gap: 0.58rem !important;
+  margin: 0.7rem auto 0 !important;
+}
+
+.purchase-dialog-card--oscar .purchase-dialog-actions::before { display: none !important; }
+.purchase-dialog-card--oscar .purchase-dialog-primary { grid-area: buy; }
+.purchase-dialog-card--oscar .purchase-dialog-secondary { grid-area: cancel; }
+.purchase-dialog-card--oscar .purchase-dialog-primary,
+.purchase-dialog-card--oscar .purchase-dialog-secondary {
+  display: inline-flex;
+  min-height: 2.5rem !important;
+  align-items: center;
+  justify-content: center;
+  gap: 0.38rem;
+  padding: 0 0.7rem !important;
+  border: 1px solid transparent !important;
+  border-radius: 0.82rem !important;
+  font-size: 0.84rem !important;
+  font-weight: 800 !important;
+  line-height: 1.1;
+  text-align: center;
+}
+
+.purchase-dialog-card--oscar .purchase-dialog-primary:not(:disabled) {
+  color: #fff !important;
+  background: linear-gradient(110deg, #174a99, #79a9e0 18%, #d9ad56 62%, #a36b1b) !important;
+  box-shadow: 0 0 0.5rem rgb(23 74 153 / 0.22), 0 0 0.82rem rgb(217 173 86 / 0.18) !important;
+}
+
+.purchase-dialog-card--oscar .purchase-dialog-secondary {
+  color: #07152e !important;
+  background: linear-gradient(180deg, #fff, #f7f8ff) padding-box,
+    linear-gradient(110deg, #174a99, #79a9e0 18%, #d9ad56 62%, #a36b1b) border-box !important;
+}
+
+.purchase-dialog-card--oscar .purchase-dialog-primary:disabled { opacity: 0.5; }
+
+.purchase-dialog-card--oscar .purchase-oscar-showcase {
+  position: relative;
+  display: grid;
+  min-height: 10.9rem;
+  place-items: center;
+  margin: 0.72rem 0 0 !important;
+  padding: 0.7rem !important;
+}
+
+.purchase-oscar-stage {
+  position: relative;
+  display: grid;
+  width: 9.75rem;
+  height: 8.95rem;
+  place-items: center;
+}
+
+.purchase-oscar-ring-glow,
+.purchase-oscar-energy-ring,
+.purchase-oscar-ring-core,
+.purchase-oscar-display-base {
+  position: absolute;
+  display: block;
+  pointer-events: none;
+}
+
+.purchase-oscar-ring-glow {
+  width: 8.45rem;
+  height: 8.45rem;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgb(121 169 224 / 0.22), rgb(217 173 86 / 0.1) 55%, transparent 72%);
+  filter: blur(0.42rem);
+}
+
+.purchase-oscar-energy-ring {
+  width: 7.35rem;
+  height: 7.35rem;
+  border: 0.26rem solid transparent;
+  border-radius: 50%;
+  background: linear-gradient(rgb(255 255 255 / 0.55), rgb(255 255 255 / 0.55)) padding-box,
+    conic-gradient(from 218deg, #174a99, #79a9e0 18%, #d9ad56 54%, #f5db98 76%, #174a99) border-box;
+  box-shadow: 0 0 0.48rem rgb(23 74 153 / 0.3), 0 0 1rem rgb(217 173 86 / 0.2);
+}
+
+.purchase-oscar-ring-core {
+  width: 4.9rem;
+  height: 4.9rem;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgb(121 169 224 / 0.24), rgb(217 173 86 / 0.12) 48%, transparent 76%);
+}
+
+.purchase-oscar-display-base {
+  bottom: 0.5rem;
+  width: 8.35rem;
+  height: 1.78rem;
+  border-radius: 50%;
+  background: linear-gradient(100deg, #174a99, #d9ad56 48%, #f5db98);
+  box-shadow: 0 0 0.5rem rgb(23 74 153 / 0.34), 0 0 0.8rem rgb(217 173 86 / 0.28);
+  transform: perspective(5rem) rotateX(58deg);
+}
+
+.purchase-oscar-product-image {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  width: 7.25rem;
+  height: 7.25rem;
+  place-items: center;
+}
+
+.purchase-oscar-product-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  filter: drop-shadow(0 0.45rem 0.7rem rgb(0 0 0 / 0.2)) drop-shadow(0 0 0.8rem rgb(121 169 224 / 0.25));
+}
+
+.purchase-dialog-overlay .purchase-dialog-card--oscar-success { width: min(94vw, 28rem) !important; max-width: 28rem !important; padding: 1.35rem !important; }
+.purchase-dialog-card--oscar-success .purchase-dialog-success-icon {
+  color: #fff !important;
+  background: linear-gradient(135deg, #174a99, #d9ad56 60%, #a36b1b) !important;
+  box-shadow: 0 0 1rem rgb(23 74 153 / 0.3), 0 0 1.5rem rgb(217 173 86 / 0.25) !important;
+}
+.purchase-dialog-card--oscar-success .purchase-dialog-success::before,
+.purchase-dialog-card--oscar-success .purchase-dialog-success::after { background: linear-gradient(90deg, transparent, #79a9e0, #d9ad56, #a36b1b, transparent) !important; }
+.purchase-dialog-card--oscar-success .purchase-dialog-success h2 { color: #07152e !important; }
+.purchase-dialog-card--oscar-success .purchase-dialog-summary-cell { border-color: rgb(217 173 86 / 0.35); background: #f8faff; }
+.purchase-dialog-card--oscar-success .purchase-dialog-summary-cell > span { color: #d9ad56; background: rgb(217 173 86 / 0.1); }
+.purchase-dialog-card--oscar-success .purchase-dialog-summary-cell p { color: #64748b; }
+.purchase-dialog-card--oscar-success .purchase-dialog-summary-cell strong { color: #07152e; }
+.purchase-dialog-card--oscar-success .purchase-dialog-primary { color: #fff; background: linear-gradient(110deg, #174a99, #d9ad56 65%, #a36b1b); }
+.purchase-dialog-card--oscar-success .purchase-dialog-secondary { color: #07152e; border-color: #d9ad56; background: #fff; }
+
+:root.dark .purchase-dialog-overlay .purchase-dialog-card--oscar,
+:root.dark .purchase-dialog-overlay .purchase-dialog-card--oscar-success {
+  color: #f8fbff !important;
+  background:
+    radial-gradient(18rem 10rem at 8% 0%, rgb(23 74 153 / 0.075), transparent 66%) padding-box,
+    radial-gradient(18rem 11rem at 94% 4%, rgb(217 173 86 / 0.06), transparent 70%) padding-box,
+    linear-gradient(180deg, rgb(7 12 24 / 0.99), rgb(4 8 18 / 0.995)) padding-box,
+    linear-gradient(125deg, rgb(23 74 153 / 0.58), rgb(217 173 86 / 0.46) 58%, rgb(163 107 27 / 0.36)) border-box !important;
+  box-shadow: inset 0 1px 0 rgb(255 255 255 / 0.07), 0 0 0.55rem rgb(23 74 153 / 0.12), 0 1.65rem 3.6rem -2rem rgb(0 0 0 / 0.78) !important;
+}
+
+:root.dark .purchase-dialog-card--oscar .purchase-oscar-title-block h2,
+:root.dark .purchase-dialog-card--oscar .ppd-gold-label,
+:root.dark .purchase-dialog-card--oscar .purchase-dialog-field > span,
+:root.dark .purchase-dialog-card--oscar .purchase-dialog-field-label,
+:root.dark .purchase-dialog-card--oscar-success .purchase-dialog-success h2 { color: #f8fbff !important; }
+:root.dark .purchase-dialog-card--oscar .purchase-oscar-description,
+:root.dark .purchase-dialog-card--oscar .purchase-oscar-title-block p { color: rgb(207 220 244 / 0.74); }
+:root.dark .purchase-dialog-card--oscar .purchase-oscar-bag { background: #101b30; }
+:root.dark .purchase-dialog-card--oscar .purchase-dialog-copy-card,
+:root.dark .purchase-dialog-card--oscar .purchase-oscar-info,
+:root.dark .purchase-dialog-card--oscar .purchase-dialog-field,
+:root.dark .purchase-dialog-card--oscar .purchase-oscar-showcase {
+  background: linear-gradient(180deg, rgb(10 17 32 / 0.82), rgb(6 11 24 / 0.9)) padding-box,
+    linear-gradient(120deg, rgb(23 74 153 / 0.48), rgb(217 173 86 / 0.38) 58%, rgb(163 107 27 / 0.3)) border-box !important;
+  box-shadow: inset 0 1px 0 rgb(255 255 255 / 0.055), 0 0.9rem 1.7rem -1.2rem rgb(0 0 0 / 0.72) !important;
+}
+:root.dark .purchase-dialog-card--oscar .purchase-dialog-copy-card strong,
+:root.dark .purchase-dialog-card--oscar-success .purchase-dialog-summary-cell strong { color: #f8fbff !important; }
+:root.dark .purchase-dialog-card--oscar .ppd-gold-input,
+:root.dark .purchase-dialog-card--oscar .purchase-dialog-field input:not([type="file"]),
+:root.dark .purchase-dialog-card--oscar .purchase-dialog-field select {
+  color: #f8fbff !important;
+  background: linear-gradient(180deg, rgb(8 15 29 / 0.96), rgb(5 10 22 / 0.98)) padding-box,
+    linear-gradient(120deg, rgb(23 74 153 / 0.5), rgb(217 173 86 / 0.4) 62%, rgb(163 107 27 / 0.32)) border-box !important;
+}
+:root.dark .purchase-dialog-card--oscar .purchase-dialog-secondary { color: #f8fbff !important; background: linear-gradient(#101b30, #071225) padding-box, linear-gradient(110deg, #174a99, #79a9e0, #d9ad56, #a36b1b) border-box !important; }
+:root.dark .purchase-dialog-card--oscar .purchase-dialog-field input[type="file"] { color: #f8fbff !important; background: #101b30 !important; }
+:root.dark .purchase-dialog-card--oscar .purchase-dialog-field button { color: #fff0bb !important; background: rgb(217 173 86 / 0.18) !important; }
+:root.dark .purchase-dialog-card--oscar .purchase-dialog-field .text-indigo-200 { color: #fff0bb !important; }
+:root.dark .purchase-dialog-card--oscar-success .purchase-dialog-summary-cell { background: #101b30; }
+:root.dark .purchase-dialog-card--oscar-success .purchase-dialog-secondary { color: #f8fbff; background: #101b30; }
+
+@media (max-width: 430px) {
+  .purchase-dialog-overlay .purchase-dialog-card--oscar { width: min(92vw, 23.35rem) !important; max-width: 23.35rem !important; padding: 0.95rem 0.74rem 0.78rem !important; }
+  .purchase-dialog-overlay .purchase-dialog-card--oscar .purchase-dialog-close { top: 0.95rem !important; left: 0.74rem !important; width: 2.35rem !important; height: 2.35rem !important; }
+  .purchase-dialog-overlay[dir="ltr"] .purchase-dialog-card--oscar .purchase-dialog-close { right: 0.74rem !important; left: auto !important; }
+  .purchase-oscar-bag { width: 2.35rem; height: 2.35rem; }
+  .purchase-oscar-title-block h2 { font-size: 1.1rem !important; }
+  .purchase-oscar-description { font-size: 0.72rem; }
+  .purchase-dialog-card--oscar .ppd-gold-price { font-size: 1.12rem !important; }
+  .purchase-dialog-card--oscar .ppd-gold-label,
+  .purchase-dialog-card--oscar .purchase-dialog-field > span,
+  .purchase-dialog-card--oscar .purchase-dialog-field-label { font-size: 0.78rem !important; }
+  .purchase-dialog-card--oscar .purchase-dialog-primary,
+  .purchase-dialog-card--oscar .purchase-dialog-secondary { min-height: 2.32rem !important; font-size: 0.78rem !important; }
+  .purchase-dialog-card--oscar .purchase-oscar-showcase { min-height: 9.85rem; }
+  .purchase-oscar-stage { transform: scale(0.88); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .purchase-oscar-neon-frame::before { animation: none; }
+  .purchase-dialog-card--oscar-success .purchase-dialog-success,
+  .purchase-dialog-card--oscar-success .purchase-dialog-success-icon { animation: none !important; }
+}
+
+/* El-jasser's royal blue and gold identity. The total is a read-only field. */
+:root:not(.dark) .purchase-dialog-overlay .purchase-dialog-card--oscar,
+:root:not(.dark) .purchase-dialog-overlay .purchase-dialog-card--oscar-success {
+  background:
+    radial-gradient(16rem 9rem at 10% 0%, rgb(var(--color-primary-rgb) / 0.1), transparent 70%) padding-box,
+    radial-gradient(17rem 10rem at 90% 6%, rgb(var(--brand-gold-rgb) / 0.13), transparent 72%) padding-box,
+    linear-gradient(180deg, #fffdf7, #f8f0df) padding-box,
+    linear-gradient(125deg, var(--brand-blue), var(--brand-gold) 60%, var(--brand-gold-deep)) border-box !important;
+}
+
+:root:not(.dark) .purchase-dialog-card--oscar .purchase-dialog-copy-card,
+:root:not(.dark) .purchase-dialog-card--oscar .purchase-oscar-info,
+:root:not(.dark) .purchase-dialog-card--oscar .purchase-dialog-field,
+:root:not(.dark) .purchase-dialog-card--oscar .purchase-oscar-showcase {
+  background: linear-gradient(180deg, #fffdf7, #f6ecd8) padding-box,
+    linear-gradient(120deg, rgb(var(--color-primary-rgb) / 0.55), rgb(var(--brand-gold-rgb) / 0.65)) border-box !important;
+}
+
+:root:not(.dark) .purchase-dialog-card--oscar .ppd-gold-input,
+:root:not(.dark) .purchase-dialog-card--oscar .purchase-dialog-field input:not([type="file"]),
+:root:not(.dark) .purchase-dialog-card--oscar .purchase-dialog-field select {
+  background: linear-gradient(180deg, #fffefb, #fff9ed) padding-box,
+    linear-gradient(120deg, rgb(var(--color-primary-rgb) / 0.56), rgb(var(--brand-gold-rgb) / 0.68)) border-box !important;
+}
+
+.purchase-dialog-card--oscar .purchase-oscar-mini-icon,
+.purchase-dialog-card--oscar .purchase-oscar-bag {
+  border: 1px solid rgb(var(--brand-gold-rgb) / 0.75) !important;
+  color: var(--brand-gold-light) !important;
+  background: var(--brand-action) !important;
+  box-shadow: 0 0.3rem 0.9rem -0.5rem rgb(var(--color-primary-rgb) / 0.6) !important;
+}
+
+.purchase-dialog-card--oscar .purchase-oscar-total-output {
+  display: grid !important;
+  width: 100%;
+  min-height: 2.35rem !important;
+  align-items: center;
+  justify-items: center;
+  padding: 0.38rem 0.55rem !important;
+  border: 1px solid transparent !important;
+  border-radius: 0.82rem !important;
+  color: var(--brand-blue) !important;
+  background: linear-gradient(180deg, #fffefb, #fff9ed) padding-box,
+    linear-gradient(120deg, rgb(var(--color-primary-rgb) / 0.56), rgb(var(--brand-gold-rgb) / 0.68)) border-box !important;
+  box-shadow: 0 0 0.38rem rgb(var(--color-primary-rgb) / 0.12) !important;
+  font-size: clamp(0.78rem, 2.8vw, 1rem) !important;
+  font-weight: 800 !important;
+  line-height: 1.35 !important;
+  overflow-wrap: anywhere;
+  text-align: center;
+}
+
+.purchase-dialog-card--oscar .purchase-dialog-primary:not(:disabled) {
+  border: 1px solid var(--brand-gold) !important;
+  color: var(--brand-action-text) !important;
+  background: var(--brand-action) !important;
+  box-shadow: inset 0 1px 0 rgb(255 255 255 / 0.16),
+    0 0.48rem 1rem -0.55rem rgb(var(--color-primary-rgb) / 0.55),
+    0 0 0.6rem rgb(var(--brand-gold-rgb) / 0.22) !important;
+}
+
+:root:not(.dark) .purchase-dialog-card--oscar .purchase-dialog-secondary {
+  border: 1px solid transparent !important;
+  color: var(--brand-navy) !important;
+  background: linear-gradient(#fffdf7, #f8f0df) padding-box,
+    linear-gradient(110deg, var(--brand-blue), var(--brand-gold)) border-box !important;
+}
+
+:root.dark .purchase-dialog-card--oscar .purchase-oscar-total-output {
+  color: var(--brand-gold-light) !important;
+  background: linear-gradient(180deg, #101f39, #0b1932) padding-box,
+    linear-gradient(120deg, var(--brand-blue), var(--brand-gold)) border-box !important;
+  box-shadow: 0 0 0.42rem rgb(var(--brand-gold-rgb) / 0.14) !important;
+}
+
+:root.dark .purchase-dialog-card--oscar .purchase-dialog-primary:not(:disabled) {
+  color: #fff8ec !important;
+}
+
+/* Lool Store brand palette: violet, fuchsia, and electric cyan from the logo. */
+.purchase-dialog-overlay .purchase-dialog-card--oscar,
+.purchase-dialog-overlay .purchase-dialog-card--oscar-success {
+  --oscar-blue: #5420c9;
+  --oscar-cyan: #00d9ff;
+  --oscar-purple: #a855f7;
+  --oscar-pink: #f02cff;
+  background:
+    radial-gradient(18rem 10rem at 8% 0%, rgb(0 217 255 / 0.12), transparent 68%) padding-box,
+    radial-gradient(18rem 11rem at 94% 4%, rgb(240 44 255 / 0.1), transparent 70%) padding-box,
+    linear-gradient(#fbf8ff, #f5efff) padding-box,
+    linear-gradient(125deg, #00d9ff, #6d28d9 38%, #a855f7 66%, #f02cff) border-box !important;
+  box-shadow: inset 0 1px 0 rgb(255 255 255 / 0.96), 0 0 0.7rem rgb(0 217 255 / 0.18), 0 1.35rem 3rem -2.1rem rgb(57 12 110 / 0.4) !important;
+}
+
+.purchase-dialog-card--oscar .purchase-oscar-bag,
+.purchase-dialog-card--oscar .purchase-oscar-mini-icon,
+.purchase-dialog-card--oscar .purchase-dialog-copy-card svg,
+.purchase-dialog-card--oscar .ppd-gold-price {
+  color: #6d28d9 !important;
+}
+
+.purchase-dialog-card--oscar .purchase-oscar-title-line,
+.purchase-dialog-card--oscar .purchase-oscar-bag::after,
+.purchase-dialog-card--oscar .purchase-dialog-primary:not(:disabled),
+.purchase-dialog-card--oscar-success .purchase-dialog-primary {
+  background: linear-gradient(110deg, #00d9ff, #6d28d9 36%, #a855f7 68%, #f02cff) !important;
+}
+
+.purchase-dialog-card--oscar .purchase-dialog-copy-card,
+.purchase-dialog-card--oscar .purchase-oscar-info,
+.purchase-dialog-card--oscar .purchase-dialog-field,
+.purchase-dialog-card--oscar .purchase-oscar-showcase {
+  border-color: rgb(168 85 247 / 0.36) !important;
+  background: linear-gradient(#fff, #fbf8ff) padding-box,
+    linear-gradient(120deg, rgb(0 217 255 / 0.58), rgb(168 85 247 / 0.52) 58%, rgb(240 44 255 / 0.42)) border-box !important;
+}
+
+.purchase-dialog-card--oscar .ppd-gold-input,
+.purchase-dialog-card--oscar .purchase-dialog-field input:not([type="file"]),
+.purchase-dialog-card--oscar .purchase-dialog-field select {
+  border-color: rgb(109 40 217 / 0.32) !important;
+  background: linear-gradient(#fff, #fcfaff) padding-box,
+    linear-gradient(120deg, rgb(0 217 255 / 0.58), rgb(168 85 247 / 0.54), rgb(240 44 255 / 0.44)) border-box !important;
+}
+
+.purchase-dialog-card--oscar .purchase-dialog-secondary {
+  border-color: rgb(168 85 247 / 0.5) !important;
+  background: linear-gradient(#fff, #fbf8ff) padding-box,
+    linear-gradient(110deg, #00d9ff, #6d28d9, #a855f7, #f02cff) border-box !important;
+}
+
+.purchase-dialog-card--oscar .purchase-oscar-energy-ring,
+.purchase-dialog-card--oscar .purchase-oscar-ring-glow,
+.purchase-dialog-card--oscar .purchase-oscar-display-base {
+  border-color: rgb(0 217 255 / 0.68) !important;
+  background: linear-gradient(100deg, #00d9ff, #6d28d9 48%, #f02cff) !important;
+  box-shadow: 0 0 0.7rem rgb(0 217 255 / 0.42), 0 0 1rem rgb(240 44 255 / 0.3) !important;
+}
+
+:root.dark .purchase-dialog-overlay .purchase-dialog-card--oscar,
+:root.dark .purchase-dialog-overlay .purchase-dialog-card--oscar-success {
+  background:
+    radial-gradient(18rem 10rem at 8% 0%, rgb(0 217 255 / 0.13), transparent 66%) padding-box,
+    radial-gradient(18rem 11rem at 94% 4%, rgb(240 44 255 / 0.1), transparent 70%) padding-box,
+    linear-gradient(#12072d, #070016) padding-box,
+    linear-gradient(125deg, #00d9ff, #6d28d9 38%, #a855f7 66%, #f02cff) border-box !important;
+}
+
+:root.dark .purchase-dialog-card--oscar .purchase-dialog-copy-card,
+:root.dark .purchase-dialog-card--oscar .purchase-oscar-info,
+:root.dark .purchase-dialog-card--oscar .purchase-dialog-field,
+:root.dark .purchase-dialog-card--oscar .purchase-oscar-showcase,
+:root.dark .purchase-dialog-card--oscar .ppd-gold-input,
+:root.dark .purchase-dialog-card--oscar .purchase-dialog-field input:not([type="file"]),
+:root.dark .purchase-dialog-card--oscar .purchase-dialog-field select {
+  border-color: rgb(168 85 247 / 0.4) !important;
+  background-color: #12072d !important;
+}

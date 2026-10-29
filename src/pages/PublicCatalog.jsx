@@ -49,8 +49,8 @@ import targetSalesImage from '../assets/تارجت.jpg';
 
 const dataProvider = (import.meta.env.VITE_DATA_PROVIDER || 'mock').toLowerCase();
 const isRealProvider = dataProvider === 'real';
-const WHATSAPP_CHANNEL_URL = 'https://whatsapp.com/channel/0029Vb5xkFpFMqrUmvTSil0Q';
-const SLIDE_TWO_URL = 'https://whatsapp.com/channel/0029VbDgien6RGJJnl8WYV0Q';
+const WHATSAPP_CHANNEL_URL = 'https://chat.whatsapp.com/EhP71my5sGm2VXafTk12Qw';
+const SLIDE_TWO_URL = WHATSAPP_CHANNEL_URL;
 const PUBLIC_NOTICES_SEEN_KEY = 'ka-card-public-notices-seen-v1';
 const normalizeCategoryKey = (value) => String(value || '').trim().toLowerCase();
 
@@ -620,14 +620,14 @@ const PublicCatalog = () => {
 
       {typeof document !== 'undefined' && createPortal(
       <header className="pointer-events-none fixed inset-x-0 top-0 z-[90]">
-        <div className="mx-auto max-w-[var(--shell-max-width)] px-3 py-2 sm:px-4 lg:px-6">
-          <div dir="ltr" className="ka-card-panel pointer-events-auto grid min-h-[2.95rem] grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)] items-center gap-2 rounded-[20px] border px-2.5 py-1 sm:min-h-[3.25rem] sm:gap-5 sm:rounded-[28px] sm:px-5 sm:py-1.5">
+        <div className="w-full">
+          <div dir="ltr" className="public-full-header ka-card-panel pointer-events-auto grid min-h-[2.95rem] grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)] items-center gap-2 rounded-[20px] border px-2.5 py-1 sm:min-h-[3.25rem] sm:gap-5 sm:rounded-[28px] sm:px-5 sm:py-1.5">
             <div className="col-start-1 row-start-1 flex items-center gap-1 justify-self-start sm:gap-2">
               <ThemeToggle variant="glass" compact className="h-9 w-9 sm:h-10 sm:w-10" />
             </div>
 
             <div className="col-start-2 row-start-1 justify-self-center">
-              <HeaderBrand />
+              <HeaderBrand className="justify-center" iconClassName="h-14 w-24 scale-100 sm:h-16 sm:w-28" />
             </div>
 
             <div className="col-start-3 row-start-1 flex items-center gap-1.5 justify-self-end sm:gap-2">
@@ -803,7 +803,7 @@ const PublicCatalog = () => {
               </div>
 
               <a
-                href="https://whatsapp.com/channel/0029Vb5xkFpFMqrUmvTSil0Q"
+                href={WHATSAPP_CHANNEL_URL}
                 target="_blank"
                 rel="noreferrer"
                 className="mt-3 inline-flex h-10 w-full items-center justify-center gap-2 rounded-full border border-emerald-300/30 bg-[linear-gradient(135deg,#128c7e,#25d366_58%,#087f9b)] px-4 text-sm font-black text-white shadow-[0_18px_38px_-24px_rgb(37_211_102/0.9)] transition-all hover:-translate-y-0.5 hover:brightness-105"
@@ -1002,7 +1002,7 @@ const PublicCatalog = () => {
         onRequireAuth={handleLogin}
       />
 
-      <SiteCopyrightFooter isArabic={isArabic} />
+      <SiteCopyrightFooter isArabic={isArabic} showSocialLinks />
     </div>
   );
 };

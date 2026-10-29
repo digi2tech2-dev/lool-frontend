@@ -5,7 +5,7 @@ import buyCardsImage from '../assets/slide-3.jpg';
 export const mockUsers = [
   {
     id: 'u1',
-    name: 'AD CARD Admin',
+    name: 'Lool Store Admin',
     email: 'admin@ad-card.com',
     password: 'REDACTED',
     role: 'admin',
