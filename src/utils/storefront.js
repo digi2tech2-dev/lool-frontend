@@ -1,6 +1,6 @@
-import buyCardsImage from '../assets/slide-1.jpg';
-import chatAppsImage from '../assets/slide-2.jpg';
-import gamesChargingImage from '../assets/slide-3.jpg';
+import buyCardsImage from '../assets/slide-1.webp';
+import chatAppsImage from '../assets/slide-2.webp';
+import gamesChargingImage from '../assets/slide-3.webp';
 import brandIconImage from '../assets/lool-store-logo.webp';
 import { calculateProductPrice } from './pricing';
 import { formatNumber } from './intl';

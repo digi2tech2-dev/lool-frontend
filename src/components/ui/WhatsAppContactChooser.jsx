@@ -1,8 +1,10 @@
 import React from 'react';
-import { ArrowUpRight, Headphones, MessageCircle, Phone } from 'lucide-react';
+import { ArrowUpRight, Headphones, MessageCircle } from 'lucide-react';
 import Modal from './Modal';
 import logo from '../../assets/lool-store-logo.webp';
-import { buildWhatsAppLink, SUPPORT_WHATSAPP_DISPLAY, SUPPORT_WHATSAPP_NUMBER } from '../../utils/whatsapp';
+import supportRobot from '../../assets/lool-support-robot.webp';
+import managerRobot from '../../assets/lool-welcome-robot.webp';
+import { buildWhatsAppLink, SUPPORT_WHATSAPP_NUMBER } from '../../utils/whatsapp';
 import './WhatsAppContactChooser.css';
 
 const WhatsAppContactChooser = ({ isOpen, onClose, message = '', isArabic = true }) => {
@@ -24,21 +26,23 @@ const WhatsAppContactChooser = ({ isOpen, onClose, message = '', isArabic = true
             </div>
             <span className="support-contact__icon" aria-hidden="true"><Headphones /></span>
           </div>
-          <div className="support-contact__intro">
-            <span className="support-contact__eyebrow">{isArabic ? 'نحن هنا لمساعدتك' : 'WE ARE HERE TO HELP'}</span>
-            <h4>{isArabic ? 'كيف نقدر نساعدك؟' : 'How can we help?'}</h4>
-            <p>{isArabic ? 'فريق خدمة العملاء على بُعد رسالة واحدة منك.' : 'Our customer support team is just a message away.'}</p>
+          <div className="support-contact__welcome">
+            <div className="support-contact__intro">
+              <span className="support-contact__eyebrow">{isArabic ? 'نحن هنا لمساعدتك' : 'WE ARE HERE TO HELP'}</span>
+              <h4>{isArabic ? 'كيف نقدر نساعدك؟' : 'How can we help?'}</h4>
+              <p>{isArabic ? 'فريق خدمة العملاء على بُعد رسالة واحدة منك.' : 'Our customer support team is just a message away.'}</p>
+            </div>
+            <img className="support-contact__robot" src={supportRobot} alt="" width="512" height="512" decoding="async" />
           </div>
         </div>
 
         <div className="support-contact__body">
-          <div className="support-contact__number">
-            <span className="support-contact__phone-icon" aria-hidden="true"><Phone /></span>
+          <a href={whatsappLink} target="_blank" rel="noopener noreferrer" onClick={onClose} className="support-contact__number">
+            <img className="support-contact__manager-avatar" src={managerRobot} alt="" width="512" height="512" decoding="async" />
             <div className="support-contact__number-text">
-              <span>{isArabic ? 'رقم خدمة العملاء' : 'Customer support number'}</span>
-              <strong dir="ltr">{SUPPORT_WHATSAPP_DISPLAY}</strong>
+              <strong>{isArabic ? 'مدير المنصة (لول)' : 'Platform manager (Lool)'}</strong>
             </div>
-          </div>
+          </a>
           <a
             href={whatsappLink}
             target="_blank"

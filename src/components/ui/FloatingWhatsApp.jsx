@@ -4,7 +4,7 @@ import { useTranslation } from 'react-i18next';
 import useAuthStore from '../../store/useAuthStore';
 import { isAdminRole } from '../../utils/authRoles';
 import WhatsAppContactChooser from './WhatsAppContactChooser';
-import floatingPromoTwo from '../../assets/floating-promo.webp';
+import floatingPromoTwo from '../../assets/floating-promo-optimized.webp';
 import supportRobot from '../../assets/lool-support-robot.webp';
 import { isLitePerformanceMode } from '../../utils/performanceMode';
 

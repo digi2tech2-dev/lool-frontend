@@ -12,7 +12,7 @@ import useAdminStore from '../store/useAdminStore';
 import { useLanguage } from '../context/LanguageContext';
 import { useToast } from '../components/ui/Toast';
 import { resolveUserAvatar } from '../utils/avatar';
-import avatarSocialFrame from '../assets/lool-avatar-social-frame.png';
+import avatarSocialFrame from '../assets/lool-avatar-social-frame.webp';
 import { useBodyScrollLock } from '../utils/bodyScrollLock';
 import { getReadableErrorMessage } from '../utils/errorMessages';
 

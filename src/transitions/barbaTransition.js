@@ -2,8 +2,8 @@ import barba from '@barba/core';
 
 const BARBA_REACT_ADAPTER = Symbol.for('ka-card.barba-react-adapter');
 const TRANSITION_EASING = 'cubic-bezier(0.22, 1, 0.36, 1)';
-const LEAVE_DURATION = 70;
-const ENTER_DURATION = 150;
+const LEAVE_DURATION = 40;
+const ENTER_DURATION = 100;
 
 const prefersReducedMotion = () => (
   typeof window !== 'undefined'

@@ -9,14 +9,12 @@ import {
   Store,
   UserPlus,
   Code2,
-  DownloadCloud,
 } from 'lucide-react';
 import { cn } from '../ui/Button';
 import HeaderBrand from './HeaderBrand';
 import SidebarSocialFooter from './SidebarSocialFooter';
-import sidebarLogoImage from '../../assets/lool-sidebar-logo.webp';
+import sidebarLogoImage from '../../assets/lool-sidebar-logo-optimized.webp';
 import LanguageSwitcher from '../ui/LanguageSwitcher';
-import { isNativeApp } from '../../utils/platform';
 
 const GoogleMark = () => (
   <svg viewBox="0 0 24 24" aria-hidden="true" className="h-4.5 w-4.5 shrink-0">
@@ -68,15 +66,6 @@ const PublicSidebar = ({ isOpen, onClose, onLogin, onHome, onAbout, onContact, o
       isActive: pathname === '/public-contact-us',
     },
   ];
-
-  if (!isNativeApp()) {
-    navItems.splice(2, 0, {
-      icon: DownloadCloud,
-      label: isArabic ? 'تحميل التطبيق' : 'Download app',
-      onClick: () => navigate('/download-app'),
-      isActive: pathname === '/download-app',
-    });
-  }
 
   if (typeof document === 'undefined') return null;
 

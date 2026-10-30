@@ -40,11 +40,11 @@ import {
 } from '../utils/storefront';
 import { buildStoreSeo, toAbsoluteUrl } from '../utils/seo';
 import { useBodyScrollLock } from '../utils/bodyScrollLock';
-import slideOneImage from '../assets/slide-1.jpg';
-import slideTwoImage from '../assets/slide-2.jpg';
-import slideThreeImage from '../assets/slide-3.jpg';
-import slideFourImage from '../assets/slide-4.jpg';
-import slideFiveImage from '../assets/slide-5.jpg';
+import slideOneImage from '../assets/slide-1.webp';
+import slideTwoImage from '../assets/slide-2.webp';
+import slideThreeImage from '../assets/slide-3.webp';
+import slideFourImage from '../assets/slide-4.webp';
+import slideFiveImage from '../assets/slide-5.webp';
 import targetSalesImage from '../assets/تارجت.jpg';
 
 const dataProvider = (import.meta.env.VITE_DATA_PROVIDER || 'mock').toLowerCase();

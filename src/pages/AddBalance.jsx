@@ -16,7 +16,7 @@ import useSystemStore from "../store/useSystemStore";
 import { resolveImageUrl } from "../utils/imageUrl";
 import { formatWalletNumber } from "../utils/storefront";
 import { getActivePaymentGroups } from "../utils/paymentSettings";
-import walletHeroImg from "../assets/lool-sidebar-logo.webp";
+import walletHeroImg from "../assets/lool-sidebar-logo-optimized.webp";
 import vodafoneRobotImg from "../assets/lool-welcome-robot.webp";
 
 const getMethodIcon = (method) => {

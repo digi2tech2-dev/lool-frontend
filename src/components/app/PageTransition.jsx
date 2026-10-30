@@ -154,6 +154,9 @@ const PageTransition = ({ children }) => {
         document.activeElement?.blur?.();
 
         const preloadPromise = preloadRoute(to.pathname);
+        // Keep the current page visible while the next route downloads.
+        await preloadPromise;
+        if (controller.signal.aborted || !mountedRef.current) break;
         const barbaData = await runBarbaLeave({
           from,
           to,
@@ -164,7 +167,6 @@ const PageTransition = ({ children }) => {
 
         if (controller.signal.aborted || !mountedRef.current) break;
 
-        await preloadPromise;
         await commitLocation(to);
         await nextPaint();
 

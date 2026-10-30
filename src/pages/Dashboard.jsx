@@ -12,11 +12,11 @@ import ProductSearchBar from '../components/products/ProductSearchBar';
 import ProductPurchaseDialog from '../components/products/ProductPurchaseDialog';
 import StorefrontQuickOffers from '../components/products/StorefrontQuickOffers';
 import WelcomeIntro from '../components/app/WelcomeIntro';
-import slideOneHeroImage from '../assets/slide-1.jpg';
-import slideTwoHeroImage from '../assets/slide-2.jpg';
-import slideThreeHeroImage from '../assets/slide-3.jpg';
-import slideFourHeroImage from '../assets/slide-4.jpg';
-import slideFiveHeroImage from '../assets/slide-5.jpg';
+import slideOneHeroImage from '../assets/slide-1.webp';
+import slideTwoHeroImage from '../assets/slide-2.webp';
+import slideThreeHeroImage from '../assets/slide-3.webp';
+import slideFourHeroImage from '../assets/slide-4.webp';
+import slideFiveHeroImage from '../assets/slide-5.webp';
 import targetBannerImage from '../assets/تارجت.jpg';
 import {
   createStorefrontCategories,
