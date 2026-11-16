@@ -388,6 +388,7 @@ const AdminProducts = () => {
         displayAccountNumber: '',
         purchaseAccountNumber: '',
         showPurchaseAccountNumber: false,
+        hideFromApi: false,
         manualPriceAdjustment: '',
         syncedProviderBasePrice: '',
         costPrice: '',
@@ -905,6 +906,7 @@ const AdminProducts = () => {
                 displayAccountNumber: String(product.displayAccountNumber || product.purchaseAccountNumber || product.accountNumber || product.productAccountNumber || '').trim(),
                 purchaseAccountNumber: String(product.displayAccountNumber || product.purchaseAccountNumber || product.accountNumber || product.productAccountNumber || '').trim(),
                 showPurchaseAccountNumber: Boolean(product.showPurchaseAccountNumber ?? product.showAccountNumber ?? product.displayAccountNumber ?? false),
+                hideFromApi: Boolean(product.hideFromApi),
                 manualPriceAdjustment: normalizePriceInput(product.manualPriceAdjustment ?? ''),
                 syncedProviderBasePrice: normalizePriceInput(product.syncedProviderBasePrice ?? product.basePriceCoins ?? ''),
                 costPrice: normalizePriceInput(product.costPrice ?? product.originalPriceCoins ?? product.originalPrice ?? ''),
@@ -960,6 +962,7 @@ const AdminProducts = () => {
                 displayAccountNumber: '',
                 purchaseAccountNumber: '',
                 showPurchaseAccountNumber: false,
+                hideFromApi: false,
                 manualPriceAdjustment: '',
                 syncedProviderBasePrice: '',
                 costPrice: '',
@@ -1138,6 +1141,7 @@ const AdminProducts = () => {
             accountNumber: String(productForm.displayAccountNumber || productForm.purchaseAccountNumber || '').trim(),
             showPurchaseAccountNumber: Boolean(productForm.showPurchaseAccountNumber),
             showAccountNumber: Boolean(productForm.showPurchaseAccountNumber),
+            hideFromApi: Boolean(productForm.hideFromApi),
             manualPriceAdjustment,
             syncedProviderBasePrice,
             originalPriceCoins: isAutomaticConnection ? '' : normalizePriceInput(productForm.originalPriceCoins),
@@ -1954,6 +1958,10 @@ const AdminProducts = () => {
             </Modal>
 
             <Modal isOpen={isProductModalOpen} onClose={() => setIsProductModalOpen(false)} title={editingProduct ? t('editProduct') : t('addProduct')} size="xl">
+                <label className="mb-3 flex items-start gap-3 rounded-xl border border-[var(--color-border)] bg-[var(--color-surface)] p-3 text-sm">
+                    <input type="checkbox" checked={Boolean(productForm.hideFromApi)} onChange={(event) => setProductForm((current) => ({ ...current, hideFromApi: event.target.checked }))} className="mt-1 h-4 w-4" />
+                    <span><strong className="block">{isEnglish ? 'Hide product from API' : 'إخفاء المنتج من API'}</strong><span className="text-xs text-[var(--color-text-secondary)]">{isEnglish ? 'The product stays visible on the website.' : 'يظل المنتج ظاهرًا للعملاء داخل الموقع.'}</span></span>
+                </label>
                 <form onSubmit={handleProductSubmit} className="space-y-5">
                     <div className="grid grid-cols-2 gap-2 sm:grid-cols-4">
                         {PRODUCT_FORM_STEPS.map((step) => {

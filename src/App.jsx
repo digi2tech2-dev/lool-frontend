@@ -50,6 +50,7 @@ const AdminUsers = lazy(routeLoaders.AdminUsers);
 const AdminGroups = lazy(routeLoaders.AdminGroups);
 const AdminProducts = lazy(routeLoaders.AdminProducts);
 const ProductRecovery = lazy(routeLoaders.ProductRecovery);
+const AdminUserProducts = lazy(routeLoaders.AdminUserProducts);
 const PlatformThemeEditor = lazy(routeLoaders.PlatformThemeEditor);
 const PlatformThemeSubscriptions = lazy(routeLoaders.PlatformThemeSubscriptions);
 const AdminWallet = lazy(routeLoaders.AdminWallet);
@@ -333,6 +334,9 @@ const AnimatedAppRoutes = ({ location }) => {
         </ProtectedRoute>} />
         <Route path="/admin/product-recovery" element={<ProtectedRoute roles={ADMIN_PANEL_ROLES} permission={PERMISSIONS.ADMIN_PRODUCTS}>
           {renderSuspended(<ProductRecovery />)}
+        </ProtectedRoute>} />
+        <Route path="/admin/users/:userId/products" element={<ProtectedRoute roles={ADMIN_PANEL_ROLES} permission={PERMISSIONS.ADMIN_USERS}>
+          {renderSuspended(<AdminUserProducts />)}
         </ProtectedRoute>} />
         <Route
           path="/admin/users"

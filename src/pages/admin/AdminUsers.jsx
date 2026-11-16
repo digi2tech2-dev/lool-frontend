@@ -39,7 +39,6 @@ import {
 } from '../../utils/accountStatus';
 import { resolveUserAvatar } from '../../utils/avatar';
 import apiClient from '../../services/client';
-import UserProductVisibility from './UserProductVisibility';
 import { normalizeBillingMode, normalizeQuota } from '../../utils/billing';
 
 const FILTER_OPTIONS = ['all', 'approved', 'rejected', 'deleted'];
@@ -1173,7 +1172,7 @@ const AdminUsers = () => {
               ) : null}
             </div>
 
-            {canManageUsers && selectedUser?.id && filter !== 'deleted' && <UserProductVisibility userId={selectedUser.id} />}
+            {canManageUsers && selectedUser?.id && filter !== 'deleted' && <button type="button" className="mt-3 w-full rounded-xl border border-[var(--color-primary)] bg-[var(--color-surface)] px-4 py-3 text-sm font-bold text-[var(--color-primary)]" onClick={() => navigate(`/admin/users/${encodeURIComponent(selectedUser.id)}/products`, { state: { userName: selectedUser.name || selectedUser.email } })}>إدارة منتجات المستخدم وأسعاره وظهورها في API</button>}
 
             <div className="mt-3 grid gap-2.5 text-xs sm:grid-cols-2 lg:grid-cols-3">
               <div>

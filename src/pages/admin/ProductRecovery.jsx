@@ -37,7 +37,13 @@ export default function ProductRecovery() {
   useEffect(() => {
     apiClient.productRecovery.providers()
       .then((data) => setProviders(data?.providers || []))
-      .catch(() => setError(ar ? 'تعذر تحميل الموردين.' : 'Could not load providers.'));
+      .catch((cause) => {
+        const status = Number(cause?.response?.status || 0);
+        setError(status === 401 ? (ar ? 'انتهت جلسة الدخول. سجّل الدخول مرة أخرى.' : 'Your session expired. Please sign in again.')
+          : status === 403 ? (ar ? 'حسابك لا يملك صلاحية إدارة المنتجات.' : 'Your account cannot manage products.')
+            : status === 404 ? (ar ? 'مسار الاسترداد غير متاح في الباك إند الحالي.' : 'Product recovery is unavailable on the current backend.')
+              : (ar ? 'تعذر تحميل الموردين. تحقق من اتصال الباك إند ثم حاول مجددًا.' : 'Could not load suppliers. Check the backend connection and retry.'));
+      });
   }, [ar]);
 
   useEffect(() => {

@@ -1633,6 +1633,7 @@ const productToBE = (fe) => {
   if (fe.image !== undefined) body.image = fe.image;
   if (fe.category !== undefined) body.category = fe.category;
   if (fe.category !== undefined) body.categoryId = fe.category;
+  if (fe.hideFromApi !== undefined) body.hideFromApi = Boolean(fe.hideFromApi);
   if (fe.displayOrder !== undefined) body.displayOrder = fe.displayOrder;
   if (fe.orderFields !== undefined) body.orderFields = fe.orderFields;
   if (fe.dynamicFields !== undefined) {
@@ -2848,6 +2849,7 @@ const realApi = {
   users: {
     listProductVisibility: async (userId) => unwrap(await http.get(`/admin/users/${encodeURIComponent(userId)}/product-visibility`)),
     setProductVisibility: async (userId, productId, hidden) => unwrap(await http.patch(`/admin/users/${encodeURIComponent(userId)}/product-visibility/${encodeURIComponent(productId)}`, { hidden })),
+    setUserProductApiVisibility: async (userId, productId, hidden) => unwrap(await http.patch(`/admin/users/${encodeURIComponent(userId)}/product-api-visibility/${encodeURIComponent(productId)}`, { hidden })),
     setUserProductPrice: async (userId, productId, priceOverride) => unwrap(await http.patch(`/admin/users/${encodeURIComponent(userId)}/product-price/${encodeURIComponent(productId)}`, { priceOverride })),
     setQuota: async (userId, quantityLimit, reason = '') => {
       const res = await http.patch(`/admin/users/${userId}/quota`, { quantityLimit, ...(reason ? { reason } : {}) });
