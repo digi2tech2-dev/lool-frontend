@@ -23,3 +23,12 @@ export const buildWhatsAppLink = ({ number, message = '' }) => {
 
 export const getDefaultWhatsAppNumber = () => SUPPORT_WHATSAPP_NUMBER;
 export const getAdminWhatsAppNumber = () => SUPPORT_WHATSAPP_NUMBER;
+
+export const resolveSupportContacts = (value) => {
+  if (!value) return [];
+  if (Array.isArray(value?.entries)) return value.entries;
+  const contacts = [];
+  if (value.owner) contacts.push({ id: 'legacy-owner', name: 'إدارة المتجر', role: 'الإدارة', number: value.owner });
+  if (value.support) contacts.push({ id: 'legacy-support', name: 'خدمة العملاء', role: 'الدعم', number: value.support });
+  return contacts;
+};

@@ -191,6 +191,8 @@ const Sidebar = ({ isOpen, setIsOpen, isMobile }) => {
     { icon: Activity, label: 'مراقبة المشرفين', path: '/admin/supervisor-monitoring', roles: ['admin'], section: 'admin' },
     { icon: FolderKanban, label: t('sidebar.groupsManager'), path: '/admin/groups', roles: ADMIN_NAV_ROLES, permission: PERMISSIONS.ADMIN_GROUPS, section: 'admin' },
     { icon: Boxes, label: t('sidebar.productsManager'), path: '/admin/products', roles: ADMIN_NAV_ROLES, permission: PERMISSIONS.ADMIN_PRODUCTS, section: 'admin' },
+    { icon: Boxes, label: dir === 'rtl' ? 'استرداد المنتجات' : 'Product recovery', path: '/admin/product-recovery', roles: ADMIN_NAV_ROLES, permission: PERMISSIONS.ADMIN_PRODUCTS, section: 'admin' },
+    { icon: Settings, label: dir === 'rtl' ? 'مظهر المنصة' : 'Platform theme', path: '/admin/themes', roles: ['admin'], section: 'admin' },
     {
       icon: ClipboardCheck,
       label: t('sidebar.ordersManager', { defaultValue: dir === 'rtl' ? 'إدارة الطلبات' : 'Orders Manager' }),

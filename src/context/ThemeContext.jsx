@@ -1,7 +1,10 @@
 import React, { createContext, useCallback, useContext, useEffect, useMemo, useState } from 'react';
+import apiClient from '../services/client';
+import { applyPublishedPlatformTheme } from '../theme/platformTheme';
 
 const ThemeContext = createContext();
 const THEME_STORAGE_KEY = 'ka-card-theme';
+const isLiveApi = (import.meta.env.VITE_DATA_PROVIDER || 'mock').toLowerCase() === 'real';
 
 const normalizeTheme = (value) => (value === 'light' || value === 'dark' ? value : null);
 
@@ -15,10 +18,50 @@ const getInitialTheme = () => {
 
 export const useTheme = () => useContext(ThemeContext);
 
+export const usePlatformBrand = () => {
+  const { publishedPlatformTheme } = useTheme();
+  const brand = publishedPlatformTheme?.brand || {};
+  return {
+    platformName: typeof brand.platformName === 'string' && brand.platformName.trim()
+      ? brand.platformName.trim() : 'Lool Store',
+    logoPath: typeof brand.logoPath === 'string' ? brand.logoPath : null,
+    slides: Array.isArray(brand.slides) ? brand.slides : [],
+  };
+};
+
 export const ThemeProvider = ({ children }) => {
   const [theme, setThemeState] = useState(getInitialTheme);
+  const [publishedPlatformTheme, setPublishedPlatformTheme] = useState(null);
 
   const isDark = theme === 'dark';
+
+  useEffect(() => {
+    if (!isLiveApi) return undefined;
+    let active = true;
+    const loadPublishedTheme = async () => {
+      try {
+        const response = await apiClient.platformTheme.getPublished();
+        if (active) setPublishedPlatformTheme(response?.published || null);
+      } catch {
+        if (active) setPublishedPlatformTheme(null);
+      }
+    };
+    const handleRefresh = () => { void loadPublishedTheme(); };
+    void loadPublishedTheme();
+    window.addEventListener('platform-theme-published', handleRefresh);
+    window.addEventListener('platform-theme-subscription-updated', handleRefresh);
+    window.addEventListener('storage', handleRefresh);
+    return () => {
+      active = false;
+      window.removeEventListener('platform-theme-published', handleRefresh);
+      window.removeEventListener('platform-theme-subscription-updated', handleRefresh);
+      window.removeEventListener('storage', handleRefresh);
+    };
+  }, []);
+
+  useEffect(() => {
+    applyPublishedPlatformTheme(publishedPlatformTheme, theme);
+  }, [publishedPlatformTheme, theme]);
 
   useEffect(() => {
     document.documentElement.classList.toggle('dark', isDark);
@@ -47,9 +90,10 @@ export const ThemeProvider = ({ children }) => {
       theme,
       isDark,
       toggleTheme,
-      setTheme
+      setTheme,
+      publishedPlatformTheme,
     }),
-    [theme, isDark, toggleTheme, setTheme]
+    [theme, isDark, toggleTheme, setTheme, publishedPlatformTheme]
   );
 
   return (

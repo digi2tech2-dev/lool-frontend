@@ -114,6 +114,8 @@ const normalizePaymentSettingsResponse = (settings) => {
     instructions: String(source?.instructions || '').trim(),
     whatsappNumber: String(source?.whatsappNumber || '').trim(),
     paymentGroups: normalizePaymentGroups(normalizeSettingArray(source?.paymentGroups), { fallbackToDefault: false }),
+    supportContacts: source?.supportContacts || { owner: '', support: '', entries: [], revision: 0 },
+    adminNotificationWhatsApp: String(source?.adminNotificationWhatsApp || '').trim(),
   };
 };
 
@@ -1827,6 +1829,48 @@ const isAdmin = () => {
 
 const realApi = {
 
+  productRecovery: {
+    providers: async () => unwrap(await http.get('/admin/product-recovery/providers')),
+    search: async (params) => unwrap(await http.get('/admin/product-recovery/search', { params, timeout: 120000 })),
+    publish: async (products) => unwrap(await http.post('/admin/product-recovery/publish', { products }, { timeout: 120000 })),
+    uploadImage: async (file) => {
+      const formData = new FormData();
+      formData.append('image', file);
+      const data = unwrap(await http.post('/upload/products', formData));
+      return data?.path || '';
+    },
+  },
+
+  maintenance: {
+    getStatus: async () => unwrap(await http.get('/maintenance/status', { headers: { 'Cache-Control': 'no-cache' } })),
+    setEnabled: async (enabled) => unwrap(await http.patch('/maintenance/status', { enabled })),
+  },
+
+  platformTheme: {
+    getPublished: async () => unwrap(await http.get('/theme/published')),
+    getSettings: async () => unwrap(await http.get('/admin/theme/settings')),
+    getPresets: async () => unwrap(await http.get('/admin/theme/presets')),
+    validate: async (configuration) => unwrap(await http.post('/admin/theme/preview/validate', configuration)),
+    saveDraft: async (configuration) => unwrap(await http.post('/admin/theme/draft', configuration)),
+    resetDraft: async () => unwrap(await http.post('/admin/theme/draft/reset')),
+    publish: async (configuration) => unwrap(await http.post('/admin/theme/publish', configuration)),
+    restore: async (version) => unwrap(await http.post('/admin/theme/restore', { version })),
+    restoreToDraft: async (version) => unwrap(await http.post('/admin/theme/restore-draft', { version })),
+    getHistory: async (page = 1) => unwrap(await http.get('/admin/theme/history', { params: { page } })),
+    getSubscription: async () => unwrap(await http.get('/admin/theme/subscription')),
+    getPayments: async () => unwrap(await http.get('/admin/theme/subscription/payment-status')),
+    getReviewQueue: async () => unwrap(await http.get('/admin/theme/subscription/review-queue')),
+    createManualOrder: async (network, planId) => unwrap(await http.post('/admin/theme/subscription/manual-order', { network, planId })),
+    confirmManualOrder: async (reference, chainTransactionId) => unwrap(await http.post('/admin/theme/subscription/manual-order/confirm', { reference, chainTransactionId })),
+    reissueManualCode: async (reference) => unwrap(await http.post('/admin/theme/subscription/manual-order/reissue-code', { reference })),
+    redeemCode: async (reference, code) => unwrap(await http.post('/admin/theme/subscription/redeem', { reference, code })),
+    uploadMedia: async (file) => {
+      const formData = new FormData();
+      formData.append('image', file);
+      return unwrap(await http.post('/admin/theme/media/upload', formData));
+    },
+  },
+
   quota: {
     getMine: async () => {
       const res = await http.get('/me/quota');
@@ -2802,6 +2846,9 @@ const realApi = {
 
   // ── Users (Admin) ────────────────────────────────────────────────────────
   users: {
+    listProductVisibility: async (userId) => unwrap(await http.get(`/admin/users/${encodeURIComponent(userId)}/product-visibility`)),
+    setProductVisibility: async (userId, productId, hidden) => unwrap(await http.patch(`/admin/users/${encodeURIComponent(userId)}/product-visibility/${encodeURIComponent(productId)}`, { hidden })),
+    setUserProductPrice: async (userId, productId, priceOverride) => unwrap(await http.patch(`/admin/users/${encodeURIComponent(userId)}/product-price/${encodeURIComponent(productId)}`, { priceOverride })),
     setQuota: async (userId, quantityLimit, reason = '') => {
       const res = await http.patch(`/admin/users/${userId}/quota`, { quantityLimit, ...(reason ? { reason } : {}) });
       return unwrap(res)?.quota || unwrap(res);
@@ -4176,6 +4223,8 @@ const realApi = {
           instructions: find('paymentInstructions'),
           whatsappNumber: find('whatsappNumber'),
           paymentGroups: find('paymentGroups'),
+          supportContacts: find('supportContacts'),
+          adminNotificationWhatsApp: find('adminNotificationWhatsApp'),
         });
         return normalized;
       } catch (error) {
@@ -4232,12 +4281,16 @@ const realApi = {
         ...(payload?.paymentGroups !== undefined ? {
           paymentGroups: serializePaymentGroupsForApi(payload.paymentGroups),
         } : {}),
+        ...(payload?.supportContacts !== undefined ? { supportContacts: payload.supportContacts } : {}),
+        ...(payload?.adminNotificationWhatsApp !== undefined ? { adminNotificationWhatsApp: String(payload.adminNotificationWhatsApp || '').trim() } : {}),
       };
       const keyMap = {
         countryAccounts: 'paymentCountryAccounts',
         instructions: 'paymentInstructions',
         whatsappNumber: 'whatsappNumber',
         paymentGroups: 'paymentGroups',
+        supportContacts: 'supportContacts',
+        adminNotificationWhatsApp: 'adminNotificationWhatsApp',
       };
       const updates = Object.entries(keyMap)
         .filter(([feKey]) => normalizedPayload[feKey] !== undefined)
@@ -4254,6 +4307,8 @@ const realApi = {
         instructions: find('paymentInstructions'),
         whatsappNumber: find('whatsappNumber'),
         paymentGroups: find('paymentGroups'),
+        supportContacts: find('supportContacts'),
+        adminNotificationWhatsApp: find('adminNotificationWhatsApp'),
       });
     },
 

@@ -1,10 +1,20 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { MessageCircle } from 'lucide-react';
 import { StoreSocialLinks } from './SidebarSocialFooter';
+import { usePlatformBrand } from '../../context/ThemeContext';
+import useSystemStore from '../../store/useSystemStore';
+import { buildWhatsAppLink, resolveSupportContacts } from '../../utils/whatsapp';
 
-const ENGINEERS_WHATSAPP_URL = `https://wa.me/201019603238?text=${encodeURIComponent('كنت محتاج تفاصيل عن انشاء موقع')}`;
-
-const SiteCopyrightFooter = ({ isArabic, showEngineerContact = true, showSocialLinks = false }) => (
+const SiteCopyrightFooter = ({ isArabic, showEngineerContact = true, showSocialLinks = false }) => {
+  const { platformName } = usePlatformBrand();
+  const paymentSettings = useSystemStore((state) => state.paymentSettings);
+  const loadPaymentSettings = useSystemStore((state) => state.loadPaymentSettings);
+  const primaryContact = resolveSupportContacts(paymentSettings?.supportContacts)[0];
+  const contactUrl = buildWhatsAppLink({ number: primaryContact?.number });
+  useEffect(() => {
+    if (showEngineerContact) void loadPaymentSettings({ force: true });
+  }, [loadPaymentSettings, showEngineerContact]);
+  return (
   <footer className="mx-auto w-full max-w-[var(--shell-max-width)] px-3 pb-6 sm:px-4 md:px-6 lg:px-8">
     <div className="relative overflow-hidden rounded-[1.45rem] border border-[color:rgb(var(--color-border-rgb)/0.72)] bg-[linear-gradient(135deg,rgb(var(--color-card-rgb)/0.82),rgb(var(--color-elevated-rgb)/0.58))] px-4 py-4 text-center shadow-[var(--shadow-subtle)] backdrop-blur-xl">
       <div className="pointer-events-none absolute inset-x-10 -top-20 h-28 rounded-full bg-[color:rgb(var(--color-primary-rgb)/0.16)] blur-3xl" />
@@ -14,7 +24,7 @@ const SiteCopyrightFooter = ({ isArabic, showEngineerContact = true, showSocialL
             {isArabic ? 'حقوق الملكية محفوظة بعناية' : 'Copyright protected'}
           </span>
           <span className="hidden h-1 w-1 rounded-full bg-[color:rgb(var(--color-primary-rgb)/0.62)] sm:inline-flex" />
-          <span>© 2026 Lool Store</span>
+          <span>© 2026 {platformName}</span>
           <span className="hidden h-1 w-1 rounded-full bg-[color:rgb(var(--color-primary-rgb)/0.62)] sm:inline-flex" />
           <span>
             {isArabic
@@ -25,20 +35,21 @@ const SiteCopyrightFooter = ({ isArabic, showEngineerContact = true, showSocialL
 
         {showSocialLinks ? <StoreSocialLinks isArabic={isArabic} /> : null}
 
-        {showEngineerContact ? (
+        {showEngineerContact && contactUrl ? (
           <a
-            href={ENGINEERS_WHATSAPP_URL}
+            href={contactUrl}
             target="_blank"
             rel="noreferrer"
             className="mx-auto inline-flex items-center justify-center gap-1 text-[0.65rem] font-semibold text-[var(--color-text-secondary)] transition-colors hover:text-[var(--color-primary)]"
           >
             <MessageCircle className="h-3 w-3" />
-            <span>{isArabic ? 'تواصل مع مهندسين الموقع' : 'Contact site engineers'}</span>
+            <span>{isArabic ? 'تواصل مع مسؤول المنصة' : 'Contact the platform administrator'}</span>
           </a>
         ) : null}
       </div>
     </div>
   </footer>
-);
+  );
+};
 
 export default SiteCopyrightFooter;

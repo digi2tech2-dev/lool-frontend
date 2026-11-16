@@ -4663,3 +4663,21 @@ body::-webkit-scrollbar,
   background: rgb(var(--color-primary-rgb) / 0.18) !important;
   color: var(--color-primary) !important;
 }
+
+/* Published platform chrome */
+:root:root.platform-theme-active :is(.app-shell-header-panel,.public-full-header) {
+  width: var(--platform-header-width); max-width: 100%; min-height: var(--platform-header-height);
+  margin-inline: auto; border-radius: var(--platform-header-radius) !important;
+  background: var(--platform-header-background) !important; color: var(--platform-header-foreground) !important;
+}
+:root:root.platform-theme-active .mobile-bottom-nav__panel {
+  width: var(--platform-bottom-nav-width); max-width: 100%; height: var(--platform-bottom-nav-height);
+  border-radius: var(--platform-bottom-nav-radius) !important;
+  background: var(--platform-bottom-nav-background) !important; color: var(--platform-bottom-nav-foreground) !important;
+}
+:root:root.platform-theme-active .ka-sidebar-panel { border-radius: var(--platform-sidebar-radius, 28px) !important; }
+:root:root[data-platform-sidebar="square"] .ka-sidebar-panel { background: #171b22 !important; border-radius: 0 !important; }
+:root:root[data-platform-sidebar="royal"] .ka-sidebar-panel { background: linear-gradient(160deg,#31240d,#11131f) !important; border-color: #c89b39 !important; }
+:root:root[data-platform-sidebar="glass"] .ka-sidebar-panel { background: rgba(30,41,59,.82) !important; backdrop-filter: blur(20px); }
+:root:root[data-platform-sidebar="aurora"] .ka-sidebar-panel { background: linear-gradient(155deg,#24134c,#083b4b) !important; }
+:root:root[data-platform-sidebar="rounded"] .ka-sidebar-panel { background: linear-gradient(155deg,#10392e,#0e242e) !important; }

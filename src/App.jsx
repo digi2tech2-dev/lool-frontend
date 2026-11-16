@@ -1,4 +1,5 @@
 import React, { Suspense, lazy } from 'react';
+import './pages/admin/PlatformThemeEditor.css';
 import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom';
 import ProtectedRoute from './components/auth/ProtectedRoute';
 import FloatingWhatsApp from './components/ui/FloatingWhatsApp';
@@ -9,6 +10,8 @@ import SessionBootstrap from './components/app/SessionBootstrap';
 import NativePlatformBootstrap from './components/app/NativePlatformBootstrap';
 import NativeAppUpdateGate from './components/native/NativeAppUpdateGate';
 import RouteErrorBoundary from './components/app/RouteErrorBoundary';
+import ConnectionNotice from './components/app/ConnectionNotice';
+import MaintenanceBoundary from './components/app/MaintenanceBoundary';
 import { LanguageProvider } from './context/LanguageContext';
 import { ThemeProvider } from './context/ThemeContext';
 import { ToastProvider } from './components/ui/Toast';
@@ -46,6 +49,9 @@ const Referral = lazy(routeLoaders.Referral);
 const AdminUsers = lazy(routeLoaders.AdminUsers);
 const AdminGroups = lazy(routeLoaders.AdminGroups);
 const AdminProducts = lazy(routeLoaders.AdminProducts);
+const ProductRecovery = lazy(routeLoaders.ProductRecovery);
+const PlatformThemeEditor = lazy(routeLoaders.PlatformThemeEditor);
+const PlatformThemeSubscriptions = lazy(routeLoaders.PlatformThemeSubscriptions);
 const AdminWallet = lazy(routeLoaders.AdminWallet);
 const AdminReferrals = lazy(routeLoaders.AdminReferrals);
 const AdminCurrencies = lazy(routeLoaders.AdminCurrencies);
@@ -319,6 +325,15 @@ const AnimatedAppRoutes = ({ location }) => {
             </ProtectedRoute>
           )}
         />
+        <Route path="/admin/themes" element={<ProtectedRoute roles={['admin']}>
+          {renderSuspended(<PlatformThemeEditor />)}
+        </ProtectedRoute>} />
+        <Route path="/admin/theme/subscriptions" element={<ProtectedRoute roles={['admin']}>
+          {renderSuspended(<PlatformThemeSubscriptions />)}
+        </ProtectedRoute>} />
+        <Route path="/admin/product-recovery" element={<ProtectedRoute roles={ADMIN_PANEL_ROLES} permission={PERMISSIONS.ADMIN_PRODUCTS}>
+          {renderSuspended(<ProductRecovery />)}
+        </ProtectedRoute>} />
         <Route
           path="/admin/users"
           element={(
@@ -471,6 +486,8 @@ function App() {
         <ToastProvider>
           <SessionBootstrap />
           <BrowserRouter>
+            <ConnectionNotice />
+            <MaintenanceBoundary>
             <NativePlatformBootstrap />
             <NativeAppUpdateGate />
             <PageTransition>
@@ -479,6 +496,7 @@ function App() {
             <CustomerBottomNav />
             <AdminBottomNav />
             <FloatingWhatsApp />
+            </MaintenanceBoundary>
           </BrowserRouter>
         </ToastProvider>
       </LanguageProvider>

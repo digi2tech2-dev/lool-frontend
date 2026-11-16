@@ -1,4 +1,4 @@
-import React, { useCallback, useMemo, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { createPortal } from 'react-dom';
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
@@ -16,6 +16,8 @@ import HeaderBrand from '../components/layout/HeaderBrand';
 import PublicSidebar from '../components/layout/PublicSidebar';
 import SiteCopyrightFooter from '../components/layout/SiteCopyrightFooter';
 import { useBodyScrollLock } from '../utils/bodyScrollLock';
+import useSystemStore from '../store/useSystemStore';
+import { resolveSupportContacts } from '../utils/whatsapp';
 
 const ContactUs = ({ accountOnly = false }) => {
   const navigate = useNavigate();
@@ -28,6 +30,10 @@ const ContactUs = ({ accountOnly = false }) => {
   const [messageError, setMessageError] = useState('');
   const [selectedComplaint, setSelectedComplaint] = useState('');
   const [submitted, setSubmitted] = useState(false);
+  const paymentSettings = useSystemStore((state) => state.paymentSettings);
+  const loadPaymentSettings = useSystemStore((state) => state.loadPaymentSettings);
+
+  useEffect(() => { void loadPaymentSettings({ force: true }); }, [loadPaymentSettings]);
 
   useBodyScrollLock(accountOnly && isMenuOpen);
 
@@ -210,7 +216,7 @@ const ContactUs = ({ accountOnly = false }) => {
     }
 
     const href = buildWhatsAppLink({
-      number: getAdminWhatsAppNumber(),
+      number: resolveSupportContacts(paymentSettings?.supportContacts)[0]?.number || paymentSettings?.whatsappNumber || getAdminWhatsAppNumber(),
       message: trimmedMessage,
     });
 

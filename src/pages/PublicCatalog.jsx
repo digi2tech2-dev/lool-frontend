@@ -21,6 +21,8 @@ import useGroupStore from '../store/useGroupStore';
 import apiClient from '../services/client';
 import ThemeToggle from '../components/ui/ThemeToggle';
 import HeaderBrand from '../components/layout/HeaderBrand';
+import { usePlatformBrand } from '../context/ThemeContext';
+import { resolveImageUrl } from '../utils/imageUrl';
 import PublicSidebar from '../components/layout/PublicSidebar';
 import SiteCopyrightFooter from '../components/layout/SiteCopyrightFooter';
 import HeroSlider from '../components/home/HeroSlider';
@@ -298,16 +300,20 @@ const PublicCatalog = () => {
     setShowWhatsAppNotice(false);
   }, []);
 
-  const heroSlides = useMemo(
-    () => ([
+  const platformBrand = usePlatformBrand();
+  const heroSlides = useMemo(() => {
+    const defaults = [
       { id: 'landing-slide-1', image: slideOneImage, title: '' },
       { id: 'landing-slide-2', image: slideTwoImage, title: '', href: SLIDE_TWO_URL },
       { id: 'landing-slide-3', image: slideThreeImage, title: '', href: '/referral' },
       { id: 'landing-slide-4', image: slideFourImage, title: '' },
       { id: 'landing-slide-5', image: slideFiveImage, title: '' },
-    ]),
-    []
-  );
+    ];
+    const customSlides = platformBrand.slides.filter(Boolean);
+    return customSlides.length ? customSlides.map((image, index) => ({
+      ...defaults[index], id: `platform-slide-${index + 1}`, image: resolveImageUrl(image),
+    })) : defaults;
+  }, [platformBrand.slides]);
 
   const catalogProducts = useMemo(
     // Use one authoritative availability source. Mixing two responses can let a

@@ -1,27 +1,36 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { ArrowUpRight, Headphones, MessageCircle } from 'lucide-react';
 import Modal from './Modal';
 import logo from '../../assets/lool-store-logo.webp';
+import { usePlatformBrand } from '../../context/ThemeContext';
+import { resolveImageUrl } from '../../utils/imageUrl';
 import supportRobot from '../../assets/lool-support-robot.webp';
-import managerRobot from '../../assets/lool-welcome-robot.webp';
-import { buildWhatsAppLink, SUPPORT_WHATSAPP_NUMBER } from '../../utils/whatsapp';
+import { buildWhatsAppLink, getDefaultWhatsAppNumber, resolveSupportContacts } from '../../utils/whatsapp';
+import useSystemStore from '../../store/useSystemStore';
 import './WhatsAppContactChooser.css';
 
 const WhatsAppContactChooser = ({ isOpen, onClose, message = '', isArabic = true }) => {
-  const whatsappLink = buildWhatsAppLink({ number: SUPPORT_WHATSAPP_NUMBER, message });
+  const brand = usePlatformBrand();
+  const paymentSettings = useSystemStore((state) => state.paymentSettings);
+  const loadPaymentSettings = useSystemStore((state) => state.loadPaymentSettings);
+  useEffect(() => {
+    if (isOpen) void loadPaymentSettings({ force: true });
+  }, [isOpen, loadPaymentSettings]);
+  const contacts = resolveSupportContacts(paymentSettings?.supportContacts);
+  const visibleContacts = contacts.length ? contacts : [{
+    id: 'support-default',
+    name: isArabic ? 'خدمة العملاء' : 'Customer support',
+    role: '',
+    number: paymentSettings?.whatsappNumber || getDefaultWhatsAppNumber(),
+  }];
 
   return (
-    <Modal
-      isOpen={isOpen}
-      onClose={onClose}
-      size="xs"
-      title={isArabic ? 'خدمة العملاء' : 'Customer support'}
-    >
+    <Modal isOpen={isOpen} onClose={onClose} size="xs" title={isArabic ? 'خدمة العملاء' : 'Customer support'}>
       <div dir={isArabic ? 'rtl' : 'ltr'} className="support-contact">
         <div className="support-contact__hero">
           <div className="support-contact__topline">
             <div className="support-contact__brand" dir="ltr">
-              <img src={logo} alt="Lool Store" className="support-contact__logo" />
+              <img src={brand.logoPath ? resolveImageUrl(brand.logoPath) : logo} alt={brand.platformName} className="support-contact__logo" />
               <span><small>CLIENT CARE</small></span>
             </div>
             <span className="support-contact__icon" aria-hidden="true"><Headphones /></span>
@@ -30,31 +39,23 @@ const WhatsAppContactChooser = ({ isOpen, onClose, message = '', isArabic = true
             <div className="support-contact__intro">
               <span className="support-contact__eyebrow">{isArabic ? 'نحن هنا لمساعدتك' : 'WE ARE HERE TO HELP'}</span>
               <h4>{isArabic ? 'كيف نقدر نساعدك؟' : 'How can we help?'}</h4>
-              <p>{isArabic ? 'فريق خدمة العملاء على بُعد رسالة واحدة منك.' : 'Our customer support team is just a message away.'}</p>
+              <p>{isArabic ? 'اختر جهة التواصل المناسبة وسنفتح محادثة واتساب.' : 'Choose a contact and we will open WhatsApp.'}</p>
             </div>
             <img className="support-contact__robot" src={supportRobot} alt="" width="512" height="512" decoding="async" />
           </div>
         </div>
-
         <div className="support-contact__body">
-          <a href={whatsappLink} target="_blank" rel="noopener noreferrer" onClick={onClose} className="support-contact__number">
-            <img className="support-contact__manager-avatar" src={managerRobot} alt="" width="512" height="512" decoding="async" />
-            <div className="support-contact__number-text">
-              <strong>{isArabic ? 'مدير المنصة (لول)' : 'Platform manager (Lool)'}</strong>
-            </div>
-          </a>
-          <a
-            href={whatsappLink}
-            target="_blank"
-            rel="noopener noreferrer"
-            onClick={onClose}
-            className="support-contact__action"
-          >
-            <MessageCircle aria-hidden="true" />
-            <span>{isArabic ? 'ابدأ المحادثة على واتساب' : 'Start a WhatsApp chat'}</span>
-            <ArrowUpRight className="support-contact__arrow" aria-hidden="true" />
-          </a>
-          <p className="support-contact__hint">{isArabic ? 'سيتم فتح محادثة واتساب مباشرة' : 'Opens a WhatsApp conversation directly'}</p>
+          {visibleContacts.map((contact) => {
+            const href = buildWhatsAppLink({ number: contact.number, message });
+            return (
+              <a key={contact.id} href={href || '#'} target="_blank" rel="noopener noreferrer" onClick={onClose} className="support-contact__action">
+                <MessageCircle aria-hidden="true" />
+                <span>{contact.name}{contact.role ? ' · ' + contact.role : ''}</span>
+                <ArrowUpRight className="support-contact__arrow" aria-hidden="true" />
+              </a>
+            );
+          })}
+          <p className="support-contact__hint">{isArabic ? 'سيتم فتح محادثة واتساب مباشرة.' : 'A WhatsApp conversation will open.'}</p>
         </div>
       </div>
     </Modal>

@@ -44,7 +44,7 @@ const HeroSlider = ({ slides }) => {
 
   if (!slides?.length) return null;
 
-  const slide = slides[currentSlide];
+  const slide = slides[currentSlide % slides.length];
   const SlideFrame = slide.href ? 'a' : 'div';
   const slideFrameProps = slide.href
     ? {

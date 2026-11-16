@@ -1,4 +1,5 @@
 import React, { useEffect, useMemo, useState } from 'react';
+import MaintenanceControl from '../components/app/MaintenanceControl';
 import {
   ArrowLeftRight,
   CheckCircle2,
@@ -1044,6 +1045,8 @@ const AdminDashboard = () => {
         userName={user?.name}
         currentDateLabel={currentDateLabel}
       />
+
+      <MaintenanceControl />
 
       <Card variant="premium" className="admin-dashboard-filter-card overflow-visible p-4 sm:p-6">
         <DashboardDateRangeFilter

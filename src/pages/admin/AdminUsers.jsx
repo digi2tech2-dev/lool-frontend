@@ -39,6 +39,7 @@ import {
 } from '../../utils/accountStatus';
 import { resolveUserAvatar } from '../../utils/avatar';
 import apiClient from '../../services/client';
+import UserProductVisibility from './UserProductVisibility';
 import { normalizeBillingMode, normalizeQuota } from '../../utils/billing';
 
 const FILTER_OPTIONS = ['all', 'approved', 'rejected', 'deleted'];
@@ -1171,6 +1172,8 @@ const AdminUsers = () => {
                 </Button>
               ) : null}
             </div>
+
+            {canManageUsers && selectedUser?.id && filter !== 'deleted' && <UserProductVisibility userId={selectedUser.id} />}
 
             <div className="mt-3 grid gap-2.5 text-xs sm:grid-cols-2 lg:grid-cols-3">
               <div>

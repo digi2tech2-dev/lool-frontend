@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 import welcomeRobot from '../../assets/lool-welcome-robot.webp';
 import { useBodyScrollLock } from '../../utils/bodyScrollLock';
+import { usePlatformBrand } from '../../context/ThemeContext';
 import './WelcomeIntro.css';
 
 const WELCOME_STORAGE_PREFIX = 'lool:welcome-seen:';
@@ -16,6 +17,7 @@ const hasSeenWelcome = (accountKeys) => {
 };
 
 const WelcomeIntro = ({ user, language = 'ar' }) => {
+  const { platformName } = usePlatformBrand();
   const accountKeys = [...new Set([user?.id, user?._id, user?.email]
     .map((value) => String(value || '').trim().toLowerCase())
     .filter(Boolean))];
@@ -47,11 +49,11 @@ const WelcomeIntro = ({ user, language = 'ar' }) => {
       className="lool-welcome"
       dir={isArabic ? 'rtl' : 'ltr'}
       onClick={dismiss}
-      aria-label={isArabic ? 'مرحبًا بك في LOOL Store. اضغط في أي مكان للمتابعة' : 'Welcome to LOOL Store. Click anywhere to continue'}
+      aria-label={isArabic ? `مرحبًا بك في ${platformName}. اضغط في أي مكان للمتابعة` : `Welcome to ${platformName}. Click anywhere to continue`}
     >
       <span className="lool-welcome__content">
         <img className="lool-welcome__robot" src={welcomeRobot} alt="" width="768" height="768" />
-        <span className="lool-welcome__title">{isArabic ? 'مرحبًا بك في LOOL Store' : 'Welcome to LOOL Store'}</span>
+        <span className="lool-welcome__title">{isArabic ? `مرحبًا بك في ${platformName}` : `Welcome to ${platformName}`}</span>
         <span className="lool-welcome__message">
           {isArabic ? 'كل خدماتك الرقمية في مكان واحد. جاهز تبدأ؟' : 'All your digital services in one place. Ready to begin?'}
         </span>

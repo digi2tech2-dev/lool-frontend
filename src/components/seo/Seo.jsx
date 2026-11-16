@@ -1,4 +1,5 @@
 import { useEffect } from 'react';
+import { usePlatformBrand } from '../../context/ThemeContext';
 
 const upsertMeta = (selector, createAttributes, valueAttribute, value) => {
   if (typeof document === 'undefined' || !value) return;
@@ -39,6 +40,10 @@ const removeManagedJsonLd = () => {
     .forEach((element) => element.remove());
 };
 
+const replaceDefaultBrand = (value, platformName) => (typeof value === 'string'
+  ? value.replace(/Lool Store|LOOL Store/g, platformName)
+  : value);
+
 const Seo = ({
   title,
   description,
@@ -48,20 +53,21 @@ const Seo = ({
   language = 'ar',
   jsonLd = [],
 }) => {
+  const { platformName } = usePlatformBrand();
   useEffect(() => {
     if (typeof document === 'undefined') return undefined;
 
-    const safeTitle = title || 'Lool Store';
+    const safeTitle = replaceDefaultBrand(title, platformName) || platformName;
     document.title = safeTitle;
     document.documentElement.lang = language === 'ar' ? 'ar' : 'en';
     document.documentElement.dir = language === 'ar' ? 'rtl' : 'ltr';
 
-    upsertMeta('meta[name="description"]', { name: 'description' }, 'content', description);
-    upsertMeta('meta[name="keywords"]', { name: 'keywords' }, 'content', keywords);
+    upsertMeta('meta[name="description"]', { name: 'description' }, 'content', replaceDefaultBrand(description, platformName));
+    upsertMeta('meta[name="keywords"]', { name: 'keywords' }, 'content', replaceDefaultBrand(keywords, platformName));
     upsertMeta('meta[name="robots"]', { name: 'robots' }, 'content', 'index, follow, max-image-preview:large');
     upsertMeta('meta[property="og:title"]', { property: 'og:title' }, 'content', safeTitle);
-    upsertMeta('meta[property="og:description"]', { property: 'og:description' }, 'content', description);
-    upsertMeta('meta[property="og:site_name"]', { property: 'og:site_name' }, 'content', 'Lool Store');
+    upsertMeta('meta[property="og:description"]', { property: 'og:description' }, 'content', replaceDefaultBrand(description, platformName));
+    upsertMeta('meta[property="og:site_name"]', { property: 'og:site_name' }, 'content', platformName);
     upsertMeta('meta[property="og:type"]', { property: 'og:type' }, 'content', 'website');
     upsertMeta('meta[property="og:locale"]', { property: 'og:locale' }, 'content', language === 'ar' ? 'ar_EG' : 'en_US');
     upsertMeta('meta[property="og:locale:alternate"]', { property: 'og:locale:alternate' }, 'content', language === 'ar' ? 'en_US' : 'ar_EG');
@@ -76,9 +82,9 @@ const Seo = ({
 
     if (image) {
       upsertMeta('meta[property="og:image"]', { property: 'og:image' }, 'content', image);
-      upsertMeta('meta[property="og:image:alt"]', { property: 'og:image:alt' }, 'content', 'Lool Store');
+      upsertMeta('meta[property="og:image:alt"]', { property: 'og:image:alt' }, 'content', platformName);
       upsertMeta('meta[name="twitter:image"]', { name: 'twitter:image' }, 'content', image);
-      upsertMeta('meta[name="twitter:image:alt"]', { name: 'twitter:image:alt' }, 'content', 'Lool Store');
+      upsertMeta('meta[name="twitter:image:alt"]', { name: 'twitter:image:alt' }, 'content', platformName);
     }
 
     removeManagedJsonLd();
@@ -91,7 +97,7 @@ const Seo = ({
     });
 
     return undefined;
-  }, [canonicalUrl, description, image, jsonLd, keywords, language, title]);
+  }, [canonicalUrl, description, image, jsonLd, keywords, language, platformName, title]);
 
   return null;
 };
