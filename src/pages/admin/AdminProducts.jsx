@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { Edit, Image as ImageIcon, Plus, Trash2, Info, Search, Check, Package, RefreshCw, Power } from 'lucide-react';
 import { resolveImageUrl } from '../../utils/imageUrl';
 import { uploadImage } from '../../services/realApi';
@@ -343,6 +343,25 @@ const AdminProducts = () => {
     const [editingProduct, setEditingProduct] = useState(null);
     const [isSavingProduct, setIsSavingProduct] = useState(false);
     const [togglingProductId, setTogglingProductId] = useState(null);
+    const [bulkProductIds, setBulkProductIds] = useState([]);
+    const [bulkProductBusy, setBulkProductBusy] = useState(false);
+    const [bulkProductResult, setBulkProductResult] = useState('');
+    const toggleBulkProduct = (id) => setBulkProductIds((ids) => ids.includes(id) ? ids.filter((item) => item !== id) : [...ids, id]);
+    const runBulkProducts = async (action) => {
+        const labels = { activate: 'تفعيل', deactivate: 'إيقاف', hideApi: 'إخفاء من API', showApi: 'إظهار في API', delete: 'حذف' };
+        if (!bulkProductIds.length || !window.confirm(`${labels[action]} ${bulkProductIds.length} منتج؟`)) return;
+        setBulkProductBusy(true); let succeeded = 0; const failed = [];
+        for (const id of bulkProductIds) {
+            try {
+                if (action === 'delete') await apiClient.products.delete(id);
+                else if (action === 'activate' || action === 'deactivate') await apiClient.products.update(id, { isActive: action === 'activate' });
+                else await apiClient.products.update(id, { hideFromApi: action === 'hideApi' });
+                succeeded++;
+            } catch (error) { failed.push(`${products.find((p) => p.id === id)?.name || id}: ${error?.response?.data?.message || error?.message || 'تعذر التنفيذ'}`); }
+        }
+        setBulkProductResult(`نجح ${succeeded}، فشل ${failed.length}${failed.length ? `: ${failed.join('؛ ')}` : ''}`);
+        setBulkProductIds([]); setBulkProductBusy(false); await loadProducts({ force: true, bypassCache: true });
+    };
     const [productToDelete, setProductToDelete] = useState(null);
 
     const [isCategoryModalOpen, setIsCategoryModalOpen] = useState(false);
@@ -358,6 +377,14 @@ const AdminProducts = () => {
     const [providers, setProviders] = useState([]);
     const [providerProducts, setProviderProducts] = useState([]);
     const [providerProductQuery, setProviderProductQuery] = useState('');
+    const [copySupplierProductName, setCopySupplierProductName] = useState(false);
+    const [allProviderSearch, setAllProviderSearch] = useState('');
+    const [allProviderResults, setAllProviderResults] = useState([]);
+    const [allProviderPage, setAllProviderPage] = useState(1);
+    const [allProviderPages, setAllProviderPages] = useState(0);
+    const [allProviderLoading, setAllProviderLoading] = useState(false);
+    const [allProviderError, setAllProviderError] = useState('');
+    const selectedCrossProvider = useRef(null);
     const [providerProductsVisibleCount, setProviderProductsVisibleCount] = useState(PROVIDER_PRODUCTS_PAGE_SIZE);
     const [isSyncingPrice, setIsSyncingPrice] = useState(false);
     const [selectedMainCategoryId, setSelectedMainCategoryId] = useState('');
@@ -621,14 +648,18 @@ const AdminProducts = () => {
 
     useEffect(() => {
         const selectedSupplier = productForm.supplierId || productForm.providerId;
+        let active = true;
         if (!isProductModalOpen || !selectedSupplier) {
             setProviderProducts([]);
-            return;
+            return () => { active = false; };
         }
         apiClient.products
             .listProviderProducts(selectedSupplier, { limit: PROVIDER_PRODUCTS_LIMIT })
             .then((items) => {
-                const nextItems = Array.isArray(items) ? items : [];
+                if (!active) return;
+                let nextItems = Array.isArray(items) ? items : [];
+                const cross = selectedCrossProvider.current;
+                if (cross && String(cross.providerId) === String(selectedSupplier) && !nextItems.some((p) => p.id === cross.id)) nextItems = [cross, ...nextItems];
                 setProviderProducts(nextItems);
                 // If the currently selected product ID is not in the new list, reset it
                 setProductForm((prev) => {
@@ -640,13 +671,29 @@ const AdminProducts = () => {
                 });
             })
             .catch(() => {
+                if (!active) return;
                 setProviderProducts([]);
                 addToast('فشل تحميل منتجات المزود', 'error');
             });
+        return () => { active = false; };
         // Fix 4: Only re-fetch when the provider ID changes or the modal opens/closes.
         // providerProductId/externalProductId are removed to prevent race conditions
         // when they are cleared by the provider onChange handler.
     }, [isProductModalOpen, productForm.providerId, productForm.supplierId, addToast]);
+
+    useEffect(() => {
+        let active = true;
+        const query = allProviderSearch.trim();
+        if (!isProductModalOpen || query.length < 3) { setAllProviderResults([]); setAllProviderError(''); setAllProviderLoading(false); return () => { active = false; }; }
+        setAllProviderLoading(true); setAllProviderError('');
+        const timer = setTimeout(() => {
+            apiClient.products.searchProviderProducts(query, allProviderPage)
+                .then((data) => { if (active) { setAllProviderResults(data.products); setAllProviderPages(Number(data.pagination?.pages || 0)); } })
+                .catch(() => { if (active) { setAllProviderResults([]); setAllProviderError(isEnglish ? 'Could not search suppliers.' : 'تعذر البحث لدى الموردين.'); } })
+                .finally(() => { if (active) setAllProviderLoading(false); });
+        }, 350);
+        return () => { active = false; clearTimeout(timer); };
+    }, [allProviderSearch, allProviderPage, isProductModalOpen, isEnglish]);
 
     useEffect(() => {
         setProviderProductQuery('');
@@ -798,6 +845,7 @@ const AdminProducts = () => {
             externalProductId: String(selected?.externalProductId || value).trim(),
             providerProductId: value,
             externalProductName: selected?.name || '',
+            ...(copySupplierProductName && selected ? { name: selected.rawName || selected.name, nameAr: selected.rawName || selected.name } : {}),
             ...(prev.syncPriceWithProvider && selectedSnapshot
                 ? buildProviderSyncSnapshot(selectedSnapshot, {
                     enableManualPrice: prev.enableManualPrice,
@@ -872,6 +920,7 @@ const AdminProducts = () => {
     };
 
     const openProductModal = (product = null) => {
+        setCopySupplierProductName(false);
         setProductFormStep(PRODUCT_FORM_STEPS[0].id);
         setPreviewQuantity(String(product?.minimumOrderQty ?? product?.minQty ?? 1));
         setPreviewCurrencyCode('USD');
@@ -902,7 +951,7 @@ const AdminProducts = () => {
                 supplierFieldMappingsText: Array.isArray(product.supplierFieldMappings) ? product.supplierFieldMappings.map((m) => `${m.internalField}:${m.externalField}`).join('\n') : 'playerId:uid\nquantity:qty',
                 syncPriceWithProvider: shouldSyncWithProvider,
                 externalPricingMode: product.externalPricingMode || (shouldSyncWithProvider ? 'use_supplier_price' : 'use_local_price'),
-                enableManualPrice: Number(product.manualPriceAdjustment || 0) !== 0,
+                enableManualPrice: product.enableManualPrice !== undefined ? Boolean(product.enableManualPrice) : Number(product.manualPriceAdjustment || 0) !== 0,
                 displayAccountNumber: String(product.displayAccountNumber || product.purchaseAccountNumber || product.accountNumber || product.productAccountNumber || '').trim(),
                 purchaseAccountNumber: String(product.displayAccountNumber || product.purchaseAccountNumber || product.accountNumber || product.productAccountNumber || '').trim(),
                 showPurchaseAccountNumber: Boolean(product.showPurchaseAccountNumber ?? product.showAccountNumber ?? product.displayAccountNumber ?? false),
@@ -1046,7 +1095,7 @@ const AdminProducts = () => {
         let basePriceCoins = Number(basePriceCoinsValue || 0);
         let syncedProviderBasePrice = null;
         let manualPriceAdjustmentRaw = normalizePriceInput(productForm.manualPriceAdjustment);
-        let manualPriceAdjustment = productForm.enableManualPrice ? Number(manualPriceAdjustmentRaw || 0) : 0;
+        const manualPriceAdjustment = manualPriceAdjustmentRaw || '0';
 
         if (shouldSyncWithProvider) {
             try {
@@ -1063,23 +1112,11 @@ const AdminProducts = () => {
                 const syncedProviderBasePriceValue = normalizePriceInput(syncedSnapshot.syncedProviderBasePrice || '');
                 syncedProviderBasePrice = Number(syncedProviderBasePriceValue || 0);
 
-                if (productForm.enableManualPrice) {
-                    manualPriceAdjustmentRaw = syncedProviderBasePriceValue
-                        ? addPriceValues(basePriceCoinsValue, `-${syncedProviderBasePriceValue}`)
-                        : manualPriceAdjustmentRaw;
-                    manualPriceAdjustment = Number(manualPriceAdjustmentRaw || 0);
-                    setProductForm((prev) => ({
-                        ...prev,
-                        syncedProviderBasePrice: syncedProviderBasePriceValue,
-                        manualPriceAdjustment: manualPriceAdjustmentRaw,
-                    }));
-                } else {
-                    basePriceCoinsValue = syncedSnapshot.basePriceCoins;
-                    basePriceCoins = Number(normalizePriceInput(basePriceCoinsValue) || 0);
-                    minQty = syncedSnapshot.minimumOrderQty;
-                    maxQty = syncedSnapshot.maximumOrderQty;
-                    setProductForm((prev) => ({ ...prev, ...syncedSnapshot }));
-                }
+                basePriceCoinsValue = syncedSnapshot.basePriceCoins;
+                basePriceCoins = Number(normalizePriceInput(basePriceCoinsValue) || 0);
+                minQty = syncedSnapshot.minimumOrderQty;
+                maxQty = syncedSnapshot.maximumOrderQty;
+                setProductForm((prev) => ({ ...prev, ...syncedSnapshot }));
             } catch (error) {
                 addToast(getReadableErrorMessage(
                     error,
@@ -1719,6 +1756,16 @@ const AdminProducts = () => {
                 </div>
             </div>
 
+            <section aria-label={isEnglish ? 'Selected product actions' : 'إجراءات المنتجات المحددة'} className="mb-2 rounded-xl border border-[var(--color-border)] bg-[var(--color-card)] px-2.5 py-2 shadow-sm sm:px-3">
+                <div className="flex flex-wrap items-center gap-1.5">
+                    <span className="inline-flex min-h-7 items-center gap-1.5 rounded-lg bg-[var(--color-primary)]/10 px-2.5 text-[11px] font-bold text-[var(--color-primary)]"><Package className="h-3.5 w-3.5" />{isEnglish ? 'Selected' : 'المحدد'} <span className="rounded-md bg-[var(--color-card)] px-1.5 py-0.5 tabular-nums">{bulkProductIds.length}</span></span>
+                    <button type="button" disabled={bulkProductBusy || !filteredAdminProducts.length} className="min-h-7 rounded-lg border border-[var(--color-border)] px-2 text-[11px] font-semibold transition hover:bg-[var(--color-surface)] disabled:opacity-40" onClick={() => setBulkProductIds((ids) => [...new Set([...ids, ...filteredAdminProducts.map((p) => p.id)])])}>{isEnglish ? 'Select results' : 'تحديد نتائج البحث'}</button>
+                    <button type="button" disabled={bulkProductBusy || !bulkProductIds.length} className="min-h-7 rounded-lg px-2 text-[11px] font-semibold text-[var(--color-text-secondary)] transition hover:bg-[var(--color-surface)] disabled:opacity-40" onClick={() => setBulkProductIds([])}>{isEnglish ? 'Clear' : 'إلغاء التحديد'}</button>
+                    <span aria-hidden="true" className="mx-0.5 hidden h-5 w-px bg-[var(--color-border)] sm:block" />
+                    {[['activate', 'تفعيل', 'Activate'], ['hideApi', 'إخفاء من API', 'Hide from API'], ['showApi', 'إظهار في API', 'Show in API'], ['deactivate', 'إيقاف', 'Deactivate']].map(([action, label, english]) => <button key={action} type="button" disabled={bulkProductBusy || !bulkProductIds.length} className={`min-h-7 rounded-lg border border-[var(--color-border)] px-2.5 text-[11px] font-bold transition hover:bg-[var(--color-surface)] disabled:cursor-not-allowed disabled:opacity-40 ${action === 'deactivate' ? 'text-red-600 dark:text-red-400' : 'text-[var(--color-text)]'}`} onClick={() => runBulkProducts(action)}>{isEnglish ? english : label}</button>)}
+                </div>
+                {bulkProductResult && <p role="status" className="mt-2 break-words text-[11px] text-[var(--color-text-secondary)]">{bulkProductResult}</p>}
+            </section>
             <div className="admin-premium-panel overflow-hidden">
                 <div className="space-y-2 p-2 sm:space-y-3 sm:p-3 xl:hidden">
                     {filteredAdminProducts.length === 0 ? (
@@ -1747,6 +1794,7 @@ const AdminProducts = () => {
                                 className="rounded-lg border border-[color:rgb(var(--color-border-rgb)/0.78)] bg-[linear-gradient(180deg,rgb(var(--color-card-rgb)/0.9),rgb(var(--color-elevated-rgb)/0.72))] p-2 shadow-[var(--shadow-subtle)] transition hover:border-[color:rgb(var(--color-primary-rgb)/0.26)] sm:rounded-xl sm:p-3"
                             >
                                 <div className="flex min-w-0 items-start gap-2 sm:gap-3">
+                                    <input aria-label={`تحديد ${primaryName}`} type="checkbox" checked={bulkProductIds.includes(product.id)} disabled={bulkProductBusy} onChange={() => toggleBulkProduct(product.id)} className="mt-2 h-4 w-4" />
                                     {renderProductImage(product, 'h-10 w-10 !rounded-lg sm:h-14 sm:w-14 sm:!rounded-xl')}
                                     <div className="min-w-0 flex-1">
                                         <div className="flex min-w-0 items-start justify-between gap-1.5 sm:gap-2">
@@ -1842,6 +1890,7 @@ const AdminProducts = () => {
                                     <TableRow key={product.id} className="hover:bg-[color:rgb(var(--color-primary-rgb)/0.055)]">
                                         <TableCell className="py-3">
                                             <div className="flex min-w-0 items-center gap-3">
+                                                <input aria-label={`تحديد ${primaryName}`} type="checkbox" checked={bulkProductIds.includes(product.id)} disabled={bulkProductBusy} onChange={() => toggleBulkProduct(product.id)} className="h-4 w-4" />
                                                 {renderProductImage(product)}
                                                 <div className="min-w-0">
                                                     <div className={`truncate font-semibold ${isHidden ? 'text-gray-500 line-through dark:text-gray-400' : isUnavailable ? 'text-gray-500 dark:text-gray-400' : 'text-gray-900 dark:text-white'}`}>
@@ -2098,11 +2147,25 @@ const AdminProducts = () => {
                             <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
                                 <div className="space-y-2">
                                     <label className="text-sm font-medium text-gray-700 dark:text-gray-300">اختر المورد</label>
+                                    <div className="rounded-xl border border-[var(--color-border)] bg-[var(--color-surface)] p-3">
+                                        <label htmlFor="all-suppliers-search" className="block text-xs font-bold">{isEnglish ? 'Search all suppliers' : 'البحث في كل الموردين'}</label>
+                                        <input id="all-suppliers-search" value={allProviderSearch} maxLength={100} onChange={(e) => { setAllProviderSearch(e.target.value); setAllProviderPage(1); }} placeholder={isEnglish ? 'Enter at least 3 letters' : 'اكتب ٣ حروف على الأقل من اسم المنتج'} className={`${inputBaseClassName} mt-2 w-full`} />
+                                        <p className="mt-1 text-xs text-[var(--color-text-secondary)]">{isEnglish ? 'Stored supplier prices, lowest first. Selection changes only when you choose a result.' : 'الأسعار المسجلة لدى الموردين من الأقل للأعلى. لن يتغير اختيارك إلا عند الضغط على نتيجة.'}</p>
+                                        {allProviderLoading && <p role="status" className="mt-2 text-xs">{isEnglish ? 'Searching...' : 'جارٍ البحث...'}</p>}
+                                        {allProviderError && <p role="alert" className="mt-2 text-xs text-red-600">{allProviderError}</p>}
+                                        {!allProviderLoading && allProviderSearch.trim().length >= 3 && !allProviderError && <div className="mt-2 max-h-56 space-y-1 overflow-auto">{allProviderResults.length ? allProviderResults.map((item) => <button key={item.id} type="button" className="flex w-full items-center justify-between gap-3 rounded-lg border border-[var(--color-border)] bg-[var(--color-card)] p-2 text-start text-xs hover:border-[var(--color-primary)]" onClick={() => {
+                                            selectedCrossProvider.current = item;
+                                            setProviderProducts((rows) => [item, ...rows.filter((p) => p.id !== item.id)]);
+                                            setProductForm((prev) => ({ ...prev, supplierId: String(item.providerId), providerId: String(item.providerId), providerProductId: item.id, externalProductId: String(item.externalProductId || item.id), externalProductName: item.name, ...(copySupplierProductName ? { name: item.rawName || item.name, nameAr: item.rawName || item.name } : {}), ...(prev.syncPriceWithProvider ? buildProviderSyncSnapshot(item, { enableManualPrice: prev.enableManualPrice, manualPriceAdjustment: prev.manualPriceAdjustment, fallbackMinQty: prev.minimumOrderQty, fallbackMaxQty: prev.maximumOrderQty }) : {}) }));
+                                        }}><span className="min-w-0"><strong className="block break-words">{item.name}</strong><span className="mt-1 block text-[var(--color-text-secondary)]">{item.providerName}</span><span className="mt-1 block text-[var(--color-text-secondary)]">{isEnglish ? 'Min' : 'الحد الأدنى'}: {item.minQty ?? '—'} · {isEnglish ? 'Max' : 'الحد الأقصى'}: {item.maxQty ?? '—'}</span></span><span className="shrink-0 font-bold text-[var(--color-primary)]" dir="ltr">{formatProviderProductPrice(item.rawPrice, language) || '—'}</span></button>) : <p className="p-2 text-xs">{isEnglish ? 'No matching products.' : 'لا توجد منتجات مطابقة.'}</p>}</div>}
+                                        {allProviderPages > 1 && <div className="mt-2 flex items-center justify-between text-xs"><button type="button" disabled={allProviderLoading || allProviderPage <= 1} onClick={() => setAllProviderPage((p) => p - 1)} className="rounded-lg border border-[var(--color-border)] px-2 py-1 disabled:opacity-40">{isEnglish ? 'Previous' : 'السابق'}</button><span>{allProviderPage} / {allProviderPages}</span><button type="button" disabled={allProviderLoading || allProviderPage >= allProviderPages} onClick={() => setAllProviderPage((p) => p + 1)} className="rounded-lg border border-[var(--color-border)] px-2 py-1 disabled:opacity-40">{isEnglish ? 'Next' : 'التالي'}</button></div>}
+                                    </div>
                                     <select
                                         className={`${selectClassName} h-11 dark:[color-scheme:dark]`}
                                         value={productForm.supplierId || productForm.providerId}
                                         onChange={(e) => {
                                             const value = e.target.value;
+                                            selectedCrossProvider.current = null;
                                             // Fix 1: Full price reset — clear ALL price-related fields
                                             // when provider changes to prevent stale prices from
                                             // Provider B bleeding into Provider A's context.
@@ -2290,10 +2353,15 @@ const AdminProducts = () => {
                             ) : null}
 
                             {productForm.connectionType === 'auto' ? (
-                            <div className="rounded-lg border border-gray-200 p-3 dark:border-gray-700">
-                                <div className="flex flex-wrap items-center gap-4">
-                                    <label className="inline-flex items-center gap-2 text-sm text-gray-700 dark:text-gray-300">
+                            <div className="overflow-hidden rounded-2xl border border-[var(--color-border)] bg-[var(--color-card)] shadow-sm">
+                                <div className="flex items-center gap-3 border-b border-[var(--color-border)] bg-[var(--color-surface)] px-4 py-3">
+                                    <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-[color:rgb(var(--color-primary-rgb)/0.1)] text-[var(--color-primary)]"><RefreshCw className="h-4 w-4" /></span>
+                                    <div><h3 className="text-sm font-bold text-[var(--color-text)]">{isEnglish ? 'Supplier pricing' : 'تسعير المورد'}</h3><p className="mt-0.5 text-xs text-[var(--color-text-secondary)]">{isEnglish ? 'Control syncing and price adjustments' : 'تحكم في المزامنة والإضافة اليدوية'}</p></div>
+                                </div>
+                                <div className="grid gap-2 p-3 sm:grid-cols-2">
+                                    <label className="flex cursor-pointer items-start gap-3 rounded-xl border border-[var(--color-border)] bg-[var(--color-surface)] p-3 transition hover:border-[var(--color-primary)]">
                                         <input
+                                            className="mt-1 h-4 w-4 shrink-0 accent-[var(--color-primary)]"
                                             type="checkbox"
                                             checked={Boolean(productForm.syncPriceWithProvider)}
                                             onChange={(e) => {
@@ -2321,17 +2389,23 @@ const AdminProducts = () => {
                                                 });
                                             }}
                                         />
-                                        مزامنة السعر والحدود من المورد
+                                        <span className="min-w-0"><span className="block text-sm font-bold text-[var(--color-text)]">{isEnglish ? 'Sync supplier price and limits' : 'مزامنة سعر وحدود المورد'}</span><span className="mt-1 block text-xs leading-5 text-[var(--color-text-secondary)]">{isEnglish ? 'Update the price and order limits automatically.' : 'تحديث السعر وحدود الطلب تلقائيًا.'}</span></span>
                                     </label>
 
-                                    <label className="inline-flex items-center gap-2 text-sm text-gray-700 dark:text-gray-300">
+                                    <label className="flex cursor-pointer items-start gap-3 rounded-xl border border-[var(--color-border)] bg-[var(--color-surface)] p-3 transition hover:border-[var(--color-primary)]">
+                                        <input type="checkbox" className="mt-1 h-4 w-4 shrink-0 accent-[var(--color-primary)]" checked={copySupplierProductName} onChange={(e) => { const checked = e.target.checked; setCopySupplierProductName(checked); if (checked && selectedProviderProduct) { const name = selectedProviderProduct.rawName || selectedProviderProduct.name; setProductForm((prev) => ({ ...prev, name, nameAr: name })); } }} />
+                                        <span className="min-w-0"><span className="block text-sm font-bold text-[var(--color-text)]">{isEnglish ? 'Copy supplier product name' : 'مزامنة اسم منتج المورد'}</span><span className="mt-1 block text-xs leading-5 text-[var(--color-text-secondary)]">{isEnglish ? 'Copy the supplier name into your product when selected.' : 'نسخ اسم المنتج من المورد عند اختياره.'}</span></span>
+                                    </label>
+
+                                    <label className="flex cursor-pointer items-start gap-3 rounded-xl border border-[var(--color-border)] bg-[var(--color-surface)] p-3 transition hover:border-[var(--color-primary)]">
                                         <input
+                                            className="mt-1 h-4 w-4 shrink-0 accent-[var(--color-primary)] disabled:cursor-not-allowed disabled:opacity-40"
                                             type="checkbox"
                                             checked={Boolean(productForm.enableManualPrice)}
                                             onChange={(e) => {
                                                 const checked = e.target.checked;
                                                 setProductForm((prev) => {
-                                                    const nextManualPriceAdjustment = checked ? prev.manualPriceAdjustment : '';
+                                                    const nextManualPriceAdjustment = prev.manualPriceAdjustment;
                                                     const nextForm = {
                                                         ...prev,
                                                         enableManualPrice: checked,
@@ -2360,11 +2434,11 @@ const AdminProducts = () => {
                                             }}
                                             disabled={!productForm.syncPriceWithProvider}
                                         />
-                                        إضافة سعر يدوي
+                                        <span className="min-w-0"><span className="block text-sm font-bold text-[var(--color-text)]">{isEnglish ? 'Manual adjustment' : 'إضافة سعر يدوي'}</span><span className="mt-1 block text-xs leading-5 text-[var(--color-text-secondary)]">{isEnglish ? 'Add or subtract a fixed amount.' : 'أضف أو اطرح مبلغًا ثابتًا من سعر المورد.'}</span></span>
                                     </label>
                                 </div>
 
-                                <div className="mt-3 flex items-start gap-2 rounded-[var(--radius-md)] border border-[color:rgb(var(--color-primary-rgb)/0.16)] bg-[color:rgb(var(--color-primary-rgb)/0.06)] px-3 py-2 text-xs text-[var(--color-text-secondary)]">
+                                <div className="mx-3 mb-3 flex items-start gap-2 rounded-xl bg-[color:rgb(var(--color-primary-rgb)/0.06)] px-3 py-2.5 text-xs leading-5 text-[var(--color-text-secondary)]">
                                     {isSyncingPrice ? (
                                         <RefreshCw className="mt-0.5 h-3.5 w-3.5 shrink-0 animate-spin text-[var(--color-primary)]" />
                                     ) : (
@@ -2378,9 +2452,10 @@ const AdminProducts = () => {
                                 </div>
 
                                 {productForm.syncPriceWithProvider && productForm.enableManualPrice ? (
-                                    <div className="mt-3">
+                                    <div className="mx-3 mb-3 rounded-xl border border-[var(--color-border)] bg-[var(--color-surface)] p-3">
                                         <Input
-                                            label="Manual Price Add (+/-)"
+                                            label={isEnglish ? 'Manual adjustment (+ / −)' : 'قيمة الإضافة أو الخصم (+ / −)'}
+                                            placeholder={isEnglish ? 'Example: 1.50 or -1.50' : 'مثال: 1.50 أو -1.50'}
                                             type="text"
                                             inputMode="decimal"
                                             value={productForm.manualPriceAdjustment}
@@ -2410,6 +2485,11 @@ const AdminProducts = () => {
                                                 });
                                             }}
                                         />
+                                        <p className="mt-2 text-xs leading-5 text-[var(--color-text-secondary)]">{isEnglish ? 'Use a negative number for a discount. The adjustment stays saved when the supplier price changes.' : 'استخدم إشارة السالب للخصم. تظل القيمة محفوظة عند تغيّر سعر المورد.'}</p>
+                                        <div className="mt-3 grid grid-cols-2 gap-2 text-xs">
+                                            <div className="rounded-lg bg-[var(--color-card)] px-3 py-2"><span className="block text-[var(--color-text-secondary)]">{isEnglish ? 'Supplier price' : 'سعر المورد'}</span><strong className="mt-1 block break-all text-[var(--color-text)]" dir="ltr">{formatExactDecimal(productForm.syncedProviderBasePrice, language) || '—'}</strong></div>
+                                            <div className="rounded-lg bg-[var(--color-card)] px-3 py-2"><span className="block text-[var(--color-text-secondary)]">{isEnglish ? 'Price after adjustment' : 'السعر بعد الإضافة'}</span><strong className="mt-1 block break-all text-[var(--color-primary)]" dir="ltr">{formatExactDecimal(productForm.basePriceCoins, language) || '—'}</strong></div>
+                                        </div>
                                     </div>
                                 ) : null}
                             </div>

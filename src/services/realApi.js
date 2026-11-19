@@ -2563,6 +2563,11 @@ const realApi = {
     /**
      * GET /admin/provider-products/:providerId — raw provider products.
      */
+    searchProviderProducts: async (search, page = 1) => {
+      const res = await http.get('/admin/provider-products', { params: { search, page, limit: 50, isActive: true, sortBy: 'price' } });
+      const rows = Array.isArray(res.data?.data) ? res.data.data : [];
+      return { products: rows.map((pp) => ({ ...pp, id: pp._id || pp.id, name: pp.translatedName || pp.rawName || pp.externalProductId, rawPrice: getProviderCatalogPriceValue(pp), providerId: pp.provider?._id || pp.provider?.id || pp.provider, providerName: pp.provider?.name || '' })), pagination: res.data?.pagination };
+    },
     listProviderProducts: async (providerId, { limit = 2000 } = {}) => {
       const res = await http.get(`/admin/provider-products/${providerId}`, {
         params: { limit },
@@ -2874,14 +2879,14 @@ const realApi = {
       role,
       status,
       email,
+      debtors = false,
     } = {}) => {
       const query = new URLSearchParams();
       query.set('page', String(page));
       query.set('limit', String(limit));
-      // Sorting is performed in the store. Only send parameters documented by
-      // the API because strict deployments reject unknown query fields.
-      void sortBy;
-      void sortOrder;
+      query.set('sortBy', sortBy);
+      query.set('sortOrder', sortOrder);
+      if (debtors) query.set('debtors', 'true');
       if (String(search || '').trim()) query.set('search', String(search).trim());
       if (role) query.set('role', String(role).toUpperCase());
       if (status) query.set('status', String(status).toUpperCase());

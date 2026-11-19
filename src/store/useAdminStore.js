@@ -209,6 +209,7 @@ const useAdminStore = create((set, get) => ({
       users: isRealProvider ? [] : mockUsers,
       deletedUsers: [],
       usersPagination: null,
+      usersQuery: { search: '', status: '', role: '', sortBy: USERS_DEFAULT_SORT_BY, sortOrder: USERS_DEFAULT_SORT_ORDER, debtors: false },
       usersCurrentPage: 1,
       usersLastLoadedAt: 0,
       isLoadingUsers: false,
@@ -220,7 +221,8 @@ const useAdminStore = create((set, get) => ({
 
       appendAdminActivity: (entry) => appendAdminActivity(set, entry),
 
-      loadUsers: async ({ force = false, page } = {}) => {
+      loadUsers: async ({ force = false, page, ...filters } = {}) => {
+        const query = { ...get().usersQuery, ...filters };
         const requestedPageCandidate = Number(page ?? get().usersCurrentPage ?? 1);
         const requestedPage = Number.isFinite(requestedPageCandidate) && requestedPageCandidate > 0
           ? Math.floor(requestedPageCandidate)
@@ -237,22 +239,19 @@ const useAdminStore = create((set, get) => ({
           return users;
         }
 
-        if (usersRequest) {
-          return usersRequest;
-        }
+        if (usersRequest) await usersRequest;
 
-        set({ isLoadingUsers: true });
+        set({ isLoadingUsers: true, usersQuery: query });
 
         usersRequest = apiClient.users.list({
           page: requestedPage,
           limit: USERS_PAGE_LIMIT,
-          sortBy: USERS_DEFAULT_SORT_BY,
-          sortOrder: USERS_DEFAULT_SORT_ORDER,
+          ...query,
         })
           .then(async (result) => {
             // Handle both old (array) and new ({ users, pagination }) response shapes
             const items = Array.isArray(result) ? result : (result?.users || []);
-            const nextUsers = sortUsersByBalanceDesc(items.length ? items : (isRealProvider ? [] : mockUsers));
+            const nextUsers = items.length ? items : (isRealProvider ? [] : mockUsers);
             const pagination = result?.pagination || null;
             const currentPage = Number.isFinite(Number(pagination?.page))
               ? Math.floor(Number(pagination.page))

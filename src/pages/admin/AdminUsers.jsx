@@ -40,8 +40,9 @@ import {
 import { resolveUserAvatar } from '../../utils/avatar';
 import apiClient from '../../services/client';
 import { normalizeBillingMode, normalizeQuota } from '../../utils/billing';
+import BulkUserActions from './BulkUserActions';
 
-const FILTER_OPTIONS = ['all', 'approved', 'rejected', 'deleted'];
+const FILTER_OPTIONS = ['all', 'approved', 'highest', 'debtors', 'deleted'];
 const USERS_PER_PAGE = 20;
 
 const compactButtonClassName = 'h-7 rounded-[var(--radius-sm)] px-2 text-[10px]';
@@ -160,6 +161,9 @@ const AdminUsers = () => {
   const [search, setSearch] = useState('');
   const deferredSearch = useDeferredValue(search);
   const [selectedUser, setSelectedUser] = useState(null);
+  const [bulkUsers, setBulkUsers] = useState([]);
+  const [bulkOpen, setBulkOpen] = useState(false);
+  const toggleBulkUser = (entry) => setBulkUsers((items) => items.some((item) => item.id === entry.id) ? items.filter((item) => item.id !== entry.id) : [...items, entry]);
   const [isDetailsOpen, setIsDetailsOpen] = useState(false);
   const [approveTarget, setApproveTarget] = useState(null);
   const [isApproveModalOpen, setIsApproveModalOpen] = useState(false);
@@ -197,13 +201,16 @@ const AdminUsers = () => {
   // Search and status are applied by the API, so results and counts span every
   // user page instead of only the users that happened to be loaded first.
   useEffect(() => {
-    const status = filter === 'all' || filter === 'deleted' ? '' : filter;
+    const status = filter === 'approved' ? 'active' : '';
     loadUsers({
       force: true,
       page: 1,
       search: filter === 'deleted' ? '' : deferredSearch,
       status,
       role: 'customer',
+      debtors: filter === 'debtors',
+      sortBy: filter === 'highest' || filter === 'debtors' ? 'balanceUsd' : 'createdAt',
+      sortOrder: filter === 'debtors' ? 'asc' : 'desc',
     });
   }, [deferredSearch, filter, loadUsers]);
 
@@ -263,6 +270,10 @@ const AdminUsers = () => {
           ? true
           : filter === 'deleted'
             ? isDeletedEntry
+            : filter === 'highest'
+              ? true
+              : filter === 'debtors'
+                ? true
             : normalizedStatus === filter;
         const haystack = [
           entry?.id,
@@ -296,10 +307,6 @@ const AdminUsers = () => {
         const normalizedHaystack = normalizeUserSearchText(haystack);
         const matchesSearch = !searchTokens.length || searchTokens.every((token) => normalizedHaystack.includes(token));
         return matchesFilter && matchesSearch;
-      })
-      .sort((left, right) => {
-        return Number(right?.walletBalance ?? right?.coins ?? right?.balance ?? 0)
-          - Number(left?.walletBalance ?? left?.coins ?? left?.balance ?? 0);
       });
   }, [customerUsers, deletedCustomerUsers, filter, isArabic, search, walletByUserId]);
 
@@ -839,9 +846,6 @@ const AdminUsers = () => {
             <Badge variant="success" className="h-6 rounded-md px-2 text-[10px]">
               مفعّلة {formatNumber(approvedCount, locale)}
             </Badge>
-            <Badge variant="danger" className="h-6 rounded-md px-2 text-[10px]">
-              مرفوضة {formatNumber(rejectedCount, locale)}
-            </Badge>
             <Badge variant="outline" className="h-6 rounded-md px-2 text-[10px]">
               محذوفة {formatNumber(deletedCount, locale)}
             </Badge>
@@ -865,12 +869,21 @@ const AdminUsers = () => {
           >
             <option value="all">كل الحالات</option>
             <option value="approved">مفعّل</option>
-            <option value="rejected">مرفوض</option>
+            <option value="highest">أعلى رصيد حسب سعر الصرف</option>
+            <option value="debtors">المديونين</option>
             <option value="deleted">محذوفة</option>
           </select>
         </div>
       </div>
       </section>
+
+      {filter !== 'deleted' && (canManageUsers || canConfirmAccounts) && <section className="flex flex-wrap items-center gap-2 rounded-xl border border-[var(--color-border)] bg-[var(--color-card)] p-3">
+        <span className="text-sm font-bold">المحدد: {bulkUsers.length} مستخدم</span>
+        <button type="button" className="rounded-lg border border-[var(--color-border)] px-3 py-2 text-xs" onClick={() => setBulkUsers((items) => [...items, ...visibleUsers.filter((u) => !items.some((v) => v.id === u.id))])}>تحديد الصفحة الحالية</button>
+        <button type="button" className="rounded-lg border border-[var(--color-border)] px-3 py-2 text-xs" onClick={() => { setBulkUsers([]); setBulkOpen(false); }}>إلغاء التحديد</button>
+        <button type="button" disabled={!bulkUsers.length} className="rounded-lg bg-[var(--color-primary)] px-3 py-2 text-xs font-bold text-white disabled:opacity-40" onClick={() => setBulkOpen(true)}>تفاصيل الإجراءات</button>
+      </section>}
+      {bulkOpen && bulkUsers.length > 0 && <BulkUserActions users={bulkUsers} onClose={() => setBulkOpen(false)} onRefresh={() => loadUsers({ force: true })} canManageUsers={canManageUsers} canConfirmAccounts={canConfirmAccounts} />}
 
       <div className="space-y-2 md:hidden">
         {visibleUsers.map((entry) => {
@@ -880,6 +893,7 @@ const AdminUsers = () => {
           return (
           <Card key={entry.id} variant="elevated" className="overflow-hidden border-[color:rgb(var(--color-primary-rgb)/0.16)] bg-[linear-gradient(145deg,rgb(var(--color-card-rgb)/0.94),rgb(var(--color-surface-rgb)/0.66))] p-2.5 shadow-[0_18px_42px_-36px_rgb(var(--color-primary-rgb)/0.28)]">
             <div className="flex items-start gap-2.5">
+              {filter !== 'deleted' && (canManageUsers || canConfirmAccounts) && <input aria-label={`تحديد ${entry.name || entry.email}`} type="checkbox" checked={bulkUsers.some((u) => u.id === entry.id)} onChange={() => toggleBulkUser(entry)} className="mt-2 h-4 w-4" />}
               <img
                 src={resolveUserAvatar(entry, entry.name || entry.email || 'EMBRATOR User')}
                 alt={entry.name}
@@ -968,6 +982,7 @@ const AdminUsers = () => {
               <TableRow key={entry.id} className="overflow-hidden rounded-xl border border-[color:rgb(var(--color-primary-rgb)/0.11)] bg-[color:rgb(var(--color-card-rgb)/0.7)] shadow-[0_12px_30px_-28px_rgb(0_0_0/0.76)] transition-all hover:-translate-y-0.5 hover:bg-[color:rgb(var(--color-card-rgb)/0.9)] hover:shadow-[0_18px_42px_-34px_rgb(var(--color-primary-rgb)/0.24)]">
                 <TableCell className={`${compactTableCellClassName} rounded-s-xl py-2`}>
                   <div className="flex items-center gap-2.5">
+                    {filter !== 'deleted' && (canManageUsers || canConfirmAccounts) && <input aria-label={`تحديد ${entry.name || entry.email}`} type="checkbox" checked={bulkUsers.some((u) => u.id === entry.id)} onChange={() => toggleBulkUser(entry)} className="h-4 w-4" />}
                     <img
                 src={resolveUserAvatar(entry, entry.name || entry.email || 'EMBRATOR User')}
                       alt={entry.name}
