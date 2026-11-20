@@ -73,10 +73,8 @@ const Dashboard = () => {
       { id: 'landing-slide-4', image: slideFourHeroImage, title: '' },
       { id: 'landing-slide-5', image: slideFiveHeroImage, title: '' },
     ];
-    const customSlides = platformBrand.slides.filter(Boolean);
-    return customSlides.length ? customSlides.map((image, index) => ({
-      ...defaults[index], id: `platform-slide-${index + 1}`, image: resolveImageUrl(image),
-    })) : defaults;
+    return defaults.map((slide, index) => platformBrand.slides[index]
+      ? { ...slide, image: resolveImageUrl(platformBrand.slides[index]) } : slide);
   }, [platformBrand.slides]);
 
   const storefrontProducts = useMemo(
@@ -227,7 +225,7 @@ const Dashboard = () => {
           <ProductSearchBar products={storefrontProducts} language={language} onSelectProduct={handleProductSelect} forceIconRight placeholder={language === 'ar' ? 'ابحث عن منتج...' : 'Search for a product...'} noResultsLabel={language === 'ar' ? 'لا يوجد منتج مطابق' : 'No matching product found'} className="mx-auto w-full" inputClassName="h-10 rounded-full" />
         </div>
 
-        <div className="relative z-0 grid grid-cols-2 gap-2 sm:gap-2.5 md:grid-cols-3 xl:grid-cols-4">
+        <div className="theme-store-categories relative z-0 grid grid-cols-2 gap-2 sm:gap-2.5 md:grid-cols-3 xl:grid-cols-4">
           {visibleHomepageCategories.map((category, index) => (
             <CategoryCard key={category.id} category={category} active={false} index={index} onSelect={handleCategorySelect} />
           ))}

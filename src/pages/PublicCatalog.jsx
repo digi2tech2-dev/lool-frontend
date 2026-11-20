@@ -309,10 +309,8 @@ const PublicCatalog = () => {
       { id: 'landing-slide-4', image: slideFourImage, title: '' },
       { id: 'landing-slide-5', image: slideFiveImage, title: '' },
     ];
-    const customSlides = platformBrand.slides.filter(Boolean);
-    return customSlides.length ? customSlides.map((image, index) => ({
-      ...defaults[index], id: `platform-slide-${index + 1}`, image: resolveImageUrl(image),
-    })) : defaults;
+    return defaults.map((slide, index) => platformBrand.slides[index]
+      ? { ...slide, image: resolveImageUrl(platformBrand.slides[index]) } : slide);
   }, [platformBrand.slides]);
 
   const catalogProducts = useMemo(
@@ -885,7 +883,7 @@ const PublicCatalog = () => {
             {!showInitialLoading && (
               <>
                 {!isInsideCategory && currentCategories.length > 0 && (
-                  <div className="relative z-0 grid grid-cols-2 gap-2 sm:gap-2.5 md:grid-cols-3 xl:grid-cols-4">
+                  <div className="theme-store-categories relative z-0 grid grid-cols-2 gap-2 sm:gap-2.5 md:grid-cols-3 xl:grid-cols-4">
                     {currentCategories.map((category, index) => (
                       <CategoryCard
                         key={category.id}
@@ -899,7 +897,7 @@ const PublicCatalog = () => {
                 )}
 
                 {shouldMergeProductsWithSubcategories && (
-                  <div className="grid grid-cols-3 gap-3 p-1 sm:gap-4">
+                  <div className="theme-store-products grid grid-cols-3 gap-3 p-1 sm:gap-4">
                     {currentCategories.map((category, index) => (
                       <CategoryCard
                         key={category.id}
@@ -923,7 +921,7 @@ const PublicCatalog = () => {
                 )}
 
                 {isInsideCategory && currentProducts.length > 0 && !shouldMergeProductsWithSubcategories && (
-                  <div className="grid grid-cols-3 gap-3 p-1 sm:gap-4">
+                  <div className="theme-store-products grid grid-cols-3 gap-3 p-1 sm:gap-4">
                     {currentProducts.map((product) => (
                       <ProductCardSimple
                         key={product.id}

@@ -1854,6 +1854,7 @@ const realApi = {
     validate: async (configuration) => unwrap(await http.post('/admin/theme/preview/validate', configuration)),
     saveDraft: async (configuration) => unwrap(await http.post('/admin/theme/draft', configuration)),
     resetDraft: async () => unwrap(await http.post('/admin/theme/draft/reset')),
+    resetDefault: async () => unwrap(await http.post('/admin/theme/reset-default')),
     publish: async (configuration) => unwrap(await http.post('/admin/theme/publish', configuration)),
     restore: async (version) => unwrap(await http.post('/admin/theme/restore', { version })),
     restoreToDraft: async (version) => unwrap(await http.post('/admin/theme/restore-draft', { version })),

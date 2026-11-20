@@ -69,9 +69,9 @@ export const platformThemeStyles = (configuration, mode = 'light') => {
   styles['--color-button-text'] = contrastLight(appearance.colors.primary) ? '#111827' : '#FFFFFF';
   const grid = configuration.layout || {};
   styles['--ad-products-desktop'] = [2,3,4,5,6].includes(grid.productsPerRow) ? grid.productsPerRow : 4;
-  styles['--ad-categories-desktop'] = [2,3].includes(grid.categoriesPerRow) ? grid.categoriesPerRow : 3;
-  styles['--ad-products-mobile'] = [1,2,3].includes(grid.productsPerRowMobile) ? grid.productsPerRowMobile : 2;
-  styles['--ad-categories-mobile'] = [1,2,3].includes(grid.categoriesPerRowMobile) ? grid.categoriesPerRowMobile : 2;
+  styles['--ad-categories-desktop'] = [2,3,4].includes(grid.categoriesPerRow) ? grid.categoriesPerRow : 3;
+  styles['--ad-products-mobile'] = [1,2,3,4].includes(grid.productsPerRowMobile) ? grid.productsPerRowMobile : 2;
+  styles['--ad-categories-mobile'] = [1,2,3,4].includes(grid.categoriesPerRowMobile) ? grid.categoriesPerRowMobile : 2;
   if (allowedFonts.arabicFont.includes(appearance.typography?.arabicFont)) {
     styles['--platform-font-ar'] = `"${appearance.typography.arabicFont}", sans-serif`;
   }
